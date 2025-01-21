@@ -13,7 +13,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 
-const pages = ['Products', 'Pricing', 'Blog'];
+const pages = ['Home', 'About', 'Services', 'Pricing', 'How it Works'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 function Header() {
@@ -37,9 +37,9 @@ function Header() {
 
   return (
     <AppBar position="static">
-      <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+      <Container className='bg-header-white min-h-[9vh] flex items-center justify-center' maxWidth="xl">
+        <Toolbar sx={{ minWidth: { xs: '100%', md: '80%' }, padding: 0 }} disableGutters>
+
           <Typography
             variant="h6"
             noWrap
@@ -47,15 +47,17 @@ function Header() {
             href="#app-bar-with-responsive-menu"
             sx={{
               mr: 2,
+              ml: 2,
               display: { xs: 'none', md: 'flex' },
-              fontFamily: 'monospace',
+              fontFamily: 'poppins',
+              fontSize: "26.4px",
               fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
+              letterSpacing: '.1rem',
+              color: '#020402',
               textDecoration: 'none',
             }}
           >
-            LOGO
+            SHOWINGILOVEYOU
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -65,7 +67,7 @@ function Header() {
               aria-controls="menu-appbar"
               aria-haspopup="true"
               onClick={handleOpenNavMenu}
-              color="inherit"
+              color="black"
             >
               <MenuIcon />
             </IconButton>
@@ -92,7 +94,7 @@ function Header() {
               ))}
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+
           <Typography
             variant="h5"
             noWrap
@@ -100,28 +102,36 @@ function Header() {
             href="#app-bar-with-responsive-menu"
             sx={{
               mr: 2,
+              ml: 2,
               display: { xs: 'flex', md: 'none' },
               flexGrow: 1,
-              fontFamily: 'monospace',
+              fontFamily: 'poppins',
+              fontSize: "26.4px",
               fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
+              letterSpacing: '.1rem',
+              color: '#020402',
               textDecoration: 'none',
+              backgroundColor: "white",
             }}
           >
-            LOGO
+            SHOWINGILOVEYOU
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end'  }}>
             {pages.map((page) => (
               <Button
                 key={page}
                 onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block' }}
+                sx={{ my: 2, color: '#595959', fontFamily: 'poppins', fontWeight: '500', display: 'block', textTransform: 'none', }}
               >
                 {page}
               </Button>
             ))}
+            <Button sx={{ my: 2, mr: 2, ml: 2, color: '#020402', fontFamily: 'poppins', fontWeight: '500', border: '1px solid #020402', borderRadius: '0px'}}>
+              contact
+            </Button>
           </Box>
+          
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -151,6 +161,7 @@ function Header() {
               ))}
             </Menu>
           </Box>
+          
         </Toolbar>
       </Container>
     </AppBar>
