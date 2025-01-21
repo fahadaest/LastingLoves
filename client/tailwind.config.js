@@ -15,6 +15,9 @@ export const theme = {
       'bg-green': '#162415',
       'logo-font-color': '#020402',
     },
+    backgroundImage: {
+      'bg-with-gradient': "linear-gradient(0deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3)), url('https://cdn.b12.io/client_media/cQFRBNdt/07f1ceb4-c694-11ef-9c5e-0242ac110002-jpg-hero_image.jpeg')",
+    },
   },
 };
 export const plugins = [];

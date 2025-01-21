@@ -36,7 +36,7 @@ function Header() {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="fixed">
       <Container className='bg-header-white min-h-[9vh] flex items-center justify-center' maxWidth="xl">
         <Toolbar sx={{ minWidth: { xs: '100%', md: '80%' }, padding: 0 }} disableGutters>
 
