@@ -1,9 +1,12 @@
 function Home() {
     return (
-      <div className="App">
-        <header className="App-header">
-        <h1>home</h1>
-        </header>
+      <div>
+        {/* bg-bg-green */}
+        <section className="min-h-[80vh]">
+          <div className="bg-hero">
+            
+          </div>
+        </section>
       </div>
     );
   }
