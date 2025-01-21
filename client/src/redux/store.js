@@ -4,7 +4,7 @@ import authReducer from './reducers/authReducer';
 
 const store = createStore(
   authReducer,
-  applyMiddleware(thunk)
+  applyMiddleware(thunk) 
 );
 
 export default store;
