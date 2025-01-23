@@ -21,6 +21,7 @@ export const theme = {
     },
     screens: {
       xxs: '495px',
+      bp900: '900px',
     },
   },
 };
