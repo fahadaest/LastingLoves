@@ -36,7 +36,7 @@ function Header() {
   };
 
   return (
-    <AppBar position="fixed">
+    <AppBar sx={{ backgroundColor: "#fff" }} position="fixed">
       <Container className='bg-header-white min-h-[9vh] flex items-center justify-center' maxWidth="xl">
         <Toolbar sx={{ minWidth: { xs: '100%', md: '80%' }, padding: 0 }} disableGutters>
 
@@ -106,7 +106,7 @@ function Header() {
               display: { xs: 'flex', md: 'none' },
               flexGrow: 1,
               fontFamily: 'poppins',
-              fontSize: "26.4px",
+              fontSize: { xs: '20.4px', md: '26.4px' },
               fontWeight: 700,
               letterSpacing: '.1rem',
               color: '#020402',
@@ -117,7 +117,7 @@ function Header() {
             SHOWINGILOVEYOU
           </Typography>
 
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end'  }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end' }}>
             {pages.map((page) => (
               <Button
                 key={page}
@@ -127,11 +127,11 @@ function Header() {
                 {page}
               </Button>
             ))}
-            <Button sx={{ my: 2, mr: 2, ml: 2, color: '#020402', fontFamily: 'poppins', fontWeight: '500', border: '1px solid #020402', borderRadius: '0px'}}>
+            <Button sx={{ my: 2, mr: 2, ml: 2, color: '#020402', fontFamily: 'poppins', fontWeight: '500', border: '1px solid #020402', borderRadius: '0px' }}>
               contact
             </Button>
           </Box>
-          
+
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -161,7 +161,7 @@ function Header() {
               ))}
             </Menu>
           </Box>
-          
+
         </Toolbar>
       </Container>
     </AppBar>
