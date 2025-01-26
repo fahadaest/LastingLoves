@@ -7,6 +7,7 @@ import ProtectedRoute from './routes/protectedRoute';
 import Home from './pages/Home';
 import Pricing from './pages/Pricing';
 import HowItWorks from './pages/HowItWorks';
+import PersonalizedVideoMessages from './pages/PersonalizedVideoMessages';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/" element={<MainLayout><Home /></MainLayout>} />
           <Route path="/Pricing" element={<MainLayout><Pricing /></MainLayout>} />
           <Route path="/how-it-works" element={<MainLayout><HowItWorks /></MainLayout>} />
+          <Route path="/personalized-video-messages" element={<MainLayout><PersonalizedVideoMessages /></MainLayout>} />
           <Route path="/login" element={<Home />} />
           <Route path="/profile" element={<ProtectedRoute> <MainLayout><Home /></MainLayout> </ProtectedRoute>} />
         </Routes>

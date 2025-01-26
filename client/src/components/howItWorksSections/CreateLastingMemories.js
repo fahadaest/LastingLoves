@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Container,
     Grid,
@@ -11,6 +11,8 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/system';
 import CLMModal from './CLM-Modal';
+import createYourMessageImg from '../../assets/create-your-message.jpeg';
+import scheduleYourDeliveryImg from '../../assets/scheduleYourDeliveryImg.jpeg';
 
 const Section = styled('section')(({ theme }) => ({
     padding: theme.spacing(4, 0),
@@ -18,8 +20,21 @@ const Section = styled('section')(({ theme }) => ({
 }));
 
 const CreateLastingMemories = () => {
+    const [open, setOpen] = useState(false);
+    const [currentIndex, setCurrentIndex] = useState();
+
+    const toggleOpen = (index) => {
+        setCurrentIndex(index);
+        setOpen((prevOpen) => !prevOpen);
+    };
+
+    console.log(open);
+
     return (
         <Section sx={{ backgroundColor: "#fff", padding: "10vh 0px 10vh 0px" }} id="how-it-works">
+
+            <CLMModal open={open} onClose={toggleOpen} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />
+
             <Container sx={{ width: "80%" }} maxWidth="lg">
 
                 <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }} textAlign="center" mb={4}>
@@ -27,10 +42,6 @@ const CreateLastingMemories = () => {
                         variant="h4"
                         component="h2"
                         gutterBottom
-                        data-aos="slide-up"
-                        data-aos-offset="120"
-                        data-aos-delay="0"
-                        data-aos-duration="400"
                         sx={{
                             fontFamily: 'poppins',
                             fontSize: '14px',
@@ -44,10 +55,6 @@ const CreateLastingMemories = () => {
                     </Typography>
                     <Typography
                         variant="subtitle1"
-                        data-aos="slide-up"
-                        data-aos-offset="120"
-                        data-aos-delay="50"
-                        data-aos-duration="400"
                         sx={{
                             fontFamily: 'poppins',
                             fontSize: '32px',
@@ -62,7 +69,7 @@ const CreateLastingMemories = () => {
                 </Box>
 
                 <Grid container spacing={4}>
-                    <Grid item xs={12} md={6} data-aos="fade-in" data-aos-delay="0">
+                    <Grid onClick={() => toggleOpen(0)} item xs={12} md={6} >
                         <Card sx={{
                             backgroundColor: "#fff",
                             boxShadow: "0 5px 20px 0 rgba(0, 0, 0, 0.15)",
@@ -79,7 +86,7 @@ const CreateLastingMemories = () => {
                             <CardMedia
                                 component="img"
                                 height="200"
-                                image="https://cdn.b12.io/client_media/cQFRBNdt/0b48c658-c694-11ef-8a29-0242ac110002-jpg-hero_image.jpeg"
+                                image={createYourMessageImg}
                                 alt="Create your message"
                             />
                             <CardContent>
@@ -126,7 +133,7 @@ const CreateLastingMemories = () => {
                         </Card>
                     </Grid>
 
-                    <Grid item xs={12} md={6} data-aos="fade-in" data-aos-delay="50">
+                    <Grid onClick={() => toggleOpen(1)} item xs={12} md={6}>
                         <Card sx={{
                             backgroundColor: "#fff",
                             boxShadow: "0 5px 20px 0 rgba(0, 0, 0, 0.15)",
@@ -143,7 +150,7 @@ const CreateLastingMemories = () => {
                             <CardMedia
                                 component="img"
                                 height="200"
-                                image="https://cdn.b12.io/client_media/cQFRBNdt/0b825ada-c694-11ef-8a29-0242ac110002-jpg-hero_image.jpeg"
+                                image={scheduleYourDeliveryImg}
                                 alt="Schedule your delivery"
                             />
                             <CardContent>

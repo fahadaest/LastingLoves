@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { Box, Typography, IconButton, Dialog, Slide, Button } from "@mui/material";
 import { ArrowBack, ArrowForward, Close } from "@mui/icons-material";
 import "@fontsource/poppins";
+import createYourMessageImg from '../../assets/create-your-message.jpeg';
+import scheduleYourDeliveryImg from '../../assets/scheduleYourDeliveryImg.jpeg';
 
-const CLMModal = ({ open, onClose, route }) => {
-    const [currentIndex, setCurrentIndex] = useState(0);
+const CLMModal = ({ open, onClose, route, currentIndex, setCurrentIndex }) => {
 
     const images = [
-        "https://cdn.b12.io/client_media/cQFRBNdt/0b48c658-c694-11ef-8a29-0242ac110002-jpg-hero_image.jpeg",
-        "https://cdn.b12.io/client_media/cQFRBNdt/0b825ada-c694-11ef-8a29-0242ac110002-jpg-hero_image.jpeg",
+        createYourMessageImg,
+        scheduleYourDeliveryImg,
     ];
 
     const heading = [
@@ -32,7 +33,7 @@ const CLMModal = ({ open, onClose, route }) => {
     return (
         <Dialog
             fullScreen
-            open={true}
+            open={open}
             onClose={onClose}
             sx={{
                 "& .MuiDialog-paper": {
@@ -54,7 +55,6 @@ const CLMModal = ({ open, onClose, route }) => {
                     opacity: "10",
                     fontFamily: "Poppins, sans-serif",
                     backgroundColor: "#fff",
-
                 }}
             >
 
@@ -108,13 +108,26 @@ const CLMModal = ({ open, onClose, route }) => {
                             </Typography>
                         </div>
 
-                        <div className="flex justify-end w-[100%]" >
+                        <div className="flex items-center justify-end w-[100%] " >
                             <IconButton
                                 onClick={handlePrev}
                                 sx={{ color: "black" }}
                             >
                                 <ArrowBack />
                             </IconButton>
+
+                            <Typography
+                                variant="h1"
+                                sx={{
+                                    fontFamily: 'poppins',
+                                    fontSize: '20px',
+                                    fontWeight: 600,
+                                    letterSpacing: '.05rem',
+                                    color: '#595959',
+                                }}
+                            >
+                                {currentIndex + 1}/2
+                            </Typography>
 
                             <IconButton
                                 onClick={handleNext}
