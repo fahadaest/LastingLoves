@@ -2,13 +2,22 @@ import Typography from '@mui/material/Typography';
 import { Box } from '@mui/material';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { useNavigate } from 'react-router-dom';
+import personalizedVMImg from '../../assets/personalizedVM-Img.jpeg';
+import ScheduledMDImg from '../../assets/ScheduledMDImg.jpeg';
+import SecureMLImg from '../../assets/SecureMLImg.jpeg';
 
 function PersonalVideoMessage() {
     const navigate = useNavigate();
 
     const handleNavigate = (page) => {
-        if (page === 'personalVideoMessage') {
+        if (page === 'PVM') {
             navigate('/personalized-video-messages');
+        }
+        if (page === 'SMD') {
+            navigate('/scheduled-message-delivery');
+        }
+        if (page === 'SML') {
+            navigate('/secure-message-locking');
         }
     };
 
@@ -43,23 +52,25 @@ function PersonalVideoMessage() {
                         Create lasting memories for your loved ones.
                     </Typography>
 
-                    <Box onClick={() => handleNavigate("personalVideoMessage")} className="flex flex-col bp900:flex-row gap-5">
-                        <Box sx={{
-                            backgroundColor: "#fff",
-                            boxShadow: "0 5px 20px 0 rgba(0, 0, 0, 0.15)",
-                            transition: "transform 0.1s ease-in-out",
-                            "&:hover": {
-                                cursor: "pointer",
-                                transform: "scale(1.05)",
-                                boxShadow: "0 5px 20px 0 #32AA27",
-                                "& .hover-text": {
-                                    color: "#32AA27",
+                    <Box className="flex flex-col bp900:flex-row gap-5">
+                        <Box
+                            onClick={() => handleNavigate("PVM")}
+                            sx={{
+                                backgroundColor: "#fff",
+                                boxShadow: "0 5px 20px 0 rgba(0, 0, 0, 0.15)",
+                                transition: "transform 0.1s ease-in-out",
+                                "&:hover": {
+                                    cursor: "pointer",
+                                    transform: "scale(1.05)",
+                                    boxShadow: "0 5px 20px 0 #32AA27",
+                                    "& .hover-text": {
+                                        color: "#32AA27",
+                                    },
                                 },
-                            },
-                        }}>
+                            }}>
                             <Box>
                                 <img
-                                    src="https://cdn.b12.io/client_media/cQFRBNdt/0e05d30e-c694-11ef-9c5e-0242ac110002-jpg-regular_image.jpeg"
+                                    src={personalizedVMImg}
                                     alt="Hero Image"
                                     className="w-full h-full object-cover object-center"
                                 />
@@ -96,22 +107,24 @@ function PersonalVideoMessage() {
                             </Box>
                         </Box>
 
-                        <Box sx={{
-                            backgroundColor: "#fff",
-                            boxShadow: "0 5px 20px 0 rgba(0, 0, 0, 0.15)",
-                            transition: "transform 0.1s ease-in-out",
-                            "&:hover": {
-                                cursor: "pointer",
-                                transform: "scale(1.05)",
-                                boxShadow: "0 5px 20px 0 #32AA27",
-                                "& .hover-text": {
-                                    color: "#32AA27",
+                        <Box
+                            onClick={() => handleNavigate("SMD")}
+                            sx={{
+                                backgroundColor: "#fff",
+                                boxShadow: "0 5px 20px 0 rgba(0, 0, 0, 0.15)",
+                                transition: "transform 0.1s ease-in-out",
+                                "&:hover": {
+                                    cursor: "pointer",
+                                    transform: "scale(1.05)",
+                                    boxShadow: "0 5px 20px 0 #32AA27",
+                                    "& .hover-text": {
+                                        color: "#32AA27",
+                                    },
                                 },
-                            },
-                        }}>
+                            }}>
                             <Box>
                                 <img
-                                    src="https://cdn.b12.io/client_media/cQFRBNdt/0d0e304a-c694-11ef-9c5e-0242ac110002-jpg-regular_image.jpeg"
+                                    src={ScheduledMDImg}
                                     alt="Hero Image"
                                     className="w-full h-full object-cover object-center"
                                 />
@@ -146,22 +159,24 @@ function PersonalVideoMessage() {
                             </Box>
                         </Box>
 
-                        <Box sx={{
-                            backgroundColor: "#fff",
-                            boxShadow: "0 5px 20px 0 rgba(0, 0, 0, 0.15)",
-                            transition: "transform 0.1s ease-in-out",
-                            "&:hover": {
-                                cursor: "pointer",
-                                transform: "scale(1.05)",
-                                boxShadow: "0 5px 20px 0 #32AA27",
-                                "& .hover-text": {
-                                    color: "#32AA27",
+                        <Box
+                            onClick={() => handleNavigate("SML")}
+                            sx={{
+                                backgroundColor: "#fff",
+                                boxShadow: "0 5px 20px 0 rgba(0, 0, 0, 0.15)",
+                                transition: "transform 0.1s ease-in-out",
+                                "&:hover": {
+                                    cursor: "pointer",
+                                    transform: "scale(1.05)",
+                                    boxShadow: "0 5px 20px 0 #32AA27",
+                                    "& .hover-text": {
+                                        color: "#32AA27",
+                                    },
                                 },
-                            },
-                        }}>
+                            }}>
                             <Box>
                                 <img
-                                    src="https://cdn.b12.io/client_media/cQFRBNdt/0cc74f36-c694-11ef-9c5e-0242ac110002-jpg-regular_image.jpeg"
+                                    src={SecureMLImg}
                                     alt="Hero Image"
                                     className="w-full h-full object-cover object-center"
                                 />
