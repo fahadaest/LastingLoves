@@ -44,6 +44,9 @@ function Header() {
     if (page === 'Pricing') {
       navigate('/Pricing');
     }
+    if (page === 'How it Works') {
+      navigate('/how-it-works');
+    }
     setAnchorElNav(null);
   };
 
