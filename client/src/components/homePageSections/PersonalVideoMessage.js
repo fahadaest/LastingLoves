@@ -1,8 +1,17 @@
 import Typography from '@mui/material/Typography';
 import { Box } from '@mui/material';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import { useNavigate } from 'react-router-dom';
 
 function PersonalVideoMessage() {
+    const navigate = useNavigate();
+
+    const handleNavigate = (page) => {
+        if (page === 'personalVideoMessage') {
+            navigate('/personalized-video-messages');
+        }
+    };
+
     return (
         <section className="flex justify-center items-center pt-12 pb-12 min-h-[80vh] bg-pm-message-bg">
             <div className=" w-[80%] bp900:w-[70%] h-[80%] flex items-center justify-between flex-col bp900:flex-row">
@@ -33,7 +42,8 @@ function PersonalVideoMessage() {
                     >
                         Create lasting memories for your loved ones.
                     </Typography>
-                    <Box className="flex flex-col bp900:flex-row gap-5">
+
+                    <Box onClick={() => handleNavigate("personalVideoMessage")} className="flex flex-col bp900:flex-row gap-5">
                         <Box sx={{
                             backgroundColor: "#fff",
                             boxShadow: "0 5px 20px 0 rgba(0, 0, 0, 0.15)",
