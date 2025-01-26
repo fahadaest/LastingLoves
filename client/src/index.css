@@ -1,4 +1,27 @@
-/* Ensure Tailwind CSS is installed and configured correctly */
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
+
+.hero-background-img {
+  background-image: url('https://cdn.b12.io/client_media/cQFRBNdt/07f1ceb4-c694-11ef-9c5e-0242ac110002-jpg-hero_image.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.pricing-background-img {
+  background-image: url('https://cdn.b12.io/client_media/cQFRBNdt/08a53332-c694-11ef-9cfc-0242ac110002-jpg-hero_image.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.how-it-works-img {
+  background-image: url('https://cdn.b12.io/client_media/cQFRBNdt/07ff4800-c694-11ef-8a29-0242ac110002-jpg-hero_image.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}

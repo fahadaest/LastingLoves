@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useNavigate } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -13,12 +14,13 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 
-const pages = ['Products', 'Pricing', 'Blog'];
+const pages = ['Home', 'About', 'Services', 'Pricing', 'How it Works'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 function Header() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const navigate = useNavigate();
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -35,11 +37,30 @@ function Header() {
     setAnchorElUser(null);
   };
 
+  const handleNavigate = (page) => {
+    if (page === 'Home') {
+      navigate('/');
+    }
+    if (page === 'About') {
+      navigate('/about');
+    }
+    if (page === 'Services') {
+      navigate('/Services');
+    }
+    if (page === 'Pricing') {
+      navigate('/Pricing');
+    }
+    if (page === 'How it Works') {
+      navigate('/how-it-works');
+    }
+    setAnchorElNav(null);
+  };
+
   return (
-    <AppBar position="static">
-      <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+    <AppBar sx={{ backgroundColor: "#fff" }} position="fixed">
+      <Container className='bg-header-white min-h-[9vh] flex items-center justify-center' maxWidth="xl">
+        <Toolbar sx={{ minWidth: { xs: '100%', md: '80%' }, padding: 0 }} disableGutters>
+
           <Typography
             variant="h6"
             noWrap
@@ -47,15 +68,17 @@ function Header() {
             href="#app-bar-with-responsive-menu"
             sx={{
               mr: 2,
+              ml: 2,
               display: { xs: 'none', md: 'flex' },
-              fontFamily: 'monospace',
+              fontFamily: 'poppins',
+              fontSize: "26.4px",
               fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
+              letterSpacing: '.1rem',
+              color: '#020402',
               textDecoration: 'none',
             }}
           >
-            LOGO
+            SHOWINGILOVEYOU
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -65,7 +88,7 @@ function Header() {
               aria-controls="menu-appbar"
               aria-haspopup="true"
               onClick={handleOpenNavMenu}
-              color="inherit"
+              color="black"
             >
               <MenuIcon />
             </IconButton>
@@ -86,13 +109,13 @@ function Header() {
               sx={{ display: { xs: 'block', md: 'none' } }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                <MenuItem key={page} onClick={() => handleNavigate(page)}>
                   <Typography sx={{ textAlign: 'center' }}>{page}</Typography>
                 </MenuItem>
               ))}
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+
           <Typography
             variant="h5"
             noWrap
@@ -100,28 +123,37 @@ function Header() {
             href="#app-bar-with-responsive-menu"
             sx={{
               mr: 2,
+              ml: 2,
               display: { xs: 'flex', md: 'none' },
               flexGrow: 1,
-              fontFamily: 'monospace',
+              fontFamily: 'poppins',
+              fontSize: { xs: '20.4px', md: '26.4px' },
               fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
+              letterSpacing: '.1rem',
+              color: '#020402',
               textDecoration: 'none',
+              backgroundColor: "white",
             }}
           >
-            LOGO
+            SHOWINGILOVEYOU
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end' }}>
             {pages.map((page) => (
               <Button
                 key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block' }}
+                // onClick={handleCloseNavMenu}
+                onClick={() => handleNavigate(page)}
+                sx={{ my: 2, color: '#595959', fontFamily: 'poppins', fontWeight: '500', display: 'block', textTransform: 'none', }}
               >
                 {page}
               </Button>
             ))}
+            <Button onClick={() => navigate('/Contact')} sx={{ my: 2, mr: 2, ml: 2, color: '#020402', fontFamily: 'poppins', fontWeight: '500', border: '1px solid #020402', borderRadius: '0px' }}>
+              contact
+            </Button>
           </Box>
+
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -151,6 +183,7 @@ function Header() {
               ))}
             </Menu>
           </Box>
+
         </Toolbar>
       </Container>
     </AppBar>
