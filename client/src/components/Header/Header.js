@@ -41,6 +41,12 @@ function Header() {
     if (page === 'Home') {
       navigate('/');
     }
+    if (page === 'About') {
+      navigate('/about');
+    }
+    if (page === 'Services') {
+      navigate('/Services');
+    }
     if (page === 'Pricing') {
       navigate('/Pricing');
     }
@@ -143,7 +149,7 @@ function Header() {
                 {page}
               </Button>
             ))}
-            <Button sx={{ my: 2, mr: 2, ml: 2, color: '#020402', fontFamily: 'poppins', fontWeight: '500', border: '1px solid #020402', borderRadius: '0px' }}>
+            <Button onClick={() => navigate('/Contact')} sx={{ my: 2, mr: 2, ml: 2, color: '#020402', fontFamily: 'poppins', fontWeight: '500', border: '1px solid #020402', borderRadius: '0px' }}>
               contact
             </Button>
           </Box>

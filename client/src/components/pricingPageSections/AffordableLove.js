@@ -1,8 +1,11 @@
+import * as React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
 import { Box } from '@mui/material';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
 function AffordableLove() {
+    const navigate = useNavigate();
     return (
         <section className="flex justify-center items-center pt-12 pb-12 min-h-[80vh] bg-header-white">
             <div className=" w-[80%] bp900:w-[75%] h-[80%] flex items-center justify-between flex-col bp900:flex-row">
@@ -102,6 +105,7 @@ function AffordableLove() {
                                 </Typography>
 
                                 <Typography
+                                    onClick={() => navigate('/personalized-video-messages')}
                                     variant="h1"
                                     sx={{
                                         fontFamily: 'poppins',
@@ -183,6 +187,7 @@ function AffordableLove() {
                                 </Typography>
 
                                 <Typography
+                                    onClick={() => navigate('/scheduled-message-delivery')}
                                     variant="h1"
                                     sx={{
                                         fontFamily: 'poppins',
@@ -264,6 +269,7 @@ function AffordableLove() {
                                 </Typography>
 
                                 <Typography
+                                    onClick={() => navigate('/secure-message-locking')}
                                     variant="h1"
                                     sx={{
                                         fontFamily: 'poppins',
