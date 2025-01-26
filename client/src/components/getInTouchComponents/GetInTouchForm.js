@@ -43,12 +43,6 @@ const ContactForm = () => {
         <FormWrapper
             component="form"
             onSubmit={handleSubmit}
-            data-aos="slide-up"
-            data-aos-offset="120"
-            data-aos-delay="0"
-            data-aos-duration="400"
-            data-aos-easing="ease-in-out"
-            data-aos-once="true"
         >
 
             <TextField
