@@ -31,7 +31,10 @@ function App() {
 
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/sign-up" element={<SignUp />} />
-          <Route path="/profile" element={<MainLayout>\<Dashboard /></MainLayout>} />
+          <Route path="/profile" element={<MainLayout>\<Dashboard path={"profile"} /></MainLayout>} />
+          <Route path="/my-memories" element={<MainLayout>\<Dashboard path={"my-memories"} /></MainLayout>} />
+          <Route path="/create-memory" element={<MainLayout>\<Dashboard path={"create-memory"} /></MainLayout>} />
+
         </Routes>
       </Router>
     </Provider>
