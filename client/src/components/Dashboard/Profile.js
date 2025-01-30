@@ -15,7 +15,7 @@ export default function Profile() {
                 container
                 spacing={2}
                 columns={12}
-                sx={{ mb: (theme) => theme.spacing(2), backgroundColor: "#fff", display: "flex", flexDirection: "column", alignItems: "center", borderRadius: "10px", padding: "20px", marginTop: "10px", boxShadow: "0px 4px 10px rgba(50, 170, 39, 0.4), 0px -4px 10px rgba(50, 170, 39, 0.4), 4px 0px 10px rgba(50, 170, 39, 0.4), -4px 0px 10px rgba(50, 170, 39, 0.4)" }}
+                sx={{ mb: (theme) => theme.spacing(2), backgroundColor: "#fff", display: "flex", flexDirection: "column", alignItems: "center", borderRadius: "10px", padding: "20px", boxShadow: "0px 4px 10px rgba(50, 170, 39, 0.4), 0px -4px 10px rgba(50, 170, 39, 0.4), 4px 0px 10px rgba(50, 170, 39, 0.4), -4px 0px 10px rgba(50, 170, 39, 0.4)" }}
             >
                 <Box>
                     <Avatar

@@ -7,7 +7,7 @@ import SideMenu from '../components/Dashboard/SideMenu';
 import Memories from '../components/Dashboard/Memories';
 import CreateMemory from '../components/Dashboard/CreateMemory';
 
-export default function Dashboard(props) {
+export default function Dashboard({ path }) {
     return (
         <Box sx={{ display: 'flex', marginTop: "9vh" }}>
             <SideMenu />
@@ -27,12 +27,13 @@ export default function Dashboard(props) {
                         alignItems: 'center',
                         mx: 3,
                         pb: 5,
-                        mt: { xs: 8, md: 0 },
+                        mt: '10px',
                     }}
                 >
-                    <Profile />
-                    <Memories />
-                    <CreateMemory />
+
+                    {path === "profile" && <Profile />}
+                    {path === "my-memories" && <Memories />}
+                    {path == "create-memory" && <CreateMemory />}
                 </Stack>
             </Box>
         </Box>

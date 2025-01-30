@@ -5,13 +5,14 @@ import Footer from '../components/Footer/Footer';
 
 const MainLayout = ({ children }) => {
   const location = useLocation();
-  const isProfilePage = location.pathname === '/profile';
+  const pathsWithoutFooter = ['/profile', '/my-memories', '/create-memory'];
+  const dontShowFooter = pathsWithoutFooter.includes(location.pathname);
 
   return (
     <div>
       <Header />
       <main>{children}</main>
-      {!isProfilePage && <Footer />}
+      {!dontShowFooter && <Footer />}
     </div>
   );
 };

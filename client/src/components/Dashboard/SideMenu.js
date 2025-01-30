@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from "react";
 import { styled } from '@mui/material/styles';
 import Avatar from '@mui/material/Avatar';
 import MuiDrawer, { drawerClasses } from '@mui/material/Drawer';
@@ -23,6 +23,7 @@ const Drawer = styled(MuiDrawer)({
 });
 
 export default function SideMenu() {
+
     return (
         <Drawer
             variant="permanent"

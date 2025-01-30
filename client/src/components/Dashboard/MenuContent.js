@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from "react";
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -9,19 +9,21 @@ import Typography from '@mui/material/Typography';
 import Person2Icon from '@mui/icons-material/Person2';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import Diversity1Icon from '@mui/icons-material/Diversity1';
+import { useNavigate } from "react-router-dom";
 
 const mainListItems = [
-    { text: 'My Profile', icon: <Person2Icon sx={{ color: "#32AA27" }} /> },
-    { text: 'My Memories', icon: <Diversity1Icon sx={{ color: "#32AA27" }} /> },
-    { text: 'Create Memory', icon: <AddCircleIcon sx={{ color: "#32AA27" }} /> },
+    { text: 'My Profile', path: '/profile', icon: <Person2Icon sx={{ color: "#32AA27" }} /> },
+    { text: 'My Memories', path: '/my-memories', icon: <Diversity1Icon sx={{ color: "#32AA27" }} /> },
+    { text: 'Create Memory', path: '/create-memory', icon: <AddCircleIcon sx={{ color: "#32AA27" }} /> },
 ];
 
 export default function MenuContent() {
-
     const [selectedIndex, setSelectedIndex] = React.useState(0);
+    const navigate = useNavigate();
 
-    const handleListItemClick = (index) => {
+    const handleListItemClick = (index, path) => {
         setSelectedIndex(index);
+        navigate(path);
     };
 
     return (
@@ -30,7 +32,7 @@ export default function MenuContent() {
                 {mainListItems.map((item, index) => (
                     <ListItem key={index} disablePadding sx={{ display: 'block' }}>
                         <ListItemButton
-                            onClick={() => handleListItemClick(index)}
+                            onClick={() => handleListItemClick(index, item.path)}
                             sx={{
                                 bgcolor: index === selectedIndex ? '#E2F9D8' : 'transparent',
                                 '&:hover': {
