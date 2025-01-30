@@ -2,33 +2,35 @@ import * as React from 'react';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import sampleImg1 from "../../assets/Jamie-Lambros.jpg";
-import sampleImg2 from "../../assets/Jamie-Lambros.jpg";
-import sampleImg3 from "../../assets/Jamie-Lambros.jpg";
+import Divider from '@mui/material/Divider';
+import { Button, Typography } from '@mui/material';
 
 export default function Memories() {
+    const [button, setActiveButton] = React.useState("All Memories");
+    const buttons = ["All Memories", "Videos", "Pictures", "Text"];
     return (
         <Box
             sx={{
                 width: '100%',
                 maxWidth: { sm: '100%', md: '1700px' },
-                margin: '0 auto',  // Center the box properly
-                overflow: 'hidden'  // Prevent extra expansion
+                margin: '0 auto',
+                overflow: 'hidden',
+                boxShadow: "0px 4px 10px rgba(50, 170, 39, 0.4), 0px -4px 10px rgba(50, 170, 39, 0.4), 4px 0px 10px rgba(50, 170, 39, 0.4), -4px 0px 10px rgba(50, 170, 39, 0.4)",
+                borderRadius: "10px",
             }}
         >
             <Grid
                 container
-                spacing={2}
                 justifyContent="center"
                 sx={{
                     mb: 2,
-                    backgroundColor: "#E2F9D8",
+                    backgroundColor: "#fff",
                     display: "flex",
                     alignItems: "center",
-                    border: "1px solid #595959",
                     borderRadius: "10px",
                     padding: "20px",
-                    maxWidth: "100%",  // Ensure it doesn't exceed the screen width
-                    margin: "0 auto"  // Align center properly
+                    maxWidth: "100%",
+                    margin: "0 auto",
                 }}
             >
                 <Box
@@ -37,20 +39,82 @@ export default function Memories() {
                         fontFamily: 'poppins',
                         fontWeight: '600',
                         fontSize: "30px",
-                        textAlign: "center",
-                        width: "100%"
+                        width: "97%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between"
                     }}
                 >
-                    My Memories
+                    <Typography
+                        sx={{
+                            color: '#595959',
+                            fontFamily: 'poppins',
+                            fontWeight: '600',
+                            fontSize: "30px",
+                        }}
+                    >
+                        My Memories
+                    </Typography>
+                    <Typography
+                        sx={{
+                            color: '#595959',
+                            fontFamily: 'poppins',
+                            fontWeight: '600',
+                            fontSize: "30px",
+                        }}
+                    >
+                        Filter & Stuff
+                    </Typography>
                 </Box>
 
-                {/* Images Row */}
-                {[sampleImg1, sampleImg2, sampleImg3, sampleImg1, sampleImg2, sampleImg3].map((img, index) => (
+                <Divider sx={{ width: '97%', my: 2, border: "1px solid #d1d4e0" }} />
+
+                <Box
+                    sx={{
+                        fontFamily: 'poppins',
+                        fontWeight: '600',
+                        fontSize: "20px",
+                        textAlign: "center",
+                        width: "100%",
+                        marginBottom: "20px",
+                        display: "flex",
+                        justifyContent: "center",
+                        gap: "10px",
+                    }}
+                >
+                    {buttons.map((key) => (
+                        <Button
+                            key={key}
+                            onClick={() => setActiveButton(key)}
+                            sx={{
+                                color: key === button ? "#32AA27" : '#595959',
+                                fontFamily: 'poppins',
+                                fontWeight: '600',
+                                fontSize: "20px",
+                                position: "relative",
+                                "&::after": {
+                                    content: '""',
+                                    display: "block",
+                                    width: "100%",
+                                    height: "3px",
+                                    backgroundColor: key === button ? "#32AA27" : "transparent",
+                                    position: "absolute",
+                                    bottom: 0,
+                                    left: 0,
+                                },
+                            }}
+                        >
+                            {key}
+                        </Button>
+                    ))}
+                </Box>
+
+                {[sampleImg1, sampleImg1, sampleImg1, sampleImg1, sampleImg1, sampleImg1].map((img, index) => (
                     <Grid
                         item
-                        xs={12} sm={4}
+                        xs={4} sm={4}
                         key={index}
-                        sx={{ display: "flex", justifyContent: "center", backgroundColor: "aqua", alignItems: "center" }}
+                        sx={{ padding: "10px" }}
                     >
                         <Box
                             component="img"

@@ -5,6 +5,7 @@ import Stack from '@mui/material/Stack';
 import Profile from '../components/Dashboard/Profile';
 import SideMenu from '../components/Dashboard/SideMenu';
 import Memories from '../components/Dashboard/Memories';
+import CreateMemory from '../components/Dashboard/CreateMemory';
 
 export default function Dashboard(props) {
     return (
@@ -31,6 +32,7 @@ export default function Dashboard(props) {
                 >
                     <Profile />
                     <Memories />
+                    <CreateMemory />
                 </Stack>
             </Box>
         </Box>
