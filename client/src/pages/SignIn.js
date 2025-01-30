@@ -14,7 +14,6 @@ import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import ForgotPassword from '../components/SignIn/ForgotPassword';
-import AppTheme from '../layouts/AppTheme';
 // import { GoogleIcon, FacebookIcon } from './components/CustomIcons';
 // import { SitemarkIcon } from '../components/SignIn/CustomIcons';
 
@@ -116,114 +115,111 @@ export default function SignIn(props) {
     };
 
     return (
-        <AppTheme {...props}>
-            <CssBaseline enableColorScheme />
-            <SignInContainer direction="column" justifyContent="space-between">
-                {/* <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} /> */}
-                <Card variant="outlined">
-                    {/* <SitemarkIcon /> */}
-                    <Typography
-                        component="h1"
-                        variant="h4"
-                        sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)', fontWeight: "600", display: "flex", justifyContent: "center" }}
-                    >
-                        Sign in
-                    </Typography>
-                    <Box
-                        component="form"
-                        onSubmit={handleSubmit}
-                        noValidate
+        <SignInContainer direction="column" justifyContent="space-between">
+            {/* <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} /> */}
+            <Card variant="outlined">
+                {/* <SitemarkIcon /> */}
+                <Typography
+                    component="h1"
+                    variant="h4"
+                    sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)', fontWeight: "600", display: "flex", justifyContent: "center" }}
+                >
+                    Sign in
+                </Typography>
+                <Box
+                    component="form"
+                    onSubmit={handleSubmit}
+                    noValidate
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        width: '100%',
+                        gap: 2,
+                    }}
+                >
+                    <FormControl>
+                        <FormLabel htmlFor="email">Email</FormLabel>
+                        <TextField
+                            error={emailError}
+                            helperText={emailErrorMessage}
+                            id="email"
+                            type="email"
+                            name="email"
+                            placeholder="your@email.com"
+                            autoComplete="email"
+                            autoFocus
+                            required
+                            fullWidth
+                            variant="outlined"
+                            color={emailError ? 'error' : 'primary'}
+                        />
+                    </FormControl>
+                    <FormControl>
+                        <FormLabel htmlFor="password">Password</FormLabel>
+                        <TextField
+                            error={passwordError}
+                            helperText={passwordErrorMessage}
+                            name="password"
+                            placeholder="••••••"
+                            type="password"
+                            id="password"
+                            autoComplete="current-password"
+                            autoFocus
+                            required
+                            fullWidth
+                            variant="outlined"
+                            color={passwordError ? 'error' : 'primary'}
+                        />
+                    </FormControl>
+                    <FormControlLabel
+                        control={<Checkbox value="remember" color="primary" />}
+                        label="Remember me"
+                    />
+                    <ForgotPassword open={open} handleClose={handleClose} />
+                    <Button
+                        type="submit"
+                        fullWidth
+                        onClick={validateInputs}
                         sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            width: '100%',
-                            gap: 2,
+                            backgroundColor: "#32AA27",
+                            color: "#fff"
                         }}
                     >
-                        <FormControl>
-                            <FormLabel htmlFor="email">Email</FormLabel>
-                            <TextField
-                                error={emailError}
-                                helperText={emailErrorMessage}
-                                id="email"
-                                type="email"
-                                name="email"
-                                placeholder="your@email.com"
-                                autoComplete="email"
-                                autoFocus
-                                required
-                                fullWidth
-                                variant="outlined"
-                                color={emailError ? 'error' : 'primary'}
-                            />
-                        </FormControl>
-                        <FormControl>
-                            <FormLabel htmlFor="password">Password</FormLabel>
-                            <TextField
-                                error={passwordError}
-                                helperText={passwordErrorMessage}
-                                name="password"
-                                placeholder="••••••"
-                                type="password"
-                                id="password"
-                                autoComplete="current-password"
-                                autoFocus
-                                required
-                                fullWidth
-                                variant="outlined"
-                                color={passwordError ? 'error' : 'primary'}
-                            />
-                        </FormControl>
-                        <FormControlLabel
-                            control={<Checkbox value="remember" color="primary" />}
-                            label="Remember me"
-                        />
-                        <ForgotPassword open={open} handleClose={handleClose} />
-                        <Button
-                            type="submit"
-                            fullWidth
-                            onClick={validateInputs}
-                            sx={{
-                                backgroundColor: "#32AA27",
-                                color: "#fff"
-                            }}
-                        >
-                            Sign in
-                        </Button>
+                        Sign in
+                    </Button>
+                    <Link
+                        component="button"
+                        type="button"
+                        onClick={handleClickOpen}
+                        variant="body2"
+                        sx={{ alignSelf: 'center', color: "#32AA27" }}
+                    >
+                        Forgot your password?
+                    </Link>
+                </Box>
+                <Divider>or</Divider>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    <Button
+                        fullWidth
+                        variant="outlined"
+                        onClick={() => alert('Sign in with Google')}
+                        sx={{ color: "#32AA27", border: " 1px solid #32AA27" }}
+                    // startIcon={<GoogleIcon />}
+                    >
+                        Sign in with Google
+                    </Button>
+                    <Typography sx={{ textAlign: 'center' }}>
+                        Don&apos;t have an account?{' '}
                         <Link
-                            component="button"
-                            type="button"
-                            onClick={handleClickOpen}
+                            href="/sign-up"
                             variant="body2"
                             sx={{ alignSelf: 'center', color: "#32AA27" }}
                         >
-                            Forgot your password?
+                            Sign up
                         </Link>
-                    </Box>
-                    <Divider>or</Divider>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                        <Button
-                            fullWidth
-                            variant="outlined"
-                            onClick={() => alert('Sign in with Google')}
-                            sx={{ color: "#32AA27", border: " 1px solid #32AA27" }}
-                        // startIcon={<GoogleIcon />}
-                        >
-                            Sign in with Google
-                        </Button>
-                        <Typography sx={{ textAlign: 'center' }}>
-                            Don&apos;t have an account?{' '}
-                            <Link
-                                href="/sign-up"
-                                variant="body2"
-                                sx={{ alignSelf: 'center', color: "#32AA27" }}
-                            >
-                                Sign up
-                            </Link>
-                        </Typography>
-                    </Box>
-                </Card>
-            </SignInContainer>
-        </AppTheme>
+                    </Typography>
+                </Box>
+            </Card>
+        </SignInContainer>
     );
 }

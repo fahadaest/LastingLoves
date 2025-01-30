@@ -10,6 +10,7 @@ import HowItWorks from './pages/HowItWorks';
 import PersonalizedVideoMessages from './pages/PVMAdditionals';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
+import Dashboard from './pages/Dashboard';
 
 function App() {
   return (
@@ -30,7 +31,7 @@ function App() {
 
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/sign-up" element={<SignUp />} />
-          <Route path="/profile" element={<ProtectedRoute> <MainLayout><Home /></MainLayout> </ProtectedRoute>} />
+          <Route path="/profile" element={<MainLayout>\<Dashboard /></MainLayout>} />
         </Routes>
       </Router>
     </Provider>
