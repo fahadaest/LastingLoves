@@ -9,13 +9,13 @@ function MessagesOfLove() {
                     variant="h1"
                     sx={{
                         fontFamily: 'poppins',
-                        fontSize: { xxs: '22px', xs: '42px', md: '62px' },
+                        fontSize: { xxs: '12px', xs: '22px', md: '42px' },
                         fontWeight: 700,
                         letterSpacing: '.1rem',
                         color: '#FFFFFF',
                     }}
                 >
-                    Messages of love
+                    Create Lasting memories for your Loved Ones
                 </Typography>
 
                 <Typography
@@ -28,7 +28,7 @@ function MessagesOfLove() {
                         color: '#FFFFFF',
                     }}
                 >
-                    Create Lasting memories
+                    15% of proceeds will be going to a non profit, JAMIES HEROIC ACTS!
                 </Typography>
 
                 <Button

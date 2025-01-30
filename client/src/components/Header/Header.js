@@ -13,14 +13,22 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
+import MenuButton from '../Dashboard/MenuButton';
+import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
+import SideMenuMobile from '../Dashboard/SideMenuMobile';
 
 const pages = ['Home', 'About', 'Services', 'Pricing', 'How it Works'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const settings = ['Profile', 'Upload Memory', 'Sign in'];
 
 function Header() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const navigate = useNavigate();
+  const [open, setOpen] = React.useState(false);
+
+  const toggleDrawer = (newOpen) => () => {
+    setOpen(newOpen);
+  };
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -57,7 +65,7 @@ function Header() {
   };
 
   return (
-    <AppBar sx={{ backgroundColor: "#fff" }} position="fixed">
+    <AppBar sx={{ backgroundColor: "#fff", zIndex: "1500" }} position="fixed">
       <Container className='bg-header-white min-h-[9vh] flex items-center justify-center' maxWidth="xl">
         <Toolbar sx={{ minWidth: { xs: '100%', md: '80%' }, padding: 0 }} disableGutters>
 
@@ -82,38 +90,9 @@ function Header() {
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="black"
-            >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              sx={{ display: { xs: 'block', md: 'none' } }}
-            >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={() => handleNavigate(page)}>
-                  <Typography sx={{ textAlign: 'center' }}>{page}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
+            <MenuButton aria-label="menu" onClick={toggleDrawer(true)}>
+              <MenuRoundedIcon />
+            </MenuButton>
           </Box>
 
           <Typography
@@ -149,7 +128,7 @@ function Header() {
                 {page}
               </Button>
             ))}
-            <Button onClick={() => navigate('/Contact')} sx={{ my: 2, mr: 2, ml: 2, color: '#020402', fontFamily: 'poppins', fontWeight: '500', border: '1px solid #020402', borderRadius: '0px' }}>
+            <Button onClick={() => navigate('/Contact')} sx={{ my: 2, mr: 2, ml: 2, color: '#32AA27', fontFamily: 'poppins', fontWeight: '500', border: '1px solid #32AA27', borderRadius: '0px' }}>
               contact
             </Button>
           </Box>
@@ -161,7 +140,7 @@ function Header() {
               </IconButton>
             </Tooltip>
             <Menu
-              sx={{ mt: '45px' }}
+              sx={{ mt: '45px', zIndex: "2000" }}
               id="menu-appbar"
               anchorEl={anchorElUser}
               anchorOrigin={{
@@ -177,12 +156,22 @@ function Header() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                <MenuItem key={setting} onClick={() => {
+                  if (setting === 'Profile') {
+                    navigate('/profile');
+                  }
+                  if (setting === 'Sign in') {
+                    navigate('/sign-in');
+                  }
+                  handleCloseUserMenu();
+                }}>
                   <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
                 </MenuItem>
               ))}
             </Menu>
           </Box>
+
+          <SideMenuMobile open={open} toggleDrawer={toggleDrawer} />
 
         </Toolbar>
       </Container>

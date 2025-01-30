@@ -25,8 +25,6 @@ function Home({ url }) {
     }
   }, [url]);
 
-
-
   return (
     <div className="hero-background-img" >
       <div ref={messagesOfLoveRef}>

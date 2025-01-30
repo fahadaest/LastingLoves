@@ -8,6 +8,9 @@ import Home from './pages/Home';
 import Pricing from './pages/Pricing';
 import HowItWorks from './pages/HowItWorks';
 import PersonalizedVideoMessages from './pages/PVMAdditionals';
+import SignIn from './pages/SignIn';
+import SignUp from './pages/SignUp';
+import Dashboard from './pages/Dashboard';
 
 function App() {
   return (
@@ -26,8 +29,12 @@ function App() {
           <Route path="/secure-message-locking" element={<MainLayout><PersonalizedVideoMessages page={"SML"} /></MainLayout>} />
 
 
-          <Route path="/login" element={<Home />} />
-          <Route path="/profile" element={<ProtectedRoute> <MainLayout><Home /></MainLayout> </ProtectedRoute>} />
+          <Route path="/sign-in" element={<SignIn />} />
+          <Route path="/sign-up" element={<SignUp />} />
+          <Route path="/profile" element={<MainLayout>\<Dashboard path={"profile"} /></MainLayout>} />
+          <Route path="/my-memories" element={<MainLayout>\<Dashboard path={"my-memories"} /></MainLayout>} />
+          <Route path="/create-memory" element={<MainLayout>\<Dashboard path={"create-memory"} /></MainLayout>} />
+
         </Routes>
       </Router>
     </Provider>
