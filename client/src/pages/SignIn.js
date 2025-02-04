@@ -14,6 +14,7 @@ import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import ForgotPassword from '../components/SignIn/ForgotPassword';
+import axios from 'axios';
 // import { GoogleIcon, FacebookIcon } from './components/CustomIcons';
 // import { SitemarkIcon } from '../components/SignIn/CustomIcons';
 
@@ -66,6 +67,8 @@ export default function SignIn(props) {
     const [passwordError, setPasswordError] = React.useState(false);
     const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
     const [open, setOpen] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
+    const [loginError, setLoginError] = React.useState('');
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -75,16 +78,39 @@ export default function SignIn(props) {
         setOpen(false);
     };
 
-    const handleSubmit = (event) => {
-        if (emailError || passwordError) {
-            event.preventDefault();
-            return;
-        }
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        if (!validateInputs()) return;
+
         const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
+        const email = data.get('email');
+        const password = data.get('password');
+
+        setLoading(true);
+        setLoginError('');
+
+        try {
+            const response = await axios.post('http://localhost:5000/api/auth/login', {
+                email,
+                password,
+            });
+            console.log('Login success:', response.data);
+
+            const token = response.data.token;
+
+            if (token) {
+                localStorage.setItem('authToken', token);
+                window.location.href = '/';
+            } else {
+                setLoginError('Login failed. No token received.');
+            }
+        } catch (error) {
+            console.error('Login failed:', error.response ? error.response.data : error.message);
+            setLoginError('Invalid email or password');
+        } finally {
+            setLoading(false);
+        }
     };
 
     const validateInputs = () => {
