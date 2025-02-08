@@ -8,7 +8,7 @@ import AddIcon from '@mui/icons-material/Add'; // Add icon for adding emails
 
 export default function CreateMemory() {
     const [button, setActiveButton] = React.useState("Video");
-    const buttons = ["Video", "Picture", "Text"];
+    const buttons = ["Video"];
     const [progress, setProgress] = useState(0);
     const [videoFile, setVideoFile] = useState(null);
     const [uploading, setUploading] = useState(false);

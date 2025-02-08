@@ -40,7 +40,8 @@ export default function Profile() {
 
                 <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                     <Typography sx={{ color: '#595959', fontFamily: 'poppins', fontWeight: '500', maxWidth: "80%", textAlign: "center" }}>
-                        A soul who walked this earth for a brief moment, leaving behind echoes of love, laughter, and perhaps a thought or two worth remembering. If you're reading this, cherish your time here—it’s fleeting, but it’s beautiful. See you on the other side
+                        {profileData?.bio}
+                        {/* A soul who walked this earth for a brief moment, leaving behind echoes of love, laughter, and perhaps a thought or two worth remembering. If you're reading this, cherish your time here—it’s fleeting, but it’s beautiful. See you on the other side */}
                     </Typography>
                 </Box>
 

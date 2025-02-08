@@ -138,7 +138,7 @@ router.get('/profile', (req, res) => {
 
     try {
         const decoded = jwt.verify(accessToken, ACCESS_TOKEN_SECRET);
-        res.json({ message: 'Profile data', userId: decoded.id, username: decoded.username });
+        res.json({ message: 'Profile data', userId: decoded.id, username: decoded.username, bio: decoded.bio });
     } catch (error) {
         res.status(401).json({ message: 'Invalid or expired access token' });
     }

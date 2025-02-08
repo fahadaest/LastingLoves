@@ -16,6 +16,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    bio: {
+        type: String,
+        default: 'Add a bio',
+    },
 });
 
 userSchema.pre('save', async function (next) {

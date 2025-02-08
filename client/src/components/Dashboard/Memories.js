@@ -7,7 +7,7 @@ import { Button, Typography } from '@mui/material';
 
 export default function Memories() {
     const [button, setActiveButton] = React.useState("All Memories");
-    const buttons = ["All Memories", "Videos", "Pictures", "Text"];
+    const buttons = ["All Memories"];
     return (
         <Box
             sx={{
