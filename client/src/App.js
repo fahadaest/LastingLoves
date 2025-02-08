@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import store from './redux/store';
@@ -11,8 +11,16 @@ import PersonalizedVideoMessages from './pages/PVMAdditionals';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import Dashboard from './pages/Dashboard';
+import { useDispatch } from "react-redux";
+import { checkAuthStatus } from "./redux/slices/authSlice";
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(checkAuthStatus());
+  }, [dispatch]);
+
   return (
     <Provider store={store}>
       <Router>
@@ -31,9 +39,24 @@ function App() {
 
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/sign-up" element={<SignUp />} />
-          <Route path="/profile" element={<MainLayout>\<Dashboard path={"profile"} /></MainLayout>} />
-          <Route path="/my-memories" element={<MainLayout>\<Dashboard path={"my-memories"} /></MainLayout>} />
-          <Route path="/create-memory" element={<MainLayout>\<Dashboard path={"create-memory"} /></MainLayout>} />
+
+          <Route path="/profile" element={
+            <ProtectedRoute>
+              <MainLayout><Dashboard path={"profile"} /></MainLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path="/my-memories" element={
+            <ProtectedRoute>
+              <MainLayout><Dashboard path={"my-memories"} /></MainLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path="/create-memory" element={
+            <ProtectedRoute>
+              <MainLayout><Dashboard path={"create-memory"} /></MainLayout>
+            </ProtectedRoute>
+          } />
 
         </Routes>
       </Router>

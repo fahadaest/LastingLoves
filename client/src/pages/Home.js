@@ -3,6 +3,7 @@ import MessagesOfLove from '../components/homePageSections/MessagesOfLove';
 import CherishYourLove from '../components/homePageSections/CherishYourLove';
 import PersonalVideoMessage from '../components/homePageSections/PersonalVideoMessage';
 import GetInTouch from '../components/homePageSections/GetInTouch';
+import { useSelector } from 'react-redux';
 
 function Home({ url }) {
   const messagesOfLoveRef = useRef(null);

@@ -6,9 +6,14 @@ import Typography from '@mui/material/Typography';
 import { Avatar } from '@mui/material';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import EmailIcon from '@mui/icons-material/Email';
-import loggedInImg from "../../assets/Jamie-Lambros.jpg"
+import loggedInImg from "../../assets/Jamie-Lambros.jpg";
+import { useSelector } from 'react-redux';
 
 export default function Profile() {
+    const profileData = useSelector(state => state.auth.user);
+
+    console.log(profileData)
+
     return (
         <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
             <Grid
@@ -30,7 +35,7 @@ export default function Profile() {
                 </Box>
 
                 <Box sx={{ color: '#595959', fontFamily: 'poppins', fontWeight: '600', fontSize: "30px" }}>
-                    Jamie Lambros
+                    {profileData?.username}
                 </Box>
 
                 <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>

@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
@@ -17,6 +19,8 @@ import ForgotPassword from '../components/SignIn/ForgotPassword';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import api from '../api';
+import { useSelector } from 'react-redux';
+import { checkAuthStatus } from "../redux/slices/authSlice";
 // import { GoogleIcon, FacebookIcon } from './components/CustomIcons';
 // import { SitemarkIcon } from '../components/SignIn/CustomIcons';
 
@@ -71,6 +75,11 @@ export default function SignIn(props) {
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
     const [loginError, setLoginError] = React.useState('');
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
+    console.log(isAuthenticated)
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -103,8 +112,9 @@ export default function SignIn(props) {
             const { accessToken, refreshToken } = response.data;
 
             if (accessToken && refreshToken) {
-                Cookies.set('accessToken', accessToken, { expires: 1 / 24, secure: false, sameSite: 'Strict' });
-                Cookies.set('refreshToken', refreshToken, { expires: 1, secure: false, sameSite: 'Strict' });
+                Cookies.set('accessToken', accessToken, { expires: 1 / 24, secure: false, sameSite: 'Lax' }); //TODO change to Strict
+                Cookies.set('refreshToken', refreshToken, { expires: 1, secure: false, sameSite: 'Lax' }); //TODO change to Strict
+                dispatch(checkAuthStatus());
                 window.location.href = '/';
             } else {
                 setLoginError('Login failed. No token received.');

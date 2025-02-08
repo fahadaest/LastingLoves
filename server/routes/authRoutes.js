@@ -64,16 +64,16 @@ router.post('/login', async (req, res) => {
         const refreshToken = generateRefreshToken(user);
 
         res.cookie('accessToken', accessToken, {
-            httpOnly: true,
+            httpOnly: false, // TODO change to true
             secure: false, // TODO Set to true in production (localhost doesn't support https)
-            sameSite: 'Strict',
+            sameSite: 'Lax', // TODO change to Strict
             maxAge: 60 * 60 * 1000 // TODO 1 hour
         });
 
         res.cookie('refreshToken', refreshToken, {
-            httpOnly: true,
+            httpOnly: false, // TODO change to true
             secure: false,
-            sameSite: 'Strict',
+            sameSite: 'Lax', // TODO change to Strict
             maxAge: 24 * 60 * 60 * 1000 // TODO 1 day
         });
 
