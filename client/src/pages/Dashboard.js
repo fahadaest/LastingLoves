@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -6,8 +6,32 @@ import Profile from '../components/Dashboard/Profile';
 import SideMenu from '../components/Dashboard/SideMenu';
 import Memories from '../components/Dashboard/Memories';
 import CreateMemory from '../components/Dashboard/CreateMemory';
+import api from '../api';
 
 export default function Dashboard({ path }) {
+
+    const [profile, setProfile] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+
+    console.log(profile)
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const response = await api.get('/profile');
+                setProfile(response.data);
+            } catch (err) {
+                console.error('Error fetching profile:', err);
+                setError('Failed to load profile');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProfile();
+    }, []);
+
     return (
         <Box sx={{ display: 'flex', marginTop: "9vh" }}>
             <SideMenu />

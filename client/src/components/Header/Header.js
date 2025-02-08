@@ -16,6 +16,7 @@ import AdbIcon from '@mui/icons-material/Adb';
 import MenuButton from '../Dashboard/MenuButton';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import SideMenuMobile from '../Dashboard/SideMenuMobile';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const pages = ['Home', 'About', 'Services', 'Pricing', 'How it Works'];
 const settings = ['Profile', 'Upload Memory', 'Sign in'];
@@ -68,7 +69,6 @@ function Header() {
     <AppBar sx={{ backgroundColor: "#fff", zIndex: "1500" }} position="fixed">
       <Container className='bg-header-white min-h-[9vh] flex items-center justify-center' maxWidth="xl">
         <Toolbar sx={{ minWidth: { xs: '100%', md: '80%' }, padding: 0 }} disableGutters>
-
           <Typography
             variant="h6"
             noWrap
@@ -136,7 +136,13 @@ function Header() {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <AccountCircleIcon
+                  sx={{
+                    color: "#32AA27",
+                    height: "40px",
+                    width: "40px"
+                  }}
+                />
               </IconButton>
             </Tooltip>
             <Menu

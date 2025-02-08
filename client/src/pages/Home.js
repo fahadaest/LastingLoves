@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import MessagesOfLove from '../components/homePageSections/MessagesOfLove';
 import CherishYourLove from '../components/homePageSections/CherishYourLove';
 import PersonalVideoMessage from '../components/homePageSections/PersonalVideoMessage';
@@ -9,6 +9,7 @@ function Home({ url }) {
   const cherishYourLoveRef = useRef(null);
   const personalVideoMessageRef = useRef(null);
   const getInTouchRef = useRef(null);
+
 
   useEffect(() => {
     if (url === 'home' && messagesOfLoveRef.current) {

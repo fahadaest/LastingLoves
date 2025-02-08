@@ -15,6 +15,8 @@ import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import ForgotPassword from '../components/SignIn/ForgotPassword';
 import axios from 'axios';
+import Cookies from 'js-cookie';
+import api from '../api';
 // import { GoogleIcon, FacebookIcon } from './components/CustomIcons';
 // import { SitemarkIcon } from '../components/SignIn/CustomIcons';
 
@@ -91,16 +93,18 @@ export default function SignIn(props) {
         setLoginError('');
 
         try {
-            const response = await axios.post('http://localhost:5000/api/auth/login', {
+            const response = await api.post('http://localhost:5000/api/auth/login', {
                 email,
                 password,
             });
+
             console.log('Login success:', response.data);
 
-            const token = response.data.token;
+            const { accessToken, refreshToken } = response.data;
 
-            if (token) {
-                localStorage.setItem('authToken', token);
+            if (accessToken && refreshToken) {
+                Cookies.set('accessToken', accessToken, { expires: 1 / 24, secure: false, sameSite: 'Strict' });
+                Cookies.set('refreshToken', refreshToken, { expires: 1, secure: false, sameSite: 'Strict' });
                 window.location.href = '/';
             } else {
                 setLoginError('Login failed. No token received.');
@@ -112,6 +116,7 @@ export default function SignIn(props) {
             setLoading(false);
         }
     };
+
 
     const validateInputs = () => {
         const email = document.getElementById('email');

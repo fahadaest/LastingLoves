@@ -1,8 +1,29 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import cookieParser from 'cookie-parser';
 
 const router = express.Router();
+router.use(cookieParser());
+
+const ACCESS_TOKEN_SECRET = 'your_access_token_secret'; // TODO Replace with a secure key
+const REFRESH_TOKEN_SECRET = 'your_refresh_token_secret'; // TODO Replace with a secure key
+
+const generateAccessToken = (user) => {
+    return jwt.sign(
+        { id: user._id, username: user.username },
+        ACCESS_TOKEN_SECRET,
+        { expiresIn: '1h' } // TODO Access token expires in 1 hour
+    );
+};
+
+const generateRefreshToken = (user) => {
+    return jwt.sign(
+        { id: user._id },
+        REFRESH_TOKEN_SECRET,
+        { expiresIn: '1d' } // TODO Refresh token expires in 1 minute
+    );
+};
 
 // Register route
 router.post('/register', async (req, res) => {
@@ -39,32 +60,87 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
-        const token = jwt.sign(
-            { id: user._id, username: user.username },
-            process.env.JWT_SECRET,
-            { expiresIn: '1h' }
-        );
+        const accessToken = generateAccessToken(user);
+        const refreshToken = generateRefreshToken(user);
 
-        res.json({ token });
+        res.cookie('accessToken', accessToken, {
+            httpOnly: true,
+            secure: false, // TODO Set to true in production (localhost doesn't support https)
+            sameSite: 'Strict',
+            maxAge: 60 * 60 * 1000 // TODO 1 hour
+        });
+
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: false,
+            sameSite: 'Strict',
+            maxAge: 24 * 60 * 60 * 1000 // TODO 1 day
+        });
+
+        res.json({ message: 'Login successful', accessToken, refreshToken });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });
     }
 });
 
-// Protected route (example)
-router.get('/profile', async (req, res) => {
-    const token = req.headers['authorization'];
-    if (!token) {
-        return res.status(401).json({ message: 'No token provided' });
+// Refresh token route
+router.post('/refresh', (req, res) => {
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) {
+        return res.status(401).json({ message: 'No refresh token provided' });
+    }
+
+    jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, async (err, decoded) => {
+        if (err) {
+            return res.status(403).json({ message: 'Invalid or expired refresh token' });
+        }
+
+        const user = await User.findById(decoded.id);
+        if (!user) {
+            return res.status(403).json({ message: 'User not found' });
+        }
+
+        const newAccessToken = generateAccessToken(user);
+        const newRefreshToken = generateRefreshToken(user);
+
+        res.cookie('accessToken', newAccessToken, {
+            httpOnly: true,
+            secure: false,
+            sameSite: 'Strict',
+            maxAge: 60 * 60 * 1000 // TODO 1 hour
+        });
+
+        res.cookie('refreshToken', newRefreshToken, {
+            httpOnly: true,
+            secure: false,
+            sameSite: 'Strict',
+            maxAge: 24 * 60 * 60 * 1000 // TODO 1 day
+        });
+
+        res.json({ message: 'Tokens refreshed', accessToken: newAccessToken, refreshToken: newRefreshToken });
+    });
+});
+
+// Logout route
+router.post('/logout', (req, res) => {
+    res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
+    res.json({ message: 'Logged out successfully' });
+});
+
+// Protected route example
+router.get('/profile', (req, res) => {
+    const accessToken = req.cookies.accessToken;
+    if (!accessToken) {
+        return res.status(401).json({ message: 'No access token provided' });
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findById(decoded.id).select('-password');
-        res.json(user);
+        const decoded = jwt.verify(accessToken, ACCESS_TOKEN_SECRET);
+        res.json({ message: 'Profile data', userId: decoded.id, username: decoded.username });
     } catch (error) {
-        res.status(401).json({ message: 'Invalid token' });
+        res.status(401).json({ message: 'Invalid or expired access token' });
     }
 });
 
