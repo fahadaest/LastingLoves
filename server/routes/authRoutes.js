@@ -130,7 +130,8 @@ router.post('/logout', (req, res) => {
 });
 
 // Protected route example
-router.get('/profile', (req, res) => {
+// Protected route example
+router.get('/profile', async (req, res) => {
     const accessToken = req.cookies.accessToken;
     if (!accessToken) {
         return res.status(401).json({ message: 'No access token provided' });
@@ -138,10 +139,51 @@ router.get('/profile', (req, res) => {
 
     try {
         const decoded = jwt.verify(accessToken, ACCESS_TOKEN_SECRET);
-        res.json({ message: 'Profile data', userId: decoded.id, username: decoded.username, bio: decoded.bio });
+
+        // Fetch user from the database to include bio
+        const user = await User.findById(decoded.id).select('-password'); // Exclude password
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.json({
+            message: 'Profile data',
+            userId: user._id,
+            username: user.username,
+            bio: user.bio,
+        });
     } catch (error) {
         res.status(401).json({ message: 'Invalid or expired access token' });
     }
 });
+
+router.put('/profile/update', async (req, res) => {
+    const accessToken = req.cookies.accessToken;
+    if (!accessToken) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    try {
+        const decoded = jwt.verify(accessToken, ACCESS_TOKEN_SECRET);
+        const { username, bio } = req.body;
+
+        // Find user and update
+        const updatedUser = await User.findByIdAndUpdate(
+            decoded.id,
+            { username, bio },
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.json(updatedUser);
+    } catch (error) {
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
+
 
 export default router;

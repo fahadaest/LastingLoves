@@ -55,8 +55,12 @@ export default function Dashboard({ path }) {
                     }}
                 >
 
-                    {path === "profile" && <Profile />}
-                    {path === "my-memories" && <Memories />}
+                    {path === "profile" && (
+                        <>
+                            <Profile />
+                            <Memories />
+                        </>
+                    )}
                     {path == "create-memory" && <CreateMemory />}
                 </Stack>
             </Box>

@@ -46,12 +46,6 @@ function App() {
             </ProtectedRoute>
           } />
 
-          <Route path="/my-memories" element={
-            <ProtectedRoute>
-              <MainLayout><Dashboard path={"my-memories"} /></MainLayout>
-            </ProtectedRoute>
-          } />
-
           <Route path="/create-memory" element={
             <ProtectedRoute>
               <MainLayout><Dashboard path={"create-memory"} /></MainLayout>

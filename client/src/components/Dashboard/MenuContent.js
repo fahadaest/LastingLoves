@@ -13,7 +13,6 @@ import { useNavigate } from "react-router-dom";
 
 const mainListItems = [
     { text: 'My Profile', path: '/profile', icon: <Person2Icon sx={{ color: "#32AA27" }} /> },
-    { text: 'My Memories', path: '/my-memories', icon: <Diversity1Icon sx={{ color: "#32AA27" }} /> },
     { text: 'Create Memory', path: '/create-memory', icon: <AddCircleIcon sx={{ color: "#32AA27" }} /> },
 ];
 
