@@ -2,6 +2,7 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import cookieParser from 'cookie-parser';
+import { upload } from '../cloudinary.js';
 
 const router = express.Router();
 router.use(cookieParser());
@@ -130,7 +131,6 @@ router.post('/logout', (req, res) => {
 });
 
 // Protected route example
-// Protected route example
 router.get('/profile', async (req, res) => {
     const accessToken = req.cookies.accessToken;
     if (!accessToken) {
@@ -157,7 +157,9 @@ router.get('/profile', async (req, res) => {
     }
 });
 
-router.put('/profile/update', async (req, res) => {
+
+router.put('/profile/update', upload.single('profilePic'), async (req, res) => {
+
     const accessToken = req.cookies.accessToken;
     if (!accessToken) {
         return res.status(401).json({ message: "Unauthorized" });
@@ -166,11 +168,11 @@ router.put('/profile/update', async (req, res) => {
     try {
         const decoded = jwt.verify(accessToken, ACCESS_TOKEN_SECRET);
         const { username, bio } = req.body;
+        const profilePicUrl = req.file ? req.file.path : undefined;
 
-        // Find user and update
         const updatedUser = await User.findByIdAndUpdate(
             decoded.id,
-            { username, bio },
+            { username, bio, profilePic: profilePicUrl },
             { new: true }
         );
 
@@ -180,7 +182,8 @@ router.put('/profile/update', async (req, res) => {
 
         res.json(updatedUser);
     } catch (error) {
-        res.status(500).json({ message: "Server error" });
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
     }
 });
 

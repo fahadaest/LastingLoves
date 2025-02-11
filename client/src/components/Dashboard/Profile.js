@@ -1,10 +1,9 @@
 import * as React from "react";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { Avatar, IconButton, TextField, Button } from "@mui/material";
+import { Avatar, IconButton, TextField, Button, CircularProgress } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-import SaveIcon from "@mui/icons-material/Save";
+import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import loggedInImg from "../../assets/Jamie-Lambros.jpg";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
@@ -13,21 +12,43 @@ export default function Profile() {
     const profileData = useSelector((state) => state.auth.user);
     const dispatch = useDispatch();
 
-    // Local state for editing
+    // Local state
     const [isEditing, setIsEditing] = React.useState(false);
     const [username, setUsername] = React.useState(profileData?.username || "");
     const [bio, setBio] = React.useState(profileData?.bio || "Add a bio");
+    const [avatar, setAvatar] = React.useState(profileData?.avatar || loggedInImg);
+    const [avatarFile, setAvatarFile] = React.useState(null);
+    const [isUploading, setIsUploading] = React.useState(false); // Show loader during upload
 
-    // Handle edit/save toggle
-    const handleEditClick = () => {
-        setIsEditing(!isEditing);
-    };
-
-    // Handle input changes
+    const handleEditClick = () => setIsEditing(!isEditing);
     const handleUsernameChange = (e) => setUsername(e.target.value);
     const handleBioChange = (e) => setBio(e.target.value);
 
-    // Handle save
+    const handleAvatarClick = async () => {
+        try {
+            const [fileHandle] = await window.showOpenFilePicker({
+                types: [{ description: "Image Files", accept: { "image/*": [".png", ".jpg", ".jpeg", ".gif"] } }],
+                multiple: false,
+            });
+
+            const file = await fileHandle.getFile();
+            setAvatarFile(file);
+
+            // Show loader
+            setIsUploading(true);
+
+            // Simulate upload delay (Replace with actual upload request)
+            setTimeout(() => {
+                setAvatar(URL.createObjectURL(file));
+                setIsUploading(false); // Hide loader after upload
+            }, 2000);
+
+        } catch (error) {
+            console.error("File selection was cancelled", error);
+            setIsUploading(false);
+        }
+    };
+
     const handleSave = async () => {
         try {
             const accessToken = document.cookie
@@ -35,12 +56,23 @@ export default function Profile() {
                 .find(row => row.startsWith('accessToken='))
                 ?.split('=')[1];
 
+            const formData = new FormData();
+            formData.append("username", username);
+            formData.append("bio", bio);
+
+            if (avatarFile) {
+                formData.append("avatar", avatarFile);
+            }
+
             const response = await axios.put(
                 "http://localhost:5000/api/auth/profile/update",
-                { username, bio },
+                formData,
                 {
-                    headers: { Authorization: `Bearer ${accessToken}` },
-                    withCredentials: true
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                        "Content-Type": "multipart/form-data",
+                    },
+                    withCredentials: true,
                 }
             );
 
@@ -57,21 +89,51 @@ export default function Profile() {
     return (
         <Box sx={{ width: '100%', display: "flex", alignItems: "center", justifyContent: "center", maxWidth: { sm: '100%', md: '1700px' } }}>
             <Box
-                container
-                spacing={2}
                 sx={{ display: "flex", gap: "20px", width: "100%", mt: "10px", borderRadius: "10px", padding: "20px", boxShadow: "0px 4px 10px rgba(50, 170, 39, 0.4), 0px -4px 10px rgba(50, 170, 39, 0.4), 4px 0px 10px rgba(50, 170, 39, 0.4), -4px 0px 10px rgba(50, 170, 39, 0.4)" }}
             >
 
-                <Avatar
-                    alt="Profile Picture"
-                    src={loggedInImg}
-                    sx={{
-                        width: { xs: 80, sm: 100, md: 120 },
-                        height: { xs: 80, sm: 100, md: 120 },
-                        border: "4px solid #595959",
-                        backgroundColor: "red"
-                    }}
-                />
+                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "10px", position: "relative" }}>
+                    <Box sx={{ position: "relative", display: "inline-block" }}>
+                        <Avatar
+                            alt="Profile Picture"
+                            src={avatar}
+                            sx={{
+                                width: { xs: 80, sm: 100, md: 120 },
+                                height: { xs: 80, sm: 100, md: 120 },
+                                border: "4px solid #595959",
+                                backgroundColor: "red",
+                                position: "relative",
+                            }}
+                        />
+                        {isUploading && (
+                            <CircularProgress
+                                size={40}
+                                sx={{
+                                    position: "absolute",
+                                    top: "35%",
+                                    left: "35%",
+                                    transform: "translate(-50%, -50%)",
+                                    color: "#ffffff99",
+                                }}
+                            />
+                        )}
+                    </Box>
+
+                    {isEditing && (
+                        <IconButton
+                            sx={{
+                                backgroundColor: "rgba(0, 0, 0, 0.6)",
+                                color: "white",
+                                width: "30px",
+                                height: "30px",
+                                "&:hover": { backgroundColor: "rgba(0, 0, 0, 0.8)" }
+                            }}
+                            onClick={handleAvatarClick}
+                        >
+                            <PhotoCameraIcon sx={{ fontSize: "18px" }} />
+                        </IconButton>
+                    )}
+                </Box>
 
                 <Box sx={{ width: "70%" }}>
                     <Box sx={{ color: '#595959', fontFamily: 'poppins', fontWeight: '600', fontSize: "30px" }}>
@@ -87,8 +149,6 @@ export default function Profile() {
                                 {username}
                             </Typography>
                         )}
-
-
                     </Box>
 
                     <Box sx={{ display: "flex" }}>
@@ -99,7 +159,7 @@ export default function Profile() {
                                 variant="outlined"
                                 size="small"
                                 multiline
-                                rows={3}
+                                rows={5}
                                 sx={{ width: "100%" }}
                             />
                         ) : (
@@ -120,8 +180,6 @@ export default function Profile() {
                     <IconButton onClick={handleEditClick}>
                         {isEditing ? null : <EditIcon />}
                     </IconButton>
-
-
 
                     {/* Save Button */}
                     {isEditing && (
