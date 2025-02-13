@@ -2,8 +2,7 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import cookieParser from 'cookie-parser';
-import { upload } from '../config/cloudinary.js';
-import multer from 'multer';
+import { uploadImage, uploadVideo } from '../config/cloudinary.js';
 import { cloudinary } from '../config/cloudinary.js';
 import Memory from '../models/memoryModel.js';
 import dotenv from 'dotenv';
@@ -38,7 +37,6 @@ const generateRefreshToken = (user) => {
     );
 };
 
-// Register route
 router.post('/register', async (req, res) => {
     const { username, email, password } = req.body;
 
@@ -58,7 +56,6 @@ router.post('/register', async (req, res) => {
     }
 });
 
-// Login route
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
@@ -97,7 +94,6 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// Refresh token route
 router.post('/refresh', (req, res) => {
     const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) {
@@ -135,14 +131,12 @@ router.post('/refresh', (req, res) => {
     });
 });
 
-// Logout route
 router.post('/logout', (req, res) => {
     res.clearCookie('accessToken');
     res.clearCookie('refreshToken');
     res.json({ message: 'Logged out successfully' });
 });
 
-// Protected route example
 router.get('/profile', async (req, res) => {
     const accessToken = req.cookies.accessToken;
     if (!accessToken) {
@@ -169,11 +163,7 @@ router.get('/profile', async (req, res) => {
     }
 });
 
-
-router.put('/profile/update', upload.single('profilePic'), async (req, res) => {
-    console.log("Uploaded File:", req.file);
-    console.log("Request Body:", req.body);
-
+router.put('/profile/update', uploadImage.single('profilePic'), async (req, res) => {
     const accessToken = req.cookies.accessToken;
     if (!accessToken) {
         return res.status(401).json({ message: "Unauthorized" });
@@ -204,32 +194,62 @@ router.put('/profile/update', upload.single('profilePic'), async (req, res) => {
     }
 });
 
-router.post('/upload', upload.single('file'), async (req, res) => {
+router.post('/createMemory', uploadVideo.single('file'), async (req, res) => {
+    const accessToken = req.cookies.accessToken;
+    if (!accessToken) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
     try {
-
         if (!req.file) {
-            return res.status(400).json({ message: 'No file uploaded' });
+            return res.status(400).json({ message: "No video file uploaded" });
         }
 
-        const { title, description, privacy } = req.body;
-        const userId = req.userId;
+        const result = await cloudinary.uploader.upload(req.file.path, {
+            resource_type: 'video',
+            folder: 'memories',
+            eager: [
+                { format: 'jpg', resource_type: 'video', transformation: { start_offset: '0' } }
+            ]
+        });
 
         const newMemory = new Memory({
-            user: userId,
-            videoUrl: result.secure_url,
-            title,
-            description,
-            privacy,
+            userId: req.body.userId,
+            title: req.body.title,
+            description: req.body.description,
+            privacy: req.body.privacy,
+            scheduledTime: req.body.scheduledTime,
+            allowedEmails: req.body.allowedEmails,
+            videoUrl: result?.secure_url,
+            thumbnailUrl: result?.eager[0].secure_url,
         });
 
         await newMemory.save();
 
-        res.status(201).json({ message: 'Memory created successfully', memory: newMemory });
+        res.status(201).json({ message: "Memory created successfully", memory: newMemory });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ message: "Server error" });
     }
 });
+
+router.get('/myMemories', async (req, res) => {
+    const accessToken = req.cookies.accessToken;
+    if (!accessToken) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    try {
+        const decoded = jwt.verify(accessToken, ACCESS_TOKEN_SECRET);
+
+        const memories = await Memory.find({ userId: decoded.id });
+
+        res.status(200).json({ memories });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
 
 
 export default router;

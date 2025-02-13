@@ -11,14 +11,18 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const storage = new CloudinaryStorage({
+const profilePictire = new CloudinaryStorage({
     cloudinary,
     params: {
         folder: 'profile_pictures',
         allowed_formats: ['jpg', 'png', 'jpeg'],
     },
 });
+const uploadImage = multer({ storage: profilePictire });
 
-const upload = multer({ storage });
 
-export { cloudinary, upload };
+const uploadVideo = multer({
+    storage: multer.diskStorage({}),
+});
+
+export { cloudinary, uploadImage, uploadVideo };

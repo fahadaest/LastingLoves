@@ -7,18 +7,16 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import AddIcon from '@mui/icons-material/Add';
 import Cookies from "js-cookie";
 import { useSelector, useDispatch } from "react-redux";
+import axios from "axios";
 
 export default function CreateMemory() {
     const [button, setActiveButton] = React.useState("Video");
     const buttons = ["Video"];
     const [progress, setProgress] = useState(0);
     const [videoFile, setVideoFile] = useState(null);
+    const [previewUrl, setPreviewUrl] = useState(null);
     const [uploading, setUploading] = useState(false);
-    const [privacy, setPrivacy] = useState({
-        public: false,
-        private: false,
-        scheduled: false,
-    });
+    const [privacy, setPrivacy] = useState("");
     const [emails, setEmails] = useState([]);
     const [newEmail, setNewEmail] = useState("");
     const [scheduleTime, setScheduleTime] = useState("");
@@ -27,10 +25,13 @@ export default function CreateMemory() {
     const profileData = useSelector((state) => state.auth.user);
     const canCreateMemory = videoFile && title.trim() && description.trim() && Object.values(privacy).some(val => val);
 
+    console.log(videoFile)
+
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (file) {
-            setVideoFile((file));
+            setVideoFile(file); // Save the File object for API
+            setPreviewUrl(URL.createObjectURL(file)); // Create a preview URL
             simulateUpload(file);
         }
     };
@@ -49,13 +50,8 @@ export default function CreateMemory() {
     };
 
     const handlePrivacyChange = (event) => {
-        const { name, checked } = event.target;
-        setPrivacy({
-            public: false,
-            private: false,
-            scheduled: false,
-        });
-        setPrivacy((prev) => ({ ...prev, [name]: checked }));
+        const { name } = event.target;
+        setPrivacy(name);
     };
 
     const handleAddEmail = () => {
@@ -72,35 +68,35 @@ export default function CreateMemory() {
     };
 
     const handleCreateMemory = async () => {
-        if (!videoFile) {
-            console.error("No video file selected!");
-            return;
-        }
+
+        const accessToken = document.cookie
+            .split('; ')
+            .find(row => row.startsWith('accessToken='))
+            ?.split('=')[1];
 
         const formData = new FormData();
         formData.append("userId", profileData?.userId);
         formData.append("title", title);
         formData.append("description", description);
         formData.append("privacy", privacy);
+        formData.append("scheduledTime", scheduleTime);
+        formData.append("allowedEmails", emails);
         formData.append("file", videoFile);
-        formData.append("my_memories", "my_memories");
-
-        console.log(formData)
-
         setUploading(true);
 
         try {
-            const accessToken = Cookies.get("accessToken");
-            const res = await fetch(`http://localhost:5000/api/auth/upload`, {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-                body: formData,
-            });
-
-            const data = await res.json();
-            console.log("Upload Successful:", data);
+            const response = await axios.post(
+                "http://localhost:5000/api/auth/createMemory",
+                formData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                        "Content-Type": "multipart/form-data",
+                    },
+                    withCredentials: true,
+                }
+            );
+            const data = await response.json();
             setVideoFile(data.secure_url);
             setUploading(false);
         } catch (error) {
@@ -110,51 +106,22 @@ export default function CreateMemory() {
     };
 
 
+
     return (
         <Box
-            sx={{
-                width: '100%',
-                maxWidth: { sm: '100%', md: '1700px' },
-                margin: '0 auto',
-                overflow: 'hidden',
-                boxShadow: "0px 4px 10px rgba(50, 170, 39, 0.4), 0px -4px 10px rgba(50, 170, 39, 0.4), 4px 0px 10px rgba(50, 170, 39, 0.4), -4px 0px 10px rgba(50, 170, 39, 0.4)",
-                borderRadius: "10px",
-            }}
+            sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' }, margin: '0 auto', overflow: 'hidden', boxShadow: "0px 4px 10px rgba(50, 170, 39, 0.4), 0px -4px 10px rgba(50, 170, 39, 0.4), 4px 0px 10px rgba(50, 170, 39, 0.4), -4px 0px 10px rgba(50, 170, 39, 0.4)", borderRadius: "10px", }}
         >
             <Grid
                 container
                 justifyContent="center"
-                sx={{
-                    mb: 2,
-                    backgroundColor: "#fff",
-                    display: "flex",
-                    alignItems: "center",
-                    borderRadius: "10px",
-                    padding: "20px",
-                    maxWidth: "100%",
-                    margin: "0 auto",
-                }}
+                sx={{ mb: 2, backgroundColor: "#fff", display: "flex", alignItems: "center", borderRadius: "10px", padding: "20px", maxWidth: "100%", margin: "0 auto", }}
             >
                 <Box
                     onClick={handleCreateMemory}
-                    sx={{
-                        color: '#595959',
-                        fontFamily: 'poppins',
-                        fontWeight: '600',
-                        fontSize: "30px",
-                        width: "97%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between"
-                    }}
+                    sx={{ color: '#595959', fontFamily: 'poppins', fontWeight: '600', fontSize: "30px", width: "97%", display: "flex", alignItems: "center", justifyContent: "space-between" }}
                 >
                     <Typography
-                        sx={{
-                            color: '#595959',
-                            fontFamily: 'poppins',
-                            fontWeight: '600',
-                            fontSize: "30px",
-                        }}
+                        sx={{ color: '#595959', fontFamily: 'poppins', fontWeight: '600', fontSize: "30px", }}
                     >
                         Create Memory
                     </Typography>
@@ -163,28 +130,14 @@ export default function CreateMemory() {
                 <Divider sx={{ width: '97%', my: 2, border: "1px solid #d1d4e0" }} />
 
                 <Box
-                    sx={{
-                        fontFamily: 'poppins',
-                        fontWeight: '600',
-                        fontSize: "20px",
-                        textAlign: "center",
-                        width: "100%",
-                        marginBottom: "20px",
-                        display: "flex",
-                        justifyContent: "center",
-                        gap: "10px",
-                    }}
+                    sx={{ fontFamily: 'poppins', fontWeight: '600', fontSize: "20px", textAlign: "center", width: "100%", marginBottom: "20px", display: "flex", justifyContent: "center", gap: "10px", }}
                 >
                     {buttons.map((key) => (
                         <Button
                             key={key}
                             onClick={() => setActiveButton(key)}
                             sx={{
-                                color: key === button ? "#32AA27" : '#595959',
-                                fontFamily: 'poppins',
-                                fontWeight: '600',
-                                fontSize: "20px",
-                                position: "relative",
+                                color: key === button ? "#32AA27" : '#595959', fontFamily: 'poppins', fontWeight: '600', fontSize: "20px", position: "relative",
                                 "&::after": {
                                     content: '""',
                                     display: "block",
@@ -205,27 +158,10 @@ export default function CreateMemory() {
                 <Grid
                     container
                     justifyContent="center"
-                    sx={{
-                        mb: 2,
-                        display: "flex",
-                        alignItems: "center",
-                        borderRadius: "10px",
-                        padding: "20px",
-                        maxWidth: "100%",
-                        margin: "0 auto",
-                    }}
+                    sx={{ mb: 2, display: "flex", alignItems: "center", borderRadius: "10px", padding: "20px", maxWidth: "100%", margin: "0 auto", }}
                 >
                     <Box
-                        sx={{
-                            width: "100%",
-                            padding: "50px",
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            borderRadius: "10px",
-                            border: "2px solid #d1d4e0"
-                        }}>
+                        sx={{ width: "100%", padding: "50px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", borderRadius: "10px", border: "2px solid #d1d4e0" }}>
                         <input
                             accept="video/*"
                             style={{ display: "none" }}
@@ -250,9 +186,9 @@ export default function CreateMemory() {
                                 <LinearProgress variant="determinate" value={progress} sx={{ width: "100%", mt: 1 }} />
                             </>
                         )}
-                        {videoFile && !uploading && (
+                        {previewUrl && !uploading && (
                             <video width="100%" controls style={{ marginTop: "20px", borderRadius: "10px" }}>
-                                <source src={videoFile} type="video/mp4" />
+                                <source src={previewUrl} type="video/mp4" />
                                 Your browser does not support the video tag.
                             </video>
                         )}
@@ -262,27 +198,10 @@ export default function CreateMemory() {
                 <Grid
                     container
                     justifyContent="center"
-                    sx={{
-                        mb: 2,
-                        display: "flex",
-                        alignItems: "center",
-                        borderRadius: "10px",
-                        padding: "20px",
-                        maxWidth: "100%",
-                        margin: "0 auto",
-                    }}
+                    sx={{ mb: 2, display: "flex", alignItems: "center", borderRadius: "10px", padding: "20px", maxWidth: "100%", margin: "0 auto", }}
                 >
                     <Box
-                        sx={{
-                            width: "100%",
-                            padding: "50px",
-                            display: "flex",
-                            flexDirection: "row",
-                            justifyContent: "center",
-                            borderRadius: "10px",
-                            border: "2px solid #d1d4e0",
-                            gap: "30px"
-                        }}>
+                        sx={{ width: "100%", padding: "50px", display: "flex", flexDirection: "row", justifyContent: "center", borderRadius: "10px", border: "2px solid #d1d4e0", gap: "30px" }}>
 
                         <Box sx={{
                             width: "50%",
@@ -364,26 +283,12 @@ export default function CreateMemory() {
                             {privacy.private && (
                                 <>
                                     <Box
-                                        sx={{
-                                            marginTop: "10px",
-                                            marginBottom: "10px",
-                                            display: "flex",
-                                            gap: "10px",
-                                            flexWrap: "wrap",
-                                            width: "100%",
-                                            padding: "10px",
-                                        }}
+                                        sx={{ marginTop: "10px", marginBottom: "10px", display: "flex", gap: "10px", flexWrap: "wrap", width: "100%", padding: "10px", }}
                                     >
                                         {emails.map((email, index) => (
                                             <Typography
                                                 key={index}
-                                                sx={{
-                                                    color: '#595959',
-                                                    backgroundColor: "#e5e7eb",
-                                                    padding: "3px 10px",
-                                                    borderRadius: "10px",
-                                                    marginBottom: "5px",
-                                                }}
+                                                sx={{ color: '#595959', backgroundColor: "#e5e7eb", padding: "3px 10px", borderRadius: "10px", marginBottom: "5px", }}
                                             >
                                                 {email}
                                             </Typography>
@@ -416,26 +321,12 @@ export default function CreateMemory() {
                             {privacy.scheduled && (
                                 <>
                                     <Box
-                                        sx={{
-                                            marginTop: "10px",
-                                            marginBottom: "10px",
-                                            display: "flex",
-                                            gap: "10px",
-                                            flexWrap: "wrap",
-                                            width: "100%",
-                                            padding: "10px",
-                                        }}
+                                        sx={{ marginTop: "10px", marginBottom: "10px", display: "flex", gap: "10px", flexWrap: "wrap", width: "100%", padding: "10px", }}
                                     >
                                         {emails.map((email, index) => (
                                             <Typography
                                                 key={index}
-                                                sx={{
-                                                    color: '#595959',
-                                                    backgroundColor: "#e5e7eb",
-                                                    padding: "3px 10px",
-                                                    borderRadius: "10px",
-                                                    marginBottom: "5px",
-                                                }}
+                                                sx={{ color: '#595959', backgroundColor: "#e5e7eb", padding: "3px 10px", borderRadius: "10px", marginBottom: "5px", }}
                                             >
                                                 {email}
                                             </Typography>
@@ -486,7 +377,7 @@ export default function CreateMemory() {
                             Cancel
                         </Button>
                         <Button
-                            disabled={!canCreateMemory}
+                            // disabled={!canCreateMemory}
                             onClick={handleCreateMemory}
                             sx={{ padding: "0px 20px 0px 20px", height: "50px", backgroundColor: !canCreateMemory ? '#e5e7eb' : '#32AA27', color: '#FFFFFF', fontFamily: 'poppins', fontWeight: '600', fontSize: "16px", borderRadius: '0px' }}
                         >

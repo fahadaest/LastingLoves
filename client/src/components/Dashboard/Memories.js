@@ -1,13 +1,35 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import sampleImg1 from "../../assets/Jamie-Lambros.jpg";
 import Divider from '@mui/material/Divider';
-import { Button, Typography } from '@mui/material';
+import { Button, Typography, Modal } from '@mui/material';
+import axios from 'axios';
 
 export default function Memories() {
-    const [button, setActiveButton] = React.useState("All Memories");
+    const [button, setActiveButton] = useState("All Memories");
     const buttons = ["All Memories"];
+    const [memories, setMemories] = useState([]);
+    const [selectedMemory, setSelectedMemory] = useState(null); // State to track the selected memory
+
+    useEffect(() => {
+        const fetchMemories = async () => {
+            try {
+                const response = await axios.get('http://localhost:5000/api/auth/myMemories', {
+                    withCredentials: true,
+                });
+                setMemories(response?.data?.memories);
+            } catch (error) {
+                console.error("Error fetching memories:", error);
+            }
+        };
+
+        fetchMemories();
+    }, []);
+
+    const handleClose = () => {
+        setSelectedMemory(null); // Close the modal
+    };
+
     return (
         <Box
             sx={{
@@ -109,26 +131,116 @@ export default function Memories() {
                     ))}
                 </Box>
 
-                {[sampleImg1, sampleImg1, sampleImg1, sampleImg1, sampleImg1, sampleImg1].map((img, index) => (
+                {memories.map((memory, index) => (
                     <Grid
                         item
                         xs={4} sm={4}
-                        key={index}
+                        key={memory._id}
                         sx={{ padding: "10px" }}
                     >
                         <Box
-                            component="img"
-                            src={img}
-                            alt={`Memory ${index + 1}`}
                             sx={{
+                                position: "relative",
                                 width: "100%",
-                                aspectRatio: "1 / 1",
-                                objectFit: "cover",
+                                aspectRatio: "1/1",
                                 borderRadius: "10px",
+                                overflow: "hidden",
+                                cursor: "pointer",
                             }}
-                        />
+                            onClick={() => setSelectedMemory(memory)}
+                        >
+                            <Box
+                                component="img"
+                                src={memory.thumbnailUrl}
+                                alt={memory.title}
+                                sx={{
+                                    width: "100%",
+                                    height: "100%",
+                                    objectFit: "cover",
+                                }}
+                            />
+                            <Typography
+                                sx={{
+                                    position: "absolute",
+                                    bottom: 0,
+                                    width: "100%",
+                                    backgroundColor: "rgba(0, 0, 0, 0.6)",
+                                    color: "#fff",
+                                    textAlign: "center",
+                                    fontFamily: 'poppins',
+                                    fontWeight: '600',
+                                    fontSize: "14px",
+                                    padding: "5px",
+                                }}
+                            >
+                                {memory.title}
+                            </Typography>
+                        </Box>
                     </Grid>
                 ))}
+
+
+                <Modal
+                    open={Boolean(selectedMemory)}
+                    onClose={handleClose}
+                    sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}
+                >
+                    <Box
+                        sx={{
+                            width: "90%",
+                            maxWidth: "800px",
+                            backgroundColor: "#fff",
+                            borderRadius: "10px",
+                            boxShadow: 24,
+                            p: 2,
+                            outline: "none",
+                            position: "relative",
+                        }}
+                    >
+                        {selectedMemory && (
+                            <Box>
+                                <Typography
+                                    sx={{
+                                        fontFamily: 'poppins',
+                                        fontWeight: '600',
+                                        fontSize: "18px",
+                                        marginBottom: "10px",
+                                        textAlign: "center",
+                                    }}
+                                >
+                                    {selectedMemory.title}
+                                </Typography>
+                                <Box
+                                    sx={{
+                                        width: "100%",
+                                        height: "0",
+                                        paddingBottom: "56.25%",
+                                        position: "relative",
+                                    }}
+                                >
+                                    <video
+                                        src={selectedMemory.videoUrl}
+                                        controls
+                                        style={{
+                                            position: "absolute",
+                                            top: 0,
+                                            left: 0,
+                                            width: "100%",
+                                            height: "100%",
+                                            borderRadius: "10px",
+                                            overflow: "hidden",
+                                        }}
+                                    />
+                                </Box>
+                            </Box>
+                        )}
+                    </Box>
+                </Modal>
+
             </Grid>
         </Box>
     );

@@ -1,12 +1,7 @@
 import mongoose from 'mongoose';
 
 const memorySchema = new mongoose.Schema({
-    user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true,
-    },
-    videoUrl: {
+    userId: {
         type: String,
         required: true,
     },
@@ -20,7 +15,6 @@ const memorySchema = new mongoose.Schema({
     },
     privacy: {
         type: String,
-        enum: ['public', 'private', 'scheduled'],
         default: 'public',
     },
     scheduledTime: {
@@ -30,6 +24,13 @@ const memorySchema = new mongoose.Schema({
     allowedEmails: {
         type: [String],
         default: [],
+    },
+    videoUrl: {
+        type: String,
+        required: true,
+    },
+    thumbnailUrl: {
+        type: String
     },
 }, { timestamps: true });
 
