@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
 import authRoutes from './routes/authRoutes.js';
 
 dotenv.config();
@@ -20,14 +21,17 @@ app.use(cors({
 
 app.use('/api/auth', authRoutes);
 
+const __dirname = path.resolve();
+app.use(express.static(path.join(__dirname, 'client/build')));
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+});
+
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("Connected to MongoDB"))
     .catch((err) => console.log("Error connecting to MongoDB:", err));
-
-app.get("/", (req, res) => {
-    res.send("Hello from the server");
-});
 
 app.listen(PORT, () => {
     console.log(`Server is running on ${BACKEND_URL}`);
