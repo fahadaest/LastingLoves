@@ -4,7 +4,9 @@ import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import { InputAdornment, Button, LinearProgress, Typography, TextField, FormControlLabel, Checkbox, IconButton } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import AddIcon from '@mui/icons-material/Add'; // Add icon for adding emails
+import AddIcon from '@mui/icons-material/Add';
+import Cookies from "js-cookie";
+import { useSelector, useDispatch } from "react-redux";
 
 export default function CreateMemory() {
     const [button, setActiveButton] = React.useState("Video");
@@ -22,11 +24,13 @@ export default function CreateMemory() {
     const [scheduleTime, setScheduleTime] = useState("");
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
+    const profileData = useSelector((state) => state.auth.user);
+    const canCreateMemory = videoFile && title.trim() && description.trim() && Object.values(privacy).some(val => val);
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (file) {
-            setVideoFile(URL.createObjectURL(file));
+            setVideoFile((file));
             simulateUpload(file);
         }
     };
@@ -67,6 +71,45 @@ export default function CreateMemory() {
         }
     };
 
+    const handleCreateMemory = async () => {
+        if (!videoFile) {
+            console.error("No video file selected!");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("userId", profileData?.userId);
+        formData.append("title", title);
+        formData.append("description", description);
+        formData.append("privacy", privacy);
+        formData.append("file", videoFile);
+        formData.append("my_memories", "my_memories");
+
+        console.log(formData)
+
+        setUploading(true);
+
+        try {
+            const accessToken = Cookies.get("accessToken");
+            const res = await fetch(`http://localhost:5000/api/auth/upload`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+                body: formData,
+            });
+
+            const data = await res.json();
+            console.log("Upload Successful:", data);
+            setVideoFile(data.secure_url);
+            setUploading(false);
+        } catch (error) {
+            console.error("Upload error:", error);
+            setUploading(false);
+        }
+    };
+
+
     return (
         <Box
             sx={{
@@ -93,6 +136,7 @@ export default function CreateMemory() {
                 }}
             >
                 <Box
+                    onClick={handleCreateMemory}
                     sx={{
                         color: '#595959',
                         fontFamily: 'poppins',
@@ -442,10 +486,12 @@ export default function CreateMemory() {
                             Cancel
                         </Button>
                         <Button
-                            sx={{ padding: "0px 20px 0px 20px", height: "50px", backgroundColor: '#32AA27', color: '#FFFFFF', fontFamily: 'poppins', fontWeight: '600', fontSize: "16px", borderRadius: '0px' }}
+                            disabled={!canCreateMemory}
+                            onClick={handleCreateMemory}
+                            sx={{ padding: "0px 20px 0px 20px", height: "50px", backgroundColor: !canCreateMemory ? '#e5e7eb' : '#32AA27', color: '#FFFFFF', fontFamily: 'poppins', fontWeight: '600', fontSize: "16px", borderRadius: '0px' }}
                         >
-                            <IconButton sx={{ backgroundColor: "#fff", height: "30px", width: "30px", marginRight: "20px" }} color="primary">
-                                <AddIcon sx={{ color: "#32AA27" }} />
+                            <IconButton sx={{ backgroundColor: !canCreateMemory ? '#e5e7eb' : "#fff", height: "30px", width: "30px", marginRight: "20px" }} color="primary">
+                                <AddIcon sx={{ color: !canCreateMemory ? '#aaabae' : "#32AA27" }} />
                             </IconButton>
                             Create Memory
                         </Button>

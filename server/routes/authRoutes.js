@@ -2,13 +2,25 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import cookieParser from 'cookie-parser';
-import { upload } from '../cloudinary.js';
+import { upload } from '../config/cloudinary.js';
+import multer from 'multer';
+import { cloudinary } from '../config/cloudinary.js';
+import Memory from '../models/memoryModel.js';
+import dotenv from 'dotenv';
 
 const router = express.Router();
 router.use(cookieParser());
+dotenv.config();
 
-const ACCESS_TOKEN_SECRET = 'your_access_token_secret'; // TODO Replace with a secure key
-const REFRESH_TOKEN_SECRET = 'your_refresh_token_secret'; // TODO Replace with a secure key
+const ACCESS_TOKEN_SECRET = 'your_access_token_secret';
+const REFRESH_TOKEN_SECRET = 'your_refresh_token_secret';
+
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 const generateAccessToken = (user) => {
     return jwt.sign(
@@ -140,17 +152,17 @@ router.get('/profile', async (req, res) => {
     try {
         const decoded = jwt.verify(accessToken, ACCESS_TOKEN_SECRET);
 
-        // Fetch user from the database to include bio
-        const user = await User.findById(decoded.id).select('-password'); // Exclude password
+        const user = await User.findById(decoded.id).select('-password');
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
         res.json({
-            message: 'Profile data',
             userId: user._id,
             username: user.username,
+            email: user.email,
             bio: user.bio,
+            avatar: user.avatar,
         });
     } catch (error) {
         res.status(401).json({ message: 'Invalid or expired access token' });
@@ -159,6 +171,8 @@ router.get('/profile', async (req, res) => {
 
 
 router.put('/profile/update', upload.single('profilePic'), async (req, res) => {
+    console.log("Uploaded File:", req.file);
+    console.log("Request Body:", req.body);
 
     const accessToken = req.cookies.accessToken;
     if (!accessToken) {
@@ -169,10 +183,12 @@ router.put('/profile/update', upload.single('profilePic'), async (req, res) => {
         const decoded = jwt.verify(accessToken, ACCESS_TOKEN_SECRET);
         const { username, bio } = req.body;
         const profilePicUrl = req.file ? req.file.path : undefined;
+        const updateData = { username, bio };
+        if (profilePicUrl) updateData.avatar = profilePicUrl;
 
         const updatedUser = await User.findByIdAndUpdate(
             decoded.id,
-            { username, bio, profilePic: profilePicUrl },
+            updateData,
             { new: true }
         );
 
@@ -180,6 +196,7 @@ router.put('/profile/update', upload.single('profilePic'), async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
+        console.log("Updated User:", updatedUser);
         res.json(updatedUser);
     } catch (error) {
         console.error(error);
@@ -187,6 +204,32 @@ router.put('/profile/update', upload.single('profilePic'), async (req, res) => {
     }
 });
 
+router.post('/upload', upload.single('file'), async (req, res) => {
+    try {
+
+        if (!req.file) {
+            return res.status(400).json({ message: 'No file uploaded' });
+        }
+
+        const { title, description, privacy } = req.body;
+        const userId = req.userId;
+
+        const newMemory = new Memory({
+            user: userId,
+            videoUrl: result.secure_url,
+            title,
+            description,
+            privacy,
+        });
+
+        await newMemory.save();
+
+        res.status(201).json({ message: 'Memory created successfully', memory: newMemory });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
 
 
 export default router;

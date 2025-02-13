@@ -8,6 +8,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import MenuContent from './MenuContent';
 import OptionsMenu from './OptionsMenu';
+import { useSelector, useDispatch } from "react-redux";
 
 const drawerWidth = 240;
 
@@ -23,6 +24,8 @@ const Drawer = styled(MuiDrawer)({
 });
 
 export default function SideMenu() {
+    const profileData = useSelector((state) => state.auth.user);
+    const [avatar, setAvatar] = React.useState(profileData?.avatar);
 
     return (
         <Drawer
@@ -58,17 +61,20 @@ export default function SideMenu() {
                 }}
             >
                 <Avatar
-                    sizes="small"
-                    alt="Jamie lambros"
-                    src="/static/images/avatar/7.jpg"
-                    sx={{ width: 36, height: 36 }}
+                    alt="Profile Picture"
+                    src={avatar}
+                    sx={{
+                        height: 36,
+                        width: 36,
+                        color: "#32AA27",
+                    }}
                 />
                 <Box sx={{ mr: 'auto' }}>
                     <Typography variant="body2" sx={{ fontWeight: 500, lineHeight: '16px' }}>
-                        Jamie lambros
+                        {profileData?.username}
                     </Typography>
                     <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                        Jamie@email.com
+                        {profileData?.email}
                     </Typography>
                 </Box>
                 <OptionsMenu />

@@ -3,11 +3,8 @@ import Cookies from "js-cookie";
 import api from "../../api";
 
 export const checkAuthStatus = createAsyncThunk("auth/checkAuthStatus", async (_, { rejectWithValue }) => {
-    console.log("called")
     try {
         const accessToken = Cookies.get("accessToken");
-
-        console.log(accessToken)
 
         if (!accessToken) {
             return rejectWithValue("No token found");

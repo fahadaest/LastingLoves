@@ -9,8 +9,12 @@ import Typography from '@mui/material/Typography';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import MenuButton from './MenuButton';
 import MenuContent from './MenuContent';
+import { useSelector, useDispatch } from "react-redux";
 
 function SideMenuMobile({ open, toggleDrawer }) {
+    const profileData = useSelector((state) => state.auth.user);
+    const [avatar, setAvatar] = React.useState(profileData?.avatar);
+
     return (
         <Drawer
             anchor="left"
@@ -36,13 +40,16 @@ function SideMenuMobile({ open, toggleDrawer }) {
                         sx={{ gap: 1, alignItems: 'center', flexGrow: 1, p: 1 }}
                     >
                         <Avatar
-                            sizes="small"
-                            alt="Jamie lambros"
-                            src="/static/images/avatar/7.jpg"
-                            sx={{ width: 24, height: 24 }}
+                            alt="Profile Picture"
+                            src={avatar}
+                            sx={{
+                                height: 36,
+                                width: 36,
+                                color: "#32AA27",
+                            }}
                         />
                         <Typography component="p" variant="h6">
-                            Jamie lambros
+                            {profileData?.username}
                         </Typography>
                     </Stack>
                 </Stack>

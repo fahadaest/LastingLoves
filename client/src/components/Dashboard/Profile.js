@@ -11,18 +11,25 @@ import axios from "axios";
 export default function Profile() {
     const profileData = useSelector((state) => state.auth.user);
     const dispatch = useDispatch();
-
-    // Local state
     const [isEditing, setIsEditing] = React.useState(false);
     const [username, setUsername] = React.useState(profileData?.username || "");
     const [bio, setBio] = React.useState(profileData?.bio || "Add a bio");
-    const [avatar, setAvatar] = React.useState(profileData?.avatar || loggedInImg);
+    const [avatar, setAvatar] = React.useState(profileData?.avatar);
     const [avatarFile, setAvatarFile] = React.useState(null);
-    const [isUploading, setIsUploading] = React.useState(false); // Show loader during upload
+    const [isUploading, setIsUploading] = React.useState(false);
 
     const handleEditClick = () => setIsEditing(!isEditing);
     const handleUsernameChange = (e) => setUsername(e.target.value);
     const handleBioChange = (e) => setBio(e.target.value);
+
+    React.useEffect(() => {
+        if (profileData) {
+            setUsername(profileData.username || "");
+            setBio(profileData.bio || "Add a bio");
+            setAvatar(profileData.avatar);
+        }
+    }, [profileData]);
+
 
     const handleAvatarClick = async () => {
         try {
@@ -34,10 +41,8 @@ export default function Profile() {
             const file = await fileHandle.getFile();
             setAvatarFile(file);
 
-            // Show loader
             setIsUploading(true);
 
-            // Simulate upload delay (Replace with actual upload request)
             setTimeout(() => {
                 setAvatar(URL.createObjectURL(file));
                 setIsUploading(false); // Hide loader after upload
@@ -61,7 +66,7 @@ export default function Profile() {
             formData.append("bio", bio);
 
             if (avatarFile) {
-                formData.append("avatar", avatarFile);
+                formData.append("profilePic", avatarFile);
             }
 
             const response = await axios.put(
@@ -78,6 +83,7 @@ export default function Profile() {
 
             if (response.status === 200) {
                 dispatch({ type: "UPDATE_USER", payload: response.data });
+                setAvatar(response.data.avatar);
                 setIsEditing(false);
             }
         } catch (error) {
@@ -100,9 +106,8 @@ export default function Profile() {
                             sx={{
                                 width: { xs: 80, sm: 100, md: 120 },
                                 height: { xs: 80, sm: 100, md: 120 },
-                                border: "4px solid #595959",
-                                backgroundColor: "red",
                                 position: "relative",
+                                color: "#32AA27",
                             }}
                         />
                         {isUploading && (

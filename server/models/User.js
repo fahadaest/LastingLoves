@@ -20,6 +20,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: 'Add a bio',
     },
+    avatar: {
+        type: String,
+        default: '',
+    },
 });
 
 userSchema.pre('save', async function (next) {

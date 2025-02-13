@@ -14,8 +14,6 @@ export default function Dashboard({ path }) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
-    console.log(profile)
-
     useEffect(() => {
         const fetchProfile = async () => {
             try {

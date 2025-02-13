@@ -6,17 +6,16 @@ import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
 import MenuButton from '../Dashboard/MenuButton';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import SideMenuMobile from '../Dashboard/SideMenuMobile';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { useSelector, useDispatch } from "react-redux";
 
 const pages = ['Home', 'About', 'Services', 'Pricing', 'How it Works'];
 const settings = ['Profile', 'Upload Memory', 'Sign in'];
@@ -26,6 +25,14 @@ function Header() {
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
+  const profileData = useSelector((state) => state.auth.user);
+  const [avatar, setAvatar] = React.useState(profileData?.avatar);
+
+  React.useEffect(() => {
+    if (profileData) {
+      setAvatar(profileData.avatar);
+    }
+  }, [profileData]);
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -136,15 +143,18 @@ function Header() {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <AccountCircleIcon
+                <Avatar
+                  alt="Profile Picture"
+                  src={avatar}
                   sx={{
-                    color: "#32AA27",
                     height: "40px",
-                    width: "40px"
+                    width: "40px",
+                    color: "#32AA27",
                   }}
                 />
               </IconButton>
             </Tooltip>
+
             <Menu
               sx={{ mt: '45px', zIndex: "2000" }}
               id="menu-appbar"
@@ -175,6 +185,7 @@ function Header() {
                 </MenuItem>
               ))}
             </Menu>
+
           </Box>
 
           <SideMenuMobile open={open} toggleDrawer={toggleDrawer} />
