@@ -21,6 +21,7 @@ export default function Profile() {
     const handleEditClick = () => setIsEditing(!isEditing);
     const handleUsernameChange = (e) => setUsername(e.target.value);
     const handleBioChange = (e) => setBio(e.target.value);
+    const baseURL = process.env.REACT_APP_BASE_URL;
 
     React.useEffect(() => {
         if (profileData) {
@@ -70,7 +71,7 @@ export default function Profile() {
             }
 
             const response = await axios.put(
-                "http://localhost:5000/api/auth/profile/update",
+                `${baseURL}/profile/update`,
                 formData,
                 {
                     headers: {

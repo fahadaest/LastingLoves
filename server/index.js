@@ -7,10 +7,12 @@ import authRoutes from './routes/authRoutes.js';
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT;
+const BACKEND_URL = process.env.BACKEND_URL;
+const FRONTEND_URL = process.env.FRONTEND_URL;
 
 app.use(express.json());
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: `${FRONTEND_URL}`,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
@@ -28,6 +30,6 @@ app.get("/", (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Server is running on ${BACKEND_URL}`);
 });
 

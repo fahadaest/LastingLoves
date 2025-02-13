@@ -9,12 +9,13 @@ export default function Memories() {
     const [button, setActiveButton] = useState("All Memories");
     const buttons = ["All Memories"];
     const [memories, setMemories] = useState([]);
-    const [selectedMemory, setSelectedMemory] = useState(null); // State to track the selected memory
+    const [selectedMemory, setSelectedMemory] = useState(null);
+    const baseURL = process.env.REACT_APP_BASE_URL;
 
     useEffect(() => {
         const fetchMemories = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/auth/myMemories', {
+                const response = await axios.get(`${baseURL}/myMemories`, {
                     withCredentials: true,
                 });
                 setMemories(response?.data?.memories);

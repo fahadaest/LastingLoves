@@ -77,9 +77,8 @@ export default function SignIn(props) {
     const [loginError, setLoginError] = React.useState('');
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
+    const baseURL = process.env.REACT_APP_BASE_URL;
     const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
-    console.log(isAuthenticated)
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -102,7 +101,7 @@ export default function SignIn(props) {
         setLoginError('');
 
         try {
-            const response = await api.post('http://localhost:5000/api/auth/login', {
+            const response = await api.post(`${baseURL}/login`, {
                 email,
                 password,
             });

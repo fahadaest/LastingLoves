@@ -65,6 +65,7 @@ export default function SignUp(props) {
     const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
     const [nameError, setNameError] = React.useState(false);
     const [nameErrorMessage, setNameErrorMessage] = React.useState('');
+    const baseURL = process.env.REACT_APP_BASE_URL;
 
     const validateInputs = () => {
         const email = document.getElementById('email');
@@ -119,7 +120,7 @@ export default function SignUp(props) {
         };
 
         try {
-            const response = await axios.post('http://localhost:5000/api/auth/register', userData);
+            const response = await axios.post(`${baseURL}/register`, userData);
             console.log('User registered:', response.data);
             alert('Registration successful!');
         } catch (error) {

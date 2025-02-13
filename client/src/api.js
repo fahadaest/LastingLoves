@@ -1,9 +1,10 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
+const baseURL = process.env.REACT_APP_BASE_URL;
 const api = axios.create({
-    baseURL: 'http://localhost:5000/api/auth',
-    withCredentials: true, // Send cookies with requests
+    baseURL: baseURL,
+    withCredentials: true,
 });
 
 // Add a request interceptor
@@ -29,7 +30,7 @@ api.interceptors.response.use(
             originalRequest._retry = true;
 
             try {
-                const refreshResponse = await axios.post('http://localhost:5000/api/auth/refresh', {}, { withCredentials: true });
+                const refreshResponse = await axios.post(`${baseURL}/refresh`, {}, { withCredentials: true });
 
                 if (refreshResponse.status === 200) {
                     const { accessToken } = refreshResponse.data;

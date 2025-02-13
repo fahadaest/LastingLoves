@@ -23,9 +23,8 @@ export default function CreateMemory() {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const profileData = useSelector((state) => state.auth.user);
+    const baseURL = process.env.REACT_APP_BASE_URL;
     const canCreateMemory = videoFile && title.trim() && description.trim() && Object.values(privacy).some(val => val);
-
-    console.log(videoFile)
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
@@ -86,7 +85,7 @@ export default function CreateMemory() {
 
         try {
             const response = await axios.post(
-                "http://localhost:5000/api/auth/createMemory",
+                `${baseURL}/createMemory`,
                 formData,
                 {
                     headers: {
