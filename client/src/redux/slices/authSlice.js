@@ -10,7 +10,7 @@ export const checkAuthStatus = createAsyncThunk("auth/checkAuthStatus", async (_
             return rejectWithValue("No token found");
         }
 
-        const response = await api.get("/profile", {
+        const response = await api.get("/api/auth/profile", {
             headers: { Authorization: `Bearer ${accessToken}` },
             withCredentials: true,
         });
