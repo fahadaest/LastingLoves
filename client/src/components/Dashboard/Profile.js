@@ -71,7 +71,7 @@ export default function Profile() {
             }
 
             const response = await axios.put(
-                `${baseURL}/profile/update`,
+                `${baseURL}/api/auth/profile/update`,
                 formData,
                 {
                     headers: {

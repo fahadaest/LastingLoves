@@ -85,7 +85,7 @@ export default function CreateMemory() {
 
         try {
             const response = await axios.post(
-                `${baseURL}/createMemory`,
+                `${baseURL}/api/auth/createMemory`,
                 formData,
                 {
                     headers: {

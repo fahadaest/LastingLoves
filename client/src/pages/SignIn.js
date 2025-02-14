@@ -101,7 +101,7 @@ export default function SignIn(props) {
         setLoginError('');
 
         try {
-            const response = await api.post(`${baseURL}/login`, {
+            const response = await api.post(`${baseURL}/api/auth/login`, {
                 email,
                 password,
             });

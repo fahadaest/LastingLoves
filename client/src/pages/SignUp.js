@@ -120,7 +120,7 @@ export default function SignUp(props) {
         };
 
         try {
-            const response = await axios.post(`${baseURL}/register`, userData);
+            const response = await axios.post(`${baseURL}/api/auth/register`, userData);
             console.log('User registered:', response.data);
             alert('Registration successful!');
         } catch (error) {

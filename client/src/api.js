@@ -30,7 +30,7 @@ api.interceptors.response.use(
             originalRequest._retry = true;
 
             try {
-                const refreshResponse = await axios.post(`${baseURL}/refresh`, {}, { withCredentials: true });
+                const refreshResponse = await axios.post(`${baseURL}/api/auth/refresh`, {}, { withCredentials: true });
 
                 if (refreshResponse.status === 200) {
                     const { accessToken } = refreshResponse.data;

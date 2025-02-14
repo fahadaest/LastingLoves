@@ -15,7 +15,7 @@ export default function Memories() {
     useEffect(() => {
         const fetchMemories = async () => {
             try {
-                const response = await axios.get(`${baseURL}/myMemories`, {
+                const response = await axios.get(`${baseURL}/api/auth/myMemories`, {
                     withCredentials: true,
                 });
                 setMemories(response?.data?.memories);
