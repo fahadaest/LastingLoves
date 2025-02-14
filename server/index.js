@@ -11,15 +11,9 @@ const PORT = process.env.PORT;
 const BACKEND_URL = process.env.BACKEND_URL;
 const FRONTEND_URL = process.env.FRONTEND_URL;
 
-const allowedOrigins = [
-    "http://localhost:3000",
-    "https://showing-i-love-you-mbac.vercel.app",
-];
-
-
 app.use(express.json());
 app.use(cors({
-    origin: allowedOrigins,
+    origin: FRONTEND_URL,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
