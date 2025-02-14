@@ -9,15 +9,18 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT;
 const BACKEND_URL = process.env.BACKEND_URL;
-const FRONTEND_URL = process.env.FRONTEND_URL;
+// const FRONTEND_URL = process.env.FRONTEND_URL;
 
 app.use(express.json());
 app.use(cors({
-    origin: FRONTEND_URL,
+    origin: (origin, callback) => {
+        callback(null, true);
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+
 
 app.use('/api/auth', authRoutes);
 
