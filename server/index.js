@@ -13,7 +13,7 @@ const FRONTEND_URL = process.env.FRONTEND_URL;
 
 const allowedOrigins = [
     "http://localhost:3000",
-    "https://showing-i-love-you-mbac.vercel.app/",
+    "https://showing-i-love-you-mbac.vercel.app",
 ];
 
 
