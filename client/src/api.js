@@ -42,7 +42,7 @@ api.interceptors.response.use(
                 }
             } catch (refreshError) {
                 console.error('Refresh token failed:', refreshError);
-                window.location.href = '/sign-in'; // Redirect to login page
+                // window.location.href = '/sign-in'; // Redirect to login page
                 return Promise.reject(refreshError);
             }
         }
