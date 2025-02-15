@@ -14,21 +14,21 @@ export default function Dashboard({ path }) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
-    useEffect(() => {
-        const fetchProfile = async () => {
-            try {
-                const response = await api.get('/api/auth/profile');
-                setProfile(response.data);
-            } catch (err) {
-                console.error('Error fetching profile:', err);
-                setError('Failed to load profile');
-            } finally {
-                setLoading(false);
-            }
-        };
+    // useEffect(() => {
+    //     const fetchProfile = async () => {
+    //         try {
+    //             const response = await api.get('/api/auth/profile');
+    //             setProfile(response.data);
+    //         } catch (err) {
+    //             console.error('Error fetching profile:', err);
+    //             setError('Failed to load profile');
+    //         } finally {
+    //             setLoading(false);
+    //         }
+    //     };
 
-        fetchProfile();
-    }, []);
+    //     fetchProfile();
+    // }, []);
 
     return (
         <Box sx={{ display: 'flex', marginTop: "9vh" }}>
