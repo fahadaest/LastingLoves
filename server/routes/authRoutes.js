@@ -90,14 +90,14 @@ router.post('/login', async (req, res) => {
         res.cookie('accessToken', accessToken, {
             httpOnly: true,
             secure: true,
-            sameSite: 'Strict',
+            sameSite: 'None',
             maxAge: 60 * 60 * 1000
         });
 
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
             secure: true,
-            sameSite: 'Strict',
+            sameSite: 'None',
             maxAge: 24 * 60 * 60 * 1000
         });
 
@@ -152,7 +152,15 @@ router.post('/logout', (req, res) => {
 });
 
 router.get('/profile', async (req, res) => {
-    const accessToken = req.cookies.accessToken;
+    let accessToken = req.cookies.accessToken;
+
+    if (!accessToken && req.headers.authorization) {
+        const authHeader = req.headers.authorization;
+        if (authHeader.startsWith('Bearer ')) {
+            accessToken = authHeader.split(' ')[1];
+        }
+    }
+
     if (!accessToken) {
         return res.status(401).json({ message: 'No access token provided' });
     }
@@ -173,9 +181,10 @@ router.get('/profile', async (req, res) => {
             avatar: user.avatar,
         });
     } catch (error) {
-        res.status(401).json({ message: 'Invalid or expired access token' });
+        return res.status(401).json({ message: 'Invalid or expired access token' });
     }
 });
+
 
 router.put('/profile/update', uploadImage.single('profilePic'), async (req, res) => {
     const accessToken = req.cookies.accessToken;
