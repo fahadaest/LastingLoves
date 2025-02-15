@@ -17,7 +17,7 @@ export default function Dashboard({ path }) {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const response = await api.get('/profile');
+                const response = await api.get('/api/auth/profile');
                 setProfile(response.data);
             } catch (err) {
                 console.error('Error fetching profile:', err);
