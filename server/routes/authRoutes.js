@@ -73,18 +73,32 @@ router.post('/login', async (req, res) => {
         const accessToken = generateAccessToken(user);
         const refreshToken = generateRefreshToken(user);
 
+        // res.cookie('accessToken', accessToken, {
+        //     httpOnly: false, // TODO change to true
+        //     secure: false, // TODO Set to true in production (localhost doesn't support https)
+        //     sameSite: 'Lax', // TODO change to Strict
+        //     maxAge: 60 * 60 * 1000 // TODO 1 hour
+        // });
+
+        // res.cookie('refreshToken', refreshToken, {
+        //     httpOnly: false, // TODO change to true
+        //     secure: false,
+        //     sameSite: 'Lax', // TODO change to Strict
+        //     maxAge: 24 * 60 * 60 * 1000 // TODO 1 day
+        // });
+
         res.cookie('accessToken', accessToken, {
-            httpOnly: false, // TODO change to true
-            secure: false, // TODO Set to true in production (localhost doesn't support https)
-            sameSite: 'Lax', // TODO change to Strict
-            maxAge: 60 * 60 * 1000 // TODO 1 hour
+            httpOnly: true,
+            secure: true,
+            sameSite: 'Strict',
+            maxAge: 60 * 60 * 1000
         });
 
         res.cookie('refreshToken', refreshToken, {
-            httpOnly: false, // TODO change to true
-            secure: false,
-            sameSite: 'Lax', // TODO change to Strict
-            maxAge: 24 * 60 * 60 * 1000 // TODO 1 day
+            httpOnly: true,
+            secure: true,
+            sameSite: 'Strict',
+            maxAge: 24 * 60 * 60 * 1000
         });
 
         res.json({ message: 'Login successful', accessToken, refreshToken });
