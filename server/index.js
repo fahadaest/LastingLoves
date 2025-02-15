@@ -9,13 +9,11 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT;
 const BACKEND_URL = process.env.BACKEND_URL;
-// const FRONTEND_URL = process.env.FRONTEND_URL;
+const FRONTEND_URL = process.env.FRONTEND_URL;
 
 app.use(express.json());
 app.use(cors({
-    origin: (origin, callback) => {
-        callback(null, true);
-    },
+    origin: process.env.FRONTEND_URL,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
