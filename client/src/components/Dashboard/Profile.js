@@ -1,12 +1,13 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { Avatar, IconButton, TextField, Button, CircularProgress } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
-import loggedInImg from "../../assets/Jamie-Lambros.jpg";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
+import CustomAlert from "../Alert/Alert";
+import { refetchProfile } from "../../redux/slices/authSlice";
 
 export default function Profile() {
     const profileData = useSelector((state) => state.auth.user);
@@ -22,6 +23,10 @@ export default function Profile() {
     const handleUsernameChange = (e) => setUsername(e.target.value);
     const handleBioChange = (e) => setBio(e.target.value);
     const baseURL = process.env.REACT_APP_BASE_URL;
+    const [message, setMessage] = useState('');
+    const [severity, setSeverity] = useState('');
+    const [duration, setDuration] = useState(null);
+    const [showAlert, setShowAlert] = useState(false);
 
     React.useEffect(() => {
         if (profileData) {
@@ -41,12 +46,11 @@ export default function Profile() {
 
             const file = await fileHandle.getFile();
             setAvatarFile(file);
-
             setIsUploading(true);
 
             setTimeout(() => {
                 setAvatar(URL.createObjectURL(file));
-                setIsUploading(false); // Hide loader after upload
+                setIsUploading(false);
             }, 2000);
 
         } catch (error) {
@@ -57,6 +61,10 @@ export default function Profile() {
 
     const handleSave = async () => {
         try {
+            setMessage("Updating Profile");
+            setSeverity("warning");
+            setShowAlert(true);
+
             const accessToken = document.cookie
                 .split('; ')
                 .find(row => row.startsWith('accessToken='))
@@ -81,20 +89,38 @@ export default function Profile() {
                     withCredentials: true,
                 }
             );
-
+            await refetchProfile();
             if (response.status === 200) {
                 dispatch({ type: "UPDATE_USER", payload: response.data });
                 setAvatar(response.data.avatar);
                 setIsEditing(false);
             }
+
+            setMessage("Profile Updated!");
+            setSeverity("success");
+            setDuration("3000");
+            setShowAlert(true);
+
         } catch (error) {
             console.error("Error updating profile:", error);
+            setMessage("Error Updating Profile");
+            setSeverity("error");
+            setDuration("3000");
+            setShowAlert(true);
         }
     };
 
 
     return (
         <Box sx={{ width: '100%', display: "flex", alignItems: "center", justifyContent: "center", maxWidth: { sm: '100%', md: '1700px' } }}>
+            {showAlert && (
+                <CustomAlert
+                    message={message}
+                    severity={severity}
+                    duration={duration}
+                    setShowAlert={setShowAlert}
+                />
+            )}
             <Box
                 sx={{ display: "flex", gap: "20px", width: "100%", mt: "15px", borderRadius: "10px", padding: "20px", boxShadow: "0px 4px 10px rgba(50, 170, 39, 0.4), 0px -4px 10px rgba(50, 170, 39, 0.4), 4px 0px 10px rgba(50, 170, 39, 0.4), -4px 0px 10px rgba(50, 170, 39, 0.4)" }}
             >

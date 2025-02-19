@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { styled } from '@mui/material/styles';
 import Avatar from '@mui/material/Avatar';
 import MuiDrawer, { drawerClasses } from '@mui/material/Drawer';
@@ -26,6 +26,13 @@ const Drawer = styled(MuiDrawer)({
 export default function SideMenu() {
     const profileData = useSelector((state) => state.auth.user);
     const [avatar, setAvatar] = React.useState(profileData?.avatar);
+
+
+    useEffect(() => {
+        if (profileData?.avatar) {
+            setAvatar(profileData?.avatar)
+        }
+    }, [profileData]);
 
     return (
         <Drawer

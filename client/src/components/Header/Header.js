@@ -36,8 +36,6 @@ function Header() {
     ? ['Profile', 'Create Memory', 'Logout']
     : ['Profile', 'Create Memory', 'Login / Register'];
 
-  console.log(isAuthenticated)
-
   React.useEffect(() => {
     if (profileData) {
       setAvatar(profileData.avatar);

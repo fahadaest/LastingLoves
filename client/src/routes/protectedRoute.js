@@ -1,11 +1,34 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from "react";
+import { Navigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { checkAuthStatus } from "../redux/slices/authSlice";
 
 const ProtectedRoute = ({ children }) => {
-  const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
+  const dispatch = useDispatch();
 
-  return isAuthenticated ? children : <Navigate to="/sign-in" replace />;
+  const { isAuthenticated, authStatus } = useSelector((state) => ({
+    isAuthenticated: state.auth.isAuthenticated,
+    authStatus: state.auth.authStatus,
+  }));
+
+  useEffect(() => {
+    if (authStatus === "idle") {
+      dispatch(checkAuthStatus());
+    }
+  }, [dispatch, authStatus]);
+
+  if (authStatus === "pending") {
+    return <div></div>;
+  }
+
+  if (authStatus === "fulfilled") {
+    return children;
+  }
+
+  if (authStatus === "rejected") {
+    return <Navigate to="/sign-in" replace />;
+  }
+  return null;
 };
 
 export default ProtectedRoute;
