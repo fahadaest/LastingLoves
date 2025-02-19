@@ -1,7 +1,15 @@
+import React from 'react';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import { useNavigate } from 'react-router-dom';
 
 function MessagesOfLove() {
+    const navigate = useNavigate();
+
+    const handleViewServices = () => {
+        navigate('/Services');
+    };
+
     return (
         <section className="flex flex-col justify-center items-center min-h-[90vh] bg-gradient-to-b from-black/30 via-black/50 to-black/70">
             <div className='flex flex-col w-[80%] gap-4 '>
@@ -32,6 +40,7 @@ function MessagesOfLove() {
                 </Typography>
 
                 <Button
+                    onClick={handleViewServices}
                     sx={{ width: '200px', height: "50px", backgroundColor: '#32AA27', color: '#FFFFFF', fontFamily: 'poppins', fontWeight: '600', fontSize: "16px", borderRadius: '0px' }}
                 >
                     View Services

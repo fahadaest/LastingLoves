@@ -16,9 +16,7 @@ import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import SideMenuMobile from '../Dashboard/SideMenuMobile';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useSelector, useDispatch } from "react-redux";
-
-const pages = ['Home', 'About', 'Services', 'Pricing', 'How it Works'];
-const settings = ['Profile', 'Upload Memory', 'Sign in'];
+import { logout } from '../../redux/slices/authSlice';
 
 function Header() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -27,6 +25,18 @@ function Header() {
   const [open, setOpen] = React.useState(false);
   const profileData = useSelector((state) => state.auth.user);
   const [avatar, setAvatar] = React.useState(profileData?.avatar);
+  const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
+  const dispatch = useDispatch();
+  const handleLogout = () => {
+    dispatch(logout());
+  };
+
+  const pages = ['Home', 'About', 'Services', 'Pricing', 'How it Works'];
+  const settings = isAuthenticated
+    ? ['Profile', 'Create Memory', 'Logout']
+    : ['Profile', 'Create Memory', 'Login / Register'];
+
+  console.log(isAuthenticated)
 
   React.useEffect(() => {
     if (profileData) {
@@ -176,7 +186,14 @@ function Header() {
                   if (setting === 'Profile') {
                     navigate('/profile');
                   }
-                  if (setting === 'Sign in') {
+                  if (setting === 'Create Memory') {
+                    navigate('/create-memory');
+                  }
+                  if (setting === 'Login / Register') {
+                    navigate('/sign-in');
+                  }
+                  if (setting === 'Logout') {
+                    handleLogout();
                     navigate('/sign-in');
                   }
                   handleCloseUserMenu();

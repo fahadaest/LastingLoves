@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from "react";
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
@@ -21,6 +21,7 @@ import Cookies from 'js-cookie';
 import api from '../api';
 import { useSelector } from 'react-redux';
 import { checkAuthStatus } from "../redux/slices/authSlice";
+import CustomAlert from '../components/Alert/Alert';
 // import { GoogleIcon, FacebookIcon } from './components/CustomIcons';
 // import { SitemarkIcon } from '../components/SignIn/CustomIcons';
 
@@ -79,6 +80,10 @@ export default function SignIn(props) {
     const navigate = useNavigate();
     const baseURL = process.env.REACT_APP_BASE_URL;
     const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
+    const [message, setMessage] = useState('');
+    const [severity, setSeverity] = useState('');
+    const [duration, setDuration] = useState(null);
+    const [showAlert, setShowAlert] = useState(false);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -90,8 +95,16 @@ export default function SignIn(props) {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        if (!validateInputs()) {
+            setMessage("Enter Valid Inputs!");
+            setSeverity("error");
+            setShowAlert(true);
+            return;
+        }
 
-        if (!validateInputs()) return;
+        setMessage("Logging in!");
+        setSeverity("warning");
+        setShowAlert(true);
 
         const data = new FormData(event.currentTarget);
         const email = data.get('email');
@@ -106,8 +119,6 @@ export default function SignIn(props) {
                 password,
             });
 
-            console.log('Login success:', response.data);
-
             const { accessToken, refreshToken } = response.data;
 
             if (accessToken && refreshToken) {
@@ -115,11 +126,20 @@ export default function SignIn(props) {
                 Cookies.set('refreshToken', refreshToken, { expires: 1, secure: false, sameSite: 'Lax' }); //TODO change to Strict
                 dispatch(checkAuthStatus());
                 window.location.href = '/';
+                setMessage("Logged in!");
+                setSeverity("success");
+                setShowAlert(true);
             } else {
                 setLoginError('Login failed. No token received.');
+                setMessage("Login failed. No access token received.");
+                setSeverity("error");
+                setShowAlert(true);
             }
         } catch (error) {
             console.error('Login failed:', error.response ? error.response.data : error.message);
+            setMessage("Invalid email or password");
+            setSeverity("error");
+            setShowAlert(true);
             setLoginError('Invalid email or password');
         } finally {
             setLoading(false);
@@ -156,9 +176,17 @@ export default function SignIn(props) {
 
     return (
         <SignInContainer direction="column" justifyContent="space-between">
-            {/* <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} /> */}
+            {showAlert && (
+                <CustomAlert
+                    message={message}
+                    severity={severity}
+                    duration={duration}
+                    setShowAlert={setShowAlert}
+                />
+            )}
+
             <Card variant="outlined">
-                {/* <SitemarkIcon /> */}
+
                 <Typography
                     component="h1"
                     variant="h4"

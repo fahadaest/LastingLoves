@@ -13,6 +13,9 @@ dotenv.config();
 
 const ACCESS_TOKEN_SECRET = 'your_access_token_secret';
 const REFRESH_TOKEN_SECRET = 'your_refresh_token_secret';
+const environment = process.env.ENVIRONMENT;
+
+console.log(environment)
 
 
 cloudinary.config({
@@ -73,31 +76,17 @@ router.post('/login', async (req, res) => {
         const accessToken = generateAccessToken(user);
         const refreshToken = generateRefreshToken(user);
 
-        // res.cookie('accessToken', accessToken, {
-        //     httpOnly: false, // TODO change to true
-        //     secure: false, // TODO Set to true in production (localhost doesn't support https)
-        //     sameSite: 'Lax', // TODO change to Strict
-        //     maxAge: 60 * 60 * 1000 // TODO 1 hour
-        // });
-
-        // res.cookie('refreshToken', refreshToken, {
-        //     httpOnly: false, // TODO change to true
-        //     secure: false,
-        //     sameSite: 'Lax', // TODO change to Strict
-        //     maxAge: 24 * 60 * 60 * 1000 // TODO 1 day
-        // });
-
         res.cookie('accessToken', accessToken, {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'None',
+            httpOnly: environment === "development" ? false : true,
+            secure: environment === "development" ? false : true,
+            sameSite: environment === "development" ? 'Lax' : 'None',
             maxAge: 60 * 60 * 1000
         });
 
         res.cookie('refreshToken', refreshToken, {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'None',
+            httpOnly: environment === "development" ? false : true,
+            secure: environment === "development" ? false : true,
+            sameSite: environment === "development" ? 'Lax' : 'None',
             maxAge: 24 * 60 * 60 * 1000
         });
 
