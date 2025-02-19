@@ -125,7 +125,7 @@ export default function SignIn(props) {
                 Cookies.set('accessToken', accessToken, { expires: 1 / 24, secure: false, sameSite: 'Lax' }); //TODO change to Strict
                 Cookies.set('refreshToken', refreshToken, { expires: 1, secure: false, sameSite: 'Lax' }); //TODO change to Strict
                 dispatch(checkAuthStatus());
-                window.location.href = '/';
+                window.location.href = '/profile';
                 setMessage("Logged in!");
                 setSeverity("success");
                 setShowAlert(true);

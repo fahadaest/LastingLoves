@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from "react";
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
@@ -14,6 +14,10 @@ import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import axios from 'axios';
+import CustomAlert from '../components/Alert/Alert';
+import Cookies from 'js-cookie';
+import { useSelector, useDispatch } from 'react-redux';
+import { checkAuthStatus } from "../redux/slices/authSlice";
 
 const Card = styled(MuiCard)(({ theme }) => ({
     display: 'flex',
@@ -66,6 +70,11 @@ export default function SignUp(props) {
     const [nameError, setNameError] = React.useState(false);
     const [nameErrorMessage, setNameErrorMessage] = React.useState('');
     const baseURL = process.env.REACT_APP_BASE_URL;
+    const [message, setMessage] = useState('');
+    const [severity, setSeverity] = useState('');
+    const [duration, setDuration] = useState(null);
+    const [showAlert, setShowAlert] = useState(false);
+    const dispatch = useDispatch();
 
     const validateInputs = () => {
         const email = document.getElementById('email');
@@ -107,10 +116,16 @@ export default function SignUp(props) {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        // Validate inputs
         if (!validateInputs()) {
+            setMessage("Enter Valid Inputs!");
+            setSeverity("error");
+            setShowAlert(true);
             return;
         }
+
+        setMessage("Registering!");
+        setSeverity("warning");
+        setShowAlert(true);
 
         const data = new FormData(event.currentTarget);
         const userData = {
@@ -122,16 +137,42 @@ export default function SignUp(props) {
         try {
             const response = await axios.post(`${baseURL}/api/auth/register`, userData);
             console.log('User registered:', response.data);
-            alert('Registration successful!');
+
+            const { accessToken, refreshToken } = response.data;
+
+            if (accessToken && refreshToken) {
+                Cookies.set('accessToken', accessToken, { expires: 1 / 24, secure: false, sameSite: 'Lax' }); //TODO change to Strict
+                Cookies.set('refreshToken', refreshToken, { expires: 1, secure: false, sameSite: 'Lax' }); //TODO change to Strict
+                dispatch(checkAuthStatus());
+                setMessage("User Registered Successfully!");
+                setSeverity("success");
+                setShowAlert(true);
+                window.location.href = '/profile';
+            } else {
+                setMessage("Registration failed. No access token received.");
+                setSeverity("error");
+                setShowAlert(true);
+            }
+
         } catch (error) {
+            setMessage("Registration failed. Please try again.");
+            setSeverity("error");
+            setShowAlert(true);
             console.error('Error registering user:', error);
-            alert('Registration failed. Please try again.');
         }
     };
 
 
     return (
         <SignUpContainer direction="column" justifyContent="space-between">
+            {showAlert && (
+                <CustomAlert
+                    message={message}
+                    severity={severity}
+                    duration={duration}
+                    setShowAlert={setShowAlert}
+                />
+            )}
             <Card variant="outlined">
                 <Typography
                     component="h1"

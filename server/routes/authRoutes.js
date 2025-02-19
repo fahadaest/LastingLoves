@@ -52,7 +52,24 @@ router.post('/register', async (req, res) => {
         const user = new User({ username, email, password });
         await user.save();
 
-        res.status(201).json({ message: 'User created successfully' });
+        const accessToken = generateAccessToken(user);
+        const refreshToken = generateRefreshToken(user);
+
+        res.cookie('accessToken', accessToken, {
+            httpOnly: environment === "development" ? false : true,
+            secure: environment === "development" ? false : true,
+            sameSite: environment === "development" ? 'Lax' : 'None',
+            maxAge: 60 * 60 * 1000
+        });
+
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: environment === "development" ? false : true,
+            secure: environment === "development" ? false : true,
+            sameSite: environment === "development" ? 'Lax' : 'None',
+            maxAge: 24 * 60 * 60 * 1000
+        });
+
+        res.status(201).json({ message: 'User created successfully', accessToken, refreshToken });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });
