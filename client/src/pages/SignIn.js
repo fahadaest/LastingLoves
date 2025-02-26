@@ -22,8 +22,7 @@ import api from '../api';
 import { useSelector } from 'react-redux';
 import { checkAuthStatus } from "../redux/slices/authSlice";
 import CustomAlert from '../components/Alert/Alert';
-// import { GoogleIcon, FacebookIcon } from './components/CustomIcons';
-// import { SitemarkIcon } from '../components/SignIn/CustomIcons';
+import { ReactComponent as GoogleIcon } from '../assets/google.svg';
 
 const Card = styled(MuiCard)(({ theme }) => ({
     display: 'flex',
@@ -272,7 +271,7 @@ export default function SignIn(props) {
                         variant="outlined"
                         onClick={() => alert('Sign in with Google')}
                         sx={{ color: "#32AA27", border: " 1px solid #32AA27" }}
-                    // startIcon={<GoogleIcon />}
+                        startIcon={<GoogleIcon width={24} height={24} />}
                     >
                         Sign in with Google
                     </Button>

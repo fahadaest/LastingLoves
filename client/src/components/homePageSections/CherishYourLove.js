@@ -45,7 +45,7 @@ function CherishYourLove() {
                             color: '#595959',
                         }}
                     >
-                        At ShowingILoveYou, we understand the importance of expressing love and creating lasting memories. Our platform allows you to craft personal video messages that can be customized with unique backgrounds and scheduled for future delivery. With our secure subscription-based or one-time fee service, you can ensure that your heartfelt messages reach your loved ones after you’re gone, offering them comfort and closure. Located in a world where love transcends time, we are dedicated to helping you connect with those who matter most.
+                        At LASTING LOVE, we understand the importance of expressing love and creating lasting memories. Our platform allows you to craft personal video messages that can be customized with unique backgrounds and scheduled for future delivery. With our secure subscription-based or one-time fee service, you can ensure that your heartfelt messages reach your loved ones after you’re gone, offering them comfort and closure. Located in a world where love transcends time, we are dedicated to helping you connect with those who matter most.
                     </Typography>
 
                     <Button

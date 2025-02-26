@@ -101,7 +101,7 @@ function Header() {
               textDecoration: 'none',
             }}
           >
-            SHOWINGILOVEYOU
+            LASTING LOVE
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -129,7 +129,7 @@ function Header() {
               backgroundColor: "white",
             }}
           >
-            SHOWINGILOVEYOU
+            LASTING LOVE
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end' }}>

@@ -23,11 +23,23 @@ app.use(cors({
 app.use('/api/auth', authRoutes);
 
 const __dirname = path.resolve();
-app.use(express.static(path.join(__dirname, 'client/build')));
 
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
-});
+
+if (process.env.ENVIRONMENT === 'production') {
+    app.use(express.static(path.join(__dirname, 'client/build')));
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+    });
+} else {
+    console.log('Running in development mode. Frontend is not served from the backend.');
+}
+
+
+// app.use(express.static(path.join(__dirname, 'client/build')));
+
+// app.get('*', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+// });
 
 
 mongoose.connect(process.env.MONGO_URI)

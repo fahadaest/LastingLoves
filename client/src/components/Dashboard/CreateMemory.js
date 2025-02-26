@@ -2,12 +2,13 @@ import React, { useState } from "react";
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
-import { InputAdornment, Button, LinearProgress, Typography, TextField, FormControlLabel, Checkbox, IconButton } from "@mui/material";
+import { InputAdornment, Button, LinearProgress, Typography, TextField, FormControlLabel, Checkbox, IconButton, Menu, MenuItem } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import AddIcon from '@mui/icons-material/Add';
 import Cookies from "js-cookie";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
+import CustomAlert from "../Alert/Alert";
 
 export default function CreateMemory() {
     const [button, setActiveButton] = React.useState("Video");
@@ -25,12 +26,73 @@ export default function CreateMemory() {
     const profileData = useSelector((state) => state.auth.user);
     const baseURL = process.env.REACT_APP_BASE_URL;
     const canCreateMemory = videoFile && title.trim() && description.trim() && Object.values(privacy).some(val => val);
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [isRecording, setIsRecording] = useState(false);
+    const [mediaRecorder, setMediaRecorder] = useState(null);
+    const [recordedChunks, setRecordedChunks] = useState([]);
+    const [message, setMessage] = useState('');
+    const [severity, setSeverity] = useState('');
+    const [duration, setDuration] = useState(null);
+    const [showAlert, setShowAlert] = useState(false);
+
+    const handleMenuOpen = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleRecordVideo = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: true,
+                audio: true,
+            });
+
+            const videoElement = document.getElementById("live-preview");
+            if (videoElement) {
+                videoElement.srcObject = stream;
+                videoElement.muted = true;
+                videoElement.playsInline = true;
+                await videoElement.play();
+            }
+
+            const recorder = new MediaRecorder(stream);
+            setMediaRecorder(recorder);
+
+            const chunks = [];
+            recorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    chunks.push(event.data);
+                }
+            };
+
+            recorder.onstop = () => {
+                const videoBlob = new Blob(chunks, { type: "video/mp4" });
+                const videoUrl = URL.createObjectURL(videoBlob);
+                setPreviewUrl(videoUrl);
+                setVideoFile(videoBlob);
+                stream.getTracks().forEach((track) => track.stop());
+            };
+
+            recorder.start();
+            setIsRecording(true);
+        } catch (err) {
+            console.error("Error accessing camera:", err);
+        }
+    };
+
+    const handleStopRecording = () => {
+        mediaRecorder?.stop();
+        setIsRecording(false);
+    };
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (file) {
-            setVideoFile(file); // Save the File object for API
-            setPreviewUrl(URL.createObjectURL(file)); // Create a preview URL
+            setVideoFile(file);
+            setPreviewUrl(URL.createObjectURL(file));
             simulateUpload(file);
         }
     };
@@ -56,7 +118,7 @@ export default function CreateMemory() {
     const handleAddEmail = () => {
         if (newEmail && !emails.includes(newEmail)) {
             setEmails([...emails, newEmail]);
-            setNewEmail(""); // Clear the input after adding
+            setNewEmail("");
         }
     };
 
@@ -67,6 +129,9 @@ export default function CreateMemory() {
     };
 
     const handleCreateMemory = async () => {
+        setMessage("Creating Memory!");
+        setSeverity("warning");
+        setShowAlert(true);
 
         const accessToken = document.cookie
             .split('; ')
@@ -95,19 +160,47 @@ export default function CreateMemory() {
                     withCredentials: true,
                 }
             );
-            const data = await response.json();
-            setVideoFile(data.secure_url);
-            setUploading(false);
+
+            if (response.status === 200) {
+                setTitle("");
+                setDescription("");
+                setPrivacy("");
+                setScheduleTime("");
+                setEmails([]);
+                setNewEmail("");
+                setVideoFile(null);
+                setPreviewUrl(null);
+                setProgress(0);
+                setIsRecording(false);
+                setMediaRecorder(null);
+                setRecordedChunks([]);
+                const fileInput = document.getElementById("video-upload");
+                if (fileInput) fileInput.value = "";
+                console.log("Memory created successfully!");
+                setMessage("Memory created successfully!");
+                setSeverity("success");
+                setShowAlert(true);
+            }
         } catch (error) {
             console.error("Upload error:", error);
+            setMessage("Unknown error, Please try again!");
+            setSeverity("error");
+            setShowAlert(true);
+        } finally {
             setUploading(false);
         }
     };
 
-
-
     return (
         <Box sx={{ width: '100%', display: "flex", alignItems: "center", justifyContent: "center", maxWidth: { sm: '100%', md: '1700px' } }}>
+            {showAlert && (
+                <CustomAlert
+                    message={message}
+                    severity={severity}
+                    duration={duration}
+                    setShowAlert={setShowAlert}
+                />
+            )}
             <Box
                 sx={{ display: "flex", gap: "20px", width: "100%", mt: "15px", borderRadius: "10px", padding: "20px", boxShadow: "0px 4px 10px rgba(50, 170, 39, 0.4), 0px -4px 10px rgba(50, 170, 39, 0.4), 4px 0px 10px rgba(50, 170, 39, 0.4), -4px 0px 10px rgba(50, 170, 39, 0.4)" }}
             >
@@ -161,7 +254,7 @@ export default function CreateMemory() {
                         sx={{ mb: 2, display: "flex", alignItems: "center", borderRadius: "10px", padding: "20px", maxWidth: "100%", margin: "0 auto", }}
                     >
                         <Box
-                            sx={{ width: "100%", padding: "50px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", borderRadius: "10px", border: "2px solid #d1d4e0" }}>
+                            sx={{ height: "auto", width: "100%", padding: "30px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", borderRadius: "10px", border: "2px solid #d1d4e0" }}>
                             <input
                                 accept="video/*"
                                 style={{ display: "none" }}
@@ -169,29 +262,120 @@ export default function CreateMemory() {
                                 type="file"
                                 onChange={handleFileChange}
                             />
-                            <label htmlFor="video-upload">
+
+                            <label>
                                 <Button
                                     variant="contained"
                                     component="span"
                                     startIcon={<CloudUploadIcon />}
+                                    onClick={handleMenuOpen}
                                     disabled={uploading}
                                 >
                                     Upload Video
                                 </Button>
+
+                                {isRecording && (
+                                    <Box sx={{ marginTop: "20px", display: "flex", justifyContent: "center", gap: "20px" }}>
+                                        <Typography variant="body1">Recording in progress...</Typography>
+                                        <Button
+                                            variant="contained"
+                                            color="error"
+                                            onClick={handleStopRecording}
+                                        >
+                                            Stop Recording
+                                        </Button>
+                                    </Box>
+                                )}
+
+                                {uploading && (
+                                    <>
+                                        <Typography variant="body1" sx={{ mt: 2 }}>
+                                            Uploading: {progress}%
+                                        </Typography>
+                                        <LinearProgress
+                                            variant="determinate"
+                                            value={progress}
+                                            sx={{ width: "100%", mt: 1 }}
+                                        />
+                                    </>
+                                )}
                             </label>
 
-                            {uploading && (
-                                <>
-                                    <Typography variant="body1" sx={{ mt: 2 }}>Uploading: {progress}%</Typography>
-                                    <LinearProgress variant="determinate" value={progress} sx={{ width: "100%", mt: 1 }} />
-                                </>
-                            )}
-                            {previewUrl && !uploading && (
-                                <video width="100%" controls style={{ marginTop: "20px", borderRadius: "10px" }}>
-                                    <source src={previewUrl} type="video/mp4" />
-                                    Your browser does not support the video tag.
-                                </video>
-                            )}
+                            <Menu
+                                anchorEl={anchorEl}
+                                open={Boolean(anchorEl)}
+                                onClose={handleMenuClose}
+                            >
+                                <MenuItem
+                                    onClick={() => {
+                                        handleMenuClose();
+                                        handleRecordVideo();
+                                    }}
+                                >
+                                    Record Video
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() => {
+                                        handleMenuClose();
+                                        document.getElementById("video-upload").click();
+                                    }}
+                                >
+                                    Select from Gallery
+                                </MenuItem>
+                            </Menu>
+
+                            <input
+                                accept="video/*"
+                                style={{ display: "none" }}
+                                id="video-upload"
+                                type="file"
+                                onChange={handleFileChange}
+                            />
+
+                            <Box
+                                sx={{
+                                    width: "90%",
+                                    maxWidth: "800px",
+                                    backgroundColor: "black",
+                                    borderRadius: "10px",
+                                    boxShadow: 24,
+                                    outline: "none",
+                                    position: "relative",
+                                    overflow: "hidden",
+                                    aspectRatio: "16/9",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    marginTop: "20px",
+                                }}
+                            >
+
+                                <video
+                                    id="live-preview"
+                                    style={{
+                                        maxWidth: "100%",
+                                        maxHeight: "100%",
+                                        display: isRecording ? "block" : "none",
+                                    }}
+                                    autoPlay
+                                    playsInline
+                                    muted
+                                />
+
+                                {previewUrl && !uploading && (
+                                    <video
+                                        controls
+                                        style={{
+                                            maxWidth: "100%",
+                                            maxHeight: "100%",
+                                        }}
+                                    >
+                                        <source src={previewUrl} type="video/mp4" />
+                                        Your browser does not support the video tag.
+                                    </video>
+                                )}
+                            </Box>
+
                         </Box>
                     </Grid>
 

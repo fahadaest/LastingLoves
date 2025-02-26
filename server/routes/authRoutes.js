@@ -6,6 +6,8 @@ import { uploadImage, uploadVideo } from '../config/cloudinary.js';
 import { cloudinary } from '../config/cloudinary.js';
 import Memory from '../models/memoryModel.js';
 import dotenv from 'dotenv';
+import passport from 'passport';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 
 const router = express.Router();
 router.use(cookieParser());
@@ -24,6 +26,37 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+passport.use(
+    new GoogleStrategy(
+        {
+            clientID: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            callbackURL: '/api/auth/google/callback',
+        },
+        async (accessToken, refreshToken, profile, done) => {
+            try {
+                let user = await User.findOne({ googleId: profile.id });
+
+                if (!user) {
+                    user = new User({
+                        googleId: profile.id,
+                        username: profile.displayName,
+                        email: profile.emails[0].value,
+                        avatar: profile.photos[0].value,
+                    });
+                    await user.save();
+                }
+
+                done(null, user);
+            } catch (error) {
+                done(error, null);
+            }
+        }
+    )
+);
+
+router.use(passport.initialize());
+
 const generateAccessToken = (user) => {
     return jwt.sign(
         { id: user._id, username: user.username },
@@ -39,6 +72,32 @@ const generateRefreshToken = (user) => {
         { expiresIn: '1d' } // TODO Refresh token expires in 1 minute
     );
 };
+
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+// Google OAuth Callback Route
+router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/login', successRedirect: "http://localhost:3000/dashboard", }), (req, res) => {
+    const user = req.user;
+
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
+
+    res.cookie('accessToken', accessToken, {
+        httpOnly: environment === "development" ? false : true,
+        secure: environment === "development" ? false : true,
+        sameSite: environment === "development" ? 'Lax' : 'None',
+        maxAge: 60 * 60 * 1000,
+    });
+
+    res.cookie('refreshToken', refreshToken, {
+        httpOnly: environment === "development" ? false : true,
+        secure: environment === "development" ? false : true,
+        sameSite: environment === "development" ? 'Lax' : 'None',
+        maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    res.redirect('http://localhost:3000/profile');
+});
 
 router.post('/register', async (req, res) => {
     const { username, email, password } = req.body;

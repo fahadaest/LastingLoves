@@ -18,6 +18,7 @@ import CustomAlert from '../components/Alert/Alert';
 import Cookies from 'js-cookie';
 import { useSelector, useDispatch } from 'react-redux';
 import { checkAuthStatus } from "../redux/slices/authSlice";
+import { ReactComponent as GoogleIcon } from '../assets/google.svg';
 
 const Card = styled(MuiCard)(({ theme }) => ({
     display: 'flex',
@@ -252,15 +253,16 @@ export default function SignUp(props) {
                     <Typography sx={{ color: 'text.secondary' }}>or</Typography>
                 </Divider>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    <Button
-                        fullWidth
-                        variant="outlined"
-                        onClick={() => alert('Sign up with Google')}
-                        sx={{ color: "#32AA27", border: " 1px solid #32AA27" }}
-                    // startIcon={<GoogleIcon />}
-                    >
-                        Sign up with Google
-                    </Button>
+                    <a href="http://localhost:5000/api/auth/google">
+                        <Button
+                            fullWidth
+                            variant="outlined"
+                            sx={{ color: "#32AA27", border: " 1px solid #32AA27" }}
+                            startIcon={<GoogleIcon width={24} height={24} />}
+                        >
+                            Sign up with Google
+                        </Button>
+                    </a>
                     <Typography sx={{ textAlign: 'center' }}>
                         Already have an account?{' '}
                         <Link

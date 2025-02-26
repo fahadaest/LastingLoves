@@ -101,7 +101,7 @@ function AffordableLove() {
                                         lineHeight: "25px"
                                     }}
                                 >
-                                    Create heartfelt personalized video messages for your loved ones with ShowingILoveYou. Choose unique backgrounds, add your personal touch, and express your emotions authentically. Whether it’s a birthday, anniversary, or just a simple ‘I love you’, your customized video message can be scheduled for future delivery. Imagine the joy and surprise on their faces when they receive a message created just for them. This is your chance to share your feelings in a memorable way, ensuring your love transcends time and space. Cherish your relationships and create lasting memories today!
+                                    Create heartfelt personalized video messages for your loved ones with LASTING LOVE. Choose unique backgrounds, add your personal touch, and express your emotions authentically. Whether it’s a birthday, anniversary, or just a simple ‘I love you’, your customized video message can be scheduled for future delivery. Imagine the joy and surprise on their faces when they receive a message created just for them. This is your chance to share your feelings in a memorable way, ensuring your love transcends time and space. Cherish your relationships and create lasting memories today!
                                 </Typography>
 
                                 <Typography
@@ -183,7 +183,7 @@ function AffordableLove() {
                                         lineHeight: "25px"
                                     }}
                                 >
-                                    With ShowingILoveYou, your love can reach your dear ones even when you're not there. Our scheduled video delivery feature allows you to lock in messages that will be sent on specific dates in the future. Whether it's for a special occasion or an unexpected surprise, you can ensure your voice is heard and your love is felt. Customize each message with unique backgrounds and heartfelt content. This service provides peace of mind, knowing that your sentiments will be delivered at the perfect moment, offering comfort and connection to those you cherish.
+                                    With LASTING LOVE, your love can reach your dear ones even when you're not there. Our scheduled video delivery feature allows you to lock in messages that will be sent on specific dates in the future. Whether it's for a special occasion or an unexpected surprise, you can ensure your voice is heard and your love is felt. Customize each message with unique backgrounds and heartfelt content. This service provides peace of mind, knowing that your sentiments will be delivered at the perfect moment, offering comfort and connection to those you cherish.
                                 </Typography>
 
                                 <Typography
@@ -265,7 +265,7 @@ function AffordableLove() {
                                         lineHeight: "25px"
                                     }}
                                 >
-                                    At ShowingILoveYou, security and privacy are our top priorities. Our secure message locking feature allows users to create and store personal video messages safely. You can set up your messages to be sent only after verification, ensuring that your heartfelt words reach your loved ones when they need them most. This thoughtful approach offers closure and a sense of comfort in difficult times. With an array of customizable options and the assurance of secure delivery, you can express your love and leave a lasting legacy that transcends time.
+                                    At LASTING LOVE, security and privacy are our top priorities. Our secure message locking feature allows users to create and store personal video messages safely. You can set up your messages to be sent only after verification, ensuring that your heartfelt words reach your loved ones when they need them most. This thoughtful approach offers closure and a sense of comfort in difficult times. With an array of customizable options and the assurance of secure delivery, you can express your love and leave a lasting legacy that transcends time.
                                 </Typography>
 
                                 <Typography
