@@ -7,6 +7,8 @@ export const checkAuthStatus = createAsyncThunk("auth/checkAuthStatus", async (_
     try {
         const accessToken = Cookies.get("accessToken");
 
+        console.log(accessToken)
+
         if (!accessToken) {
             return rejectWithValue("No token found");
         }

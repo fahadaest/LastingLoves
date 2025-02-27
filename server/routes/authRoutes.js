@@ -26,12 +26,13 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+
 passport.use(
     new GoogleStrategy(
         {
             clientID: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            callbackURL: '/api/auth/google/callback',
+            callbackURL: `${process.env.BACKEND_URL}/api/auth/google/callback`,
         },
         async (accessToken, refreshToken, profile, done) => {
             try {
@@ -55,13 +56,27 @@ passport.use(
     )
 );
 
+passport.serializeUser((user, done) => {
+    done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+    try {
+        const user = await User.findById(id);
+        done(null, user);
+    } catch (error) {
+        done(error, null);
+    }
+});
+
+
 router.use(passport.initialize());
 
 const generateAccessToken = (user) => {
     return jwt.sign(
         { id: user._id, username: user.username },
         ACCESS_TOKEN_SECRET,
-        { expiresIn: '1h' } // TODO Access token expires in 1 hour
+        { expiresIn: '1h' }
     );
 };
 
@@ -69,35 +84,46 @@ const generateRefreshToken = (user) => {
     return jwt.sign(
         { id: user._id },
         REFRESH_TOKEN_SECRET,
-        { expiresIn: '1d' } // TODO Refresh token expires in 1 minute
+        { expiresIn: '1d' }
     );
 };
 
-router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+router.get('/google', passport.authenticate('google', {
+    scope: ['profile', 'email'],
+    prompt: 'select_account'
+}));
 
-// Google OAuth Callback Route
-router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/login', successRedirect: "http://localhost:3000/dashboard", }), (req, res) => {
-    const user = req.user;
+router.get(
+    '/google/callback',
+    passport.authenticate('google', { failureRedirect: '/login' }),
+    (req, res) => {
+        if (!req.user) {
+            return res.redirect('/login');
+        }
 
-    const accessToken = generateAccessToken(user);
-    const refreshToken = generateRefreshToken(user);
+        const accessToken = generateAccessToken(req.user);
+        const refreshToken = generateRefreshToken(req.user);
 
-    res.cookie('accessToken', accessToken, {
-        httpOnly: environment === "development" ? false : true,
-        secure: environment === "development" ? false : true,
-        sameSite: environment === "development" ? 'Lax' : 'None',
-        maxAge: 60 * 60 * 1000,
-    });
+        res.cookie('accessToken', accessToken, {
+            httpOnly: environment === "development" ? false : true,
+            secure: environment === "development" ? false : true,
+            sameSite: environment === "development" ? 'Lax' : 'None',
+            maxAge: 60 * 60 * 1000
+        });
 
-    res.cookie('refreshToken', refreshToken, {
-        httpOnly: environment === "development" ? false : true,
-        secure: environment === "development" ? false : true,
-        sameSite: environment === "development" ? 'Lax' : 'None',
-        maxAge: 24 * 60 * 60 * 1000,
-    });
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: environment === "development" ? false : true,
+            secure: environment === "development" ? false : true,
+            sameSite: environment === "development" ? 'Lax' : 'None',
+            maxAge: 24 * 60 * 60 * 1000
+        });
 
-    res.redirect('http://localhost:3000/profile');
-});
+        // ✅ Redirect to frontend dashboard **after** setting cookies
+        res.redirect(`${process.env.FRONTEND_URL}/profile`);
+    }
+);
+
+
 
 router.post('/register', async (req, res) => {
     const { username, email, password } = req.body;
@@ -106,6 +132,9 @@ router.post('/register', async (req, res) => {
         const userExists = await User.findOne({ email });
         if (userExists) {
             return res.status(400).json({ message: 'User already exists' });
+        }
+        if (!password) {
+            return res.status(400).json({ message: "Password is required" });
         }
 
         const user = new User({ username, email, password });

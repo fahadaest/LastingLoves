@@ -173,6 +173,19 @@ export default function SignIn(props) {
         return isValid;
     };
 
+    const handleGoogleAuth = async () => {
+        try {
+            window.open(`${process.env.REACT_APP_BASE_URL}/api/auth/google`, "_self");
+
+            setTimeout(async () => {
+                dispatch(checkAuthStatus());
+                navigate("/profile");
+            }, 2000);
+        } catch (error) {
+            console.error("Google Auth Error:", error);
+        }
+    };
+
     return (
         <SignInContainer direction="column" justifyContent="space-between">
             {showAlert && (
@@ -272,6 +285,7 @@ export default function SignIn(props) {
                         onClick={() => alert('Sign in with Google')}
                         sx={{ color: "#32AA27", border: " 1px solid #32AA27" }}
                         startIcon={<GoogleIcon width={24} height={24} />}
+                        onClick={handleGoogleAuth}
                     >
                         Sign in with Google
                     </Button>

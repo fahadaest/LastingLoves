@@ -4,6 +4,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import authRoutes from './routes/authRoutes.js';
+import passport from 'passport';
+import session from 'express-session';
 
 dotenv.config();
 const app = express();
@@ -19,6 +21,19 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'your_secret_key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: process.env.ENVIRONMENT === 'production',
+        httpOnly: true,
+        sameSite: 'Lax',
+    }
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/api/auth', authRoutes);
 

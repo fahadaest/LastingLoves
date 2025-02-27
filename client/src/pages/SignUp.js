@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
@@ -76,6 +77,7 @@ export default function SignUp(props) {
     const [duration, setDuration] = useState(null);
     const [showAlert, setShowAlert] = useState(false);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const validateInputs = () => {
         const email = document.getElementById('email');
@@ -163,6 +165,18 @@ export default function SignUp(props) {
         }
     };
 
+    const handleGoogleAuth = async () => {
+        try {
+            window.open(`${process.env.REACT_APP_BASE_URL}/api/auth/google`, "_self");
+
+            setTimeout(async () => {
+                dispatch(checkAuthStatus());
+                navigate("/profile");
+            }, 2000);
+        } catch (error) {
+            console.error("Google Auth Error:", error);
+        }
+    };
 
     return (
         <SignUpContainer direction="column" justifyContent="space-between">
@@ -253,16 +267,15 @@ export default function SignUp(props) {
                     <Typography sx={{ color: 'text.secondary' }}>or</Typography>
                 </Divider>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    <a href="http://localhost:5000/api/auth/google">
-                        <Button
-                            fullWidth
-                            variant="outlined"
-                            sx={{ color: "#32AA27", border: " 1px solid #32AA27" }}
-                            startIcon={<GoogleIcon width={24} height={24} />}
-                        >
-                            Sign up with Google
-                        </Button>
-                    </a>
+                    <Button
+                        fullWidth
+                        variant="outlined"
+                        sx={{ color: "#32AA27", border: "1px solid #32AA27" }}
+                        startIcon={<GoogleIcon width={24} height={24} />}
+                        onClick={handleGoogleAuth}
+                    >
+                        Sign up with Google
+                    </Button>
                     <Typography sx={{ textAlign: 'center' }}>
                         Already have an account?{' '}
                         <Link
@@ -275,6 +288,6 @@ export default function SignUp(props) {
                     </Typography>
                 </Box>
             </Card>
-        </SignUpContainer>
+        </SignUpContainer >
     );
 }
