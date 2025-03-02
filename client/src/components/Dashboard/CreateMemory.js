@@ -16,6 +16,7 @@ export default function CreateMemory() {
     const [progress, setProgress] = useState(0);
     const [videoFile, setVideoFile] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
+    const [thumbnailUrl, setThumbnailUrl] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [privacy, setPrivacy] = useState("");
     const [emails, setEmails] = useState([]);
@@ -34,8 +35,6 @@ export default function CreateMemory() {
     const [severity, setSeverity] = useState('');
     const [duration, setDuration] = useState(null);
     const [showAlert, setShowAlert] = useState(false);
-
-    console.log(privacy)
 
     const handleMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
@@ -70,11 +69,45 @@ export default function CreateMemory() {
                 }
             };
 
-            recorder.onstop = () => {
+            recorder.onstop = async () => {
                 const videoBlob = new Blob(chunks, { type: "video/mp4" });
                 const videoUrl = URL.createObjectURL(videoBlob);
                 setPreviewUrl(videoUrl);
-                setVideoFile(videoBlob);
+                const formData = new FormData();
+                formData.append("file", videoBlob);
+                formData.append("upload_preset", process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET);
+
+                try {
+                    setUploading(true);
+                    setProgress(0);
+
+                    const response = await axios.post(
+                        `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/video/upload`,
+                        formData,
+                        {
+                            onUploadProgress: (progressEvent) => {
+                                const percentCompleted = Math.round(
+                                    (progressEvent.loaded * 100) / progressEvent.total
+                                );
+                                setProgress(percentCompleted);
+                            },
+                        }
+                    );
+
+                    if (response.data.secure_url) {
+                        const uploadedVideoUrl = response.data.secure_url;
+                        const publicId = response.data.public_id;
+                        const cloudName = process.env.REACT_APP_CLOUDINARY_CLOUD_NAME;
+                        const thumbnailUrl = `https://res.cloudinary.com/${cloudName}/video/upload/so_1/${publicId}.jpg`;
+
+                        setVideoFile(uploadedVideoUrl);
+                        setThumbnailUrl(thumbnailUrl);
+                    }
+                } catch (error) {
+                    console.error("Cloudinary upload failed:", error);
+                } finally {
+                    setUploading(false);
+                }
                 stream.getTracks().forEach((track) => track.stop());
             };
 
@@ -88,15 +121,6 @@ export default function CreateMemory() {
     const handleStopRecording = () => {
         mediaRecorder?.stop();
         setIsRecording(false);
-    };
-
-    const handleFileChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            setVideoFile(file);
-            setPreviewUrl(URL.createObjectURL(file));
-            simulateUpload(file);
-        }
     };
 
     const simulateUpload = (file) => {
@@ -130,7 +154,58 @@ export default function CreateMemory() {
         }
     };
 
+    const handleFileChange = async (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            setUploading(true);
+            setProgress(0);
+            setPreviewUrl(URL.createObjectURL(file));
+
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("upload_preset", process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET);
+
+            try {
+                const response = await axios.post(
+                    `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/video/upload`,
+                    formData,
+                    {
+                        onUploadProgress: (progressEvent) => {
+                            const percentCompleted = Math.round(
+                                (progressEvent.loaded * 100) / progressEvent.total
+                            );
+                            setProgress(percentCompleted);
+                        },
+                    }
+                );
+
+                if (response.data.secure_url) {
+                    const videoUrl = response.data.secure_url;
+                    const publicId = response.data.public_id;
+
+                    const cloudName = process.env.REACT_APP_CLOUDINARY_CLOUD_NAME;
+                    const thumbnailUrl = `https://res.cloudinary.com/${cloudName}/video/upload/so_1/` + publicId + ".jpg";
+
+                    setVideoFile(videoUrl);
+                    setThumbnailUrl(thumbnailUrl);
+                }
+            } catch (error) {
+                console.error("Cloudinary upload failed:", error);
+            } finally {
+                setUploading(false);
+            }
+        }
+    };
+
+
     const handleCreateMemory = async () => {
+        if (!videoFile) {
+            setMessage("Please upload a video before creating memory.");
+            setSeverity("error");
+            setShowAlert(true);
+            return;
+        }
+
         setMessage("Creating Memory!");
         setSeverity("warning");
         setShowAlert(true);
@@ -140,25 +215,22 @@ export default function CreateMemory() {
             .find(row => row.startsWith('accessToken='))
             ?.split('=')[1];
 
-        const formData = new FormData();
-        formData.append("userId", profileData?.userId);
-        formData.append("title", title);
-        formData.append("description", description);
-        formData.append("privacy", privacy);
-        formData.append("scheduledTime", scheduleTime);
-        formData.append("allowedEmails", emails);
-        formData.append("file", videoFile);
-        setUploading(true);
-
         try {
             const response = await axios.post(
                 `${baseURL}/api/auth/createMemory`,
-                formData,
                 {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                        "Content-Type": "multipart/form-data",
-                    },
+                    userId: profileData?.userId,
+                    title,
+                    description,
+                    privacy,
+                    scheduledTime: scheduleTime,
+                    allowedEmails: emails,
+                    videoUrl: videoFile,
+                    thumbnailUrl: thumbnailUrl,
+                    username: profileData?.username,
+                },
+                {
+                    headers: { Authorization: `Bearer ${accessToken}` },
                     withCredentials: true,
                 }
             );
@@ -176,21 +248,19 @@ export default function CreateMemory() {
                 setVideoFile(null);
                 setPreviewUrl(null);
                 setProgress(0);
-                setIsRecording(false);
-                setMediaRecorder(null);
-                setRecordedChunks([]);
-                const fileInput = document.getElementById("video-upload");
-                if (fileInput) fileInput.value = "";
-                console.log("Memory created successfully!");
             }
         } catch (error) {
             console.error("Upload error:", error);
             setMessage("Unknown error, Please try again!");
             setSeverity("error");
             setShowAlert(true);
-        } finally {
-            setUploading(false);
         }
+    };
+
+    const handleCancel = () => {
+        setVideoFile(null);
+        setPreviewUrl(null);
+        setProgress(0);
     };
 
     return (

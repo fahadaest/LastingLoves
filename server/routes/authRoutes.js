@@ -8,6 +8,7 @@ import Memory from '../models/memoryModel.js';
 import dotenv from 'dotenv';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import nodemailer from 'nodemailer';
 
 const router = express.Router();
 router.use(cookieParser());
@@ -17,8 +18,6 @@ const ACCESS_TOKEN_SECRET = 'your_access_token_secret';
 const REFRESH_TOKEN_SECRET = 'your_refresh_token_secret';
 const environment = process.env.ENVIRONMENT;
 
-console.log(environment)
-
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -26,6 +25,14 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+    }
+});
 
 passport.use(
     new GoogleStrategy(
@@ -118,7 +125,6 @@ router.get(
             maxAge: 24 * 60 * 60 * 1000
         });
 
-        // ✅ Redirect to frontend dashboard **after** setting cookies
         res.redirect(`${process.env.FRONTEND_URL}/profile`);
     }
 );
@@ -342,17 +348,22 @@ router.post('/createMemory', uploadVideo.single('file'), async (req, res) => {
         return res.status(401).json({ message: "Unauthorized" });
     }
     try {
-        if (!req.file) {
-            return res.status(400).json({ message: "No video file uploaded" });
-        }
 
-        const result = await cloudinary.uploader.upload(req.file.path, {
-            resource_type: 'video',
-            folder: 'memories',
-            eager: [
-                { format: 'jpg', resource_type: 'video', transformation: { start_offset: '0' } }
-            ]
-        });
+        let videoUrl = "";
+        let thumbnailUrl = "";
+
+        if (req.file) {
+            const result = await cloudinary.uploader.upload(req.file.path, {
+                resource_type: 'video',
+                folder: 'memories',
+                eager: [
+                    { format: 'jpg', resource_type: 'video', transformation: { start_offset: '0' } }
+                ]
+            });
+
+            videoUrl = result?.secure_url;
+            thumbnailUrl = result?.eager[0].secure_url;
+        }
 
         const newMemory = new Memory({
             userId: req.body.userId,
@@ -361,11 +372,55 @@ router.post('/createMemory', uploadVideo.single('file'), async (req, res) => {
             privacy: req.body.privacy,
             scheduledTime: req.body.scheduledTime,
             allowedEmails: req.body.allowedEmails,
-            videoUrl: result?.secure_url,
-            thumbnailUrl: result?.eager[0].secure_url,
+            videoUrl: req.body.videoUrl,
+            thumbnailUrl: req.body.thumbnailUrl,
         });
-
         await newMemory.save();
+
+        if (req.body.allowedEmails && req.body.allowedEmails.length > 0) {
+            const mailOptions = {
+                from: 'Lasting Love',
+                to: req.body.allowedEmails.join(','),
+                subject: `${req.body.username} shared a memory with you!`,
+                html: `
+                    <h2>A Special Memory from ${req.body.username}</h2>
+                    <p>Hi there,</p>
+            
+                    <p>We hope this email finds you well.</p>
+            
+                    <p>${req.body.username} has left behind a special message for you—one filled with love, memories, and their thoughts just for you. 
+                    They wanted to make sure you received this when the time was right.</p>
+            
+                    <p>💌 <strong>To view their message and access the video, please follow this link:</strong></p>
+                    <p>👉 <a href="${process.env.FRONTEND_URL}/public-profile/${req.body.userId}" target="_blank">${process.env.FRONTEND_URL}/public-profile/${req.body.userId}</a></p>
+            
+                    <hr>
+            
+                    <h3>Confirming Their Passing</h3>
+                    <p>If you have received this email under unfortunate circumstances, you may confirm ${req.body.username}’s passing by uploading an official death certificate. 
+                    Once verified, their message will be unlocked for you.</p>
+            
+                    <p>🔗 <strong>Confirm & Access the Memory:</strong> <a href="[Insert Verification Link]" target="_blank">[Insert Verification Link]</a></p>
+            
+                    <hr>
+            
+                    <p>This is a deeply personal and meaningful message, and we are honored to help deliver it to you. 
+                    If you need any support or have any questions, please reach out.</p>
+            
+                    <p>With care,</p>
+                    <p><strong>Lasting Love</strong></p>
+                    <p>Visit Our Website: <a href="${process.env.FRONTEND_URL}" target="_blank">${process.env.FRONTEND_URL}</a></p>
+                `
+            };
+
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    console.error("Email error:", error);
+                } else {
+                    console.log("Emails sent:", info.response);
+                }
+            });
+        }
 
         res.status(201).json({ message: "Memory created successfully", memory: newMemory });
     } catch (error) {
