@@ -280,6 +280,30 @@ router.get('/profile', async (req, res) => {
     }
 });
 
+router.get('/publicProfile/:userId', async (req, res) => {
+    const { userId } = req.params;
+
+    try {
+        const user = await User.findById(userId).select('-password');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.json({
+            userId: user._id,
+            username: user.username,
+            email: user.email,
+            bio: user.bio,
+            avatar: user.avatar,
+            paymentPlan: user.paymentPlan,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+
 
 router.put('/profile/update', uploadImage.single('profilePic'), async (req, res) => {
     const accessToken = req.cookies.accessToken;
@@ -367,6 +391,25 @@ router.get('/myMemories', async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 });
+
+router.get('/memories/:userId', async (req, res) => {
+    const { userId } = req.params;
+
+    try {
+        const userExists = await User.findById(userId);
+        if (!userExists) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const memories = await Memory.find({ userId });
+
+        res.status(200).json({ memories });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 
 
 

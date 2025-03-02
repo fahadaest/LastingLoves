@@ -13,6 +13,7 @@ import SignUp from './pages/SignUp';
 import Dashboard from './pages/Dashboard';
 import { useDispatch } from "react-redux";
 import { checkAuthStatus } from "./redux/slices/authSlice";
+import PublicProfile from './pages/PublicProfile';
 
 function App() {
   const dispatch = useDispatch();
@@ -49,6 +50,12 @@ function App() {
           <Route path="/create-memory" element={
             <ProtectedRoute>
               <MainLayout><Dashboard path={"create-memory"} /></MainLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path="/public-profile/:userId/:videoId?" element={
+            <ProtectedRoute>
+              <MainLayout><PublicProfile /></MainLayout>
             </ProtectedRoute>
           } />
 
