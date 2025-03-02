@@ -6,6 +6,10 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
 function AffordableLove() {
     const navigate = useNavigate();
+    const monthlyPlan = 25.00;
+    const annualPlan = 240.00;
+    const lifetimePlan = 499.00;
+
     return (
         <section className="flex justify-center items-center pt-12 pb-12 min-h-[80vh] bg-header-white">
             <div className=" w-[80%] bp900:w-[75%] h-[80%] flex items-center justify-between flex-col bp900:flex-row">
@@ -61,7 +65,7 @@ function AffordableLove() {
                                         color: '#020402',
                                     }}
                                 >
-                                    Personalized video messages
+                                    Monthly Plan
                                 </Typography>
 
                                 <Typography
@@ -74,7 +78,7 @@ function AffordableLove() {
                                         color: '#595959',
                                     }}
                                 >
-                                    Craft unique video messages for your loved ones.
+                                    Memories stay uploaded for 2 years
                                 </Typography>
 
                                 <Typography
@@ -87,7 +91,7 @@ function AffordableLove() {
                                         color: '#595959',
                                     }}
                                 >
-                                    Free
+                                    ${monthlyPlan}
                                 </Typography>
 
                                 <Typography
@@ -143,7 +147,7 @@ function AffordableLove() {
                                         color: '#020402',
                                     }}
                                 >
-                                    Scheduled video delivery
+                                    Annual Plan
                                 </Typography>
 
                                 <Typography
@@ -156,7 +160,7 @@ function AffordableLove() {
                                         color: '#595959',
                                     }}
                                 >
-                                    Send future messages to loved ones on special dates.
+                                    Pay once, save more, Memories stay uploaded for 2 years
                                 </Typography>
 
                                 <Typography
@@ -169,7 +173,7 @@ function AffordableLove() {
                                         color: '#595959',
                                     }}
                                 >
-                                    $25/month
+                                    ${annualPlan}
                                 </Typography>
 
                                 <Typography
@@ -225,7 +229,7 @@ function AffordableLove() {
                                         color: '#020402',
                                     }}
                                 >
-                                    Secure message locking
+                                    Lifetime Plan
                                 </Typography>
 
                                 <Typography
@@ -238,7 +242,7 @@ function AffordableLove() {
                                         color: '#595959',
                                     }}
                                 >
-                                    Protect and lock your messages for secure delivery.
+                                    Memories stays forever uploaded
                                 </Typography>
 
                                 <Typography
@@ -251,7 +255,7 @@ function AffordableLove() {
                                         color: '#595959',
                                     }}
                                 >
-                                    $50/month
+                                    ${lifetimePlan}
                                 </Typography>
 
                                 <Typography

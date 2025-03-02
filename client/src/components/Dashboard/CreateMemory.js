@@ -35,6 +35,8 @@ export default function CreateMemory() {
     const [duration, setDuration] = useState(null);
     const [showAlert, setShowAlert] = useState(false);
 
+    console.log(privacy)
+
     const handleMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -161,7 +163,10 @@ export default function CreateMemory() {
                 }
             );
 
-            if (response.status === 200) {
+            if (response.status === 201) {
+                setMessage("Memory created successfully!");
+                setSeverity("success");
+                setShowAlert(true);
                 setTitle("");
                 setDescription("");
                 setPrivacy("");
@@ -177,9 +182,6 @@ export default function CreateMemory() {
                 const fileInput = document.getElementById("video-upload");
                 if (fileInput) fileInput.value = "";
                 console.log("Memory created successfully!");
-                setMessage("Memory created successfully!");
-                setSeverity("success");
-                setShowAlert(true);
             }
         } catch (error) {
             console.error("Upload error:", error);
@@ -193,6 +195,7 @@ export default function CreateMemory() {
 
     return (
         <Box sx={{ width: '100%', display: "flex", alignItems: "center", justifyContent: "center", maxWidth: { sm: '100%', md: '1700px' } }}>
+
             {showAlert && (
                 <CustomAlert
                     message={message}
@@ -201,60 +204,29 @@ export default function CreateMemory() {
                     setShowAlert={setShowAlert}
                 />
             )}
-            <Box
-                sx={{ display: "flex", gap: "20px", width: "100%", mt: "15px", borderRadius: "10px", padding: "20px", boxShadow: "0px 4px 10px rgba(50, 170, 39, 0.4), 0px -4px 10px rgba(50, 170, 39, 0.4), 4px 0px 10px rgba(50, 170, 39, 0.4), -4px 0px 10px rgba(50, 170, 39, 0.4)" }}
-            >
-                <Grid
-                    container
-                    justifyContent="center"
-                    sx={{ mb: 2, backgroundColor: "#fff", display: "flex", alignItems: "center", borderRadius: "10px", padding: "20px", maxWidth: "100%", }}
-                >
-                    <Box
-                        onClick={handleCreateMemory}
-                        sx={{ color: '#595959', fontFamily: 'poppins', fontWeight: '600', fontSize: "30px", width: "97%", display: "flex", alignItems: "center", justifyContent: "space-between" }}
-                    >
-                        <Typography
-                            sx={{ color: '#595959', fontFamily: 'poppins', fontWeight: '600', fontSize: "30px", }}
-                        >
+
+            <Box sx={{ display: "flex", gap: "20px", width: "100%", mt: "15px", borderRadius: "10px", padding: "20px", boxShadow: "0px 4px 10px rgba(50, 170, 39, 0.4), 0px -4px 10px rgba(50, 170, 39, 0.4), 4px 0px 10px rgba(50, 170, 39, 0.4), -4px 0px 10px rgba(50, 170, 39, 0.4)" }} >
+
+                <Grid container justifyContent="center" sx={{ mb: 2, backgroundColor: "#fff", display: "flex", alignItems: "center", borderRadius: "10px", padding: "20px", maxWidth: "100%", }} >
+
+                    <Box onClick={handleCreateMemory} sx={{ color: '#595959', fontFamily: 'poppins', fontWeight: '600', fontSize: "30px", width: "97%", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                        <Typography sx={{ color: '#595959', fontFamily: 'poppins', fontWeight: '600', fontSize: "30px", }}>
                             Create Memory
                         </Typography>
                     </Box>
 
                     <Divider sx={{ width: '97%', my: 2, border: "1px solid #d1d4e0" }} />
 
-                    <Box
-                        sx={{ fontFamily: 'poppins', fontWeight: '600', fontSize: "20px", textAlign: "center", width: "100%", marginBottom: "20px", display: "flex", justifyContent: "center", gap: "10px", }}
-                    >
+                    <Box sx={{ fontFamily: 'poppins', fontWeight: '600', fontSize: "20px", textAlign: "center", width: "100%", marginBottom: "20px", display: "flex", justifyContent: "center", gap: "10px", }}>
                         {buttons.map((key) => (
-                            <Button
-                                key={key}
-                                onClick={() => setActiveButton(key)}
-                                sx={{
-                                    color: key === button ? "#32AA27" : '#595959', fontFamily: 'poppins', fontWeight: '600', fontSize: "20px", position: "relative",
-                                    "&::after": {
-                                        content: '""',
-                                        display: "block",
-                                        width: "100%",
-                                        height: "3px",
-                                        backgroundColor: key === button ? "#32AA27" : "transparent",
-                                        position: "absolute",
-                                        bottom: 0,
-                                        left: 0,
-                                    },
-                                }}
-                            >
+                            <Button key={key} onClick={() => setActiveButton(key)} sx={{ color: key === button ? "#32AA27" : '#595959', fontFamily: 'poppins', fontWeight: '600', fontSize: "20px", position: "relative", "&::after": { content: '""', display: "block", width: "100%", height: "3px", backgroundColor: key === button ? "#32AA27" : "transparent", position: "absolute", bottom: 0, left: 0, }, }}>
                                 {key}
                             </Button>
                         ))}
                     </Box>
 
-                    <Grid
-                        container
-                        justifyContent="center"
-                        sx={{ mb: 2, display: "flex", alignItems: "center", borderRadius: "10px", padding: "20px", maxWidth: "100%", margin: "0 auto", }}
-                    >
-                        <Box
-                            sx={{ height: "auto", width: "100%", padding: "30px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", borderRadius: "10px", border: "2px solid #d1d4e0" }}>
+                    <Grid container justifyContent="center" sx={{ mb: 2, display: "flex", alignItems: "center", borderRadius: "10px", padding: "20px", maxWidth: "100%", margin: "0 auto", }}>
+                        <Box sx={{ height: "auto", width: "100%", padding: "30px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", borderRadius: "10px", border: "2px solid #d1d4e0" }}>
                             <input
                                 accept="video/*"
                                 style={{ display: "none" }}
@@ -264,24 +236,14 @@ export default function CreateMemory() {
                             />
 
                             <label>
-                                <Button
-                                    variant="contained"
-                                    component="span"
-                                    startIcon={<CloudUploadIcon />}
-                                    onClick={handleMenuOpen}
-                                    disabled={uploading}
-                                >
+                                <Button variant="contained" component="span" startIcon={<CloudUploadIcon />} onClick={handleMenuOpen} disabled={uploading}>
                                     Upload Video
                                 </Button>
 
                                 {isRecording && (
                                     <Box sx={{ marginTop: "20px", display: "flex", justifyContent: "center", gap: "20px" }}>
                                         <Typography variant="body1">Recording in progress...</Typography>
-                                        <Button
-                                            variant="contained"
-                                            color="error"
-                                            onClick={handleStopRecording}
-                                        >
+                                        <Button variant="contained" color="error" onClick={handleStopRecording}>
                                             Stop Recording
                                         </Button>
                                     </Box>
@@ -292,84 +254,27 @@ export default function CreateMemory() {
                                         <Typography variant="body1" sx={{ mt: 2 }}>
                                             Uploading: {progress}%
                                         </Typography>
-                                        <LinearProgress
-                                            variant="determinate"
-                                            value={progress}
-                                            sx={{ width: "100%", mt: 1 }}
+                                        <LinearProgress variant="determinate" value={progress} sx={{ width: "100%", mt: 1 }}
                                         />
                                     </>
                                 )}
                             </label>
 
-                            <Menu
-                                anchorEl={anchorEl}
-                                open={Boolean(anchorEl)}
-                                onClose={handleMenuClose}
-                            >
-                                <MenuItem
-                                    onClick={() => {
-                                        handleMenuClose();
-                                        handleRecordVideo();
-                                    }}
-                                >
+                            <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+                                <MenuItem onClick={() => { handleMenuClose(); handleRecordVideo(); }}>
                                     Record Video
                                 </MenuItem>
-                                <MenuItem
-                                    onClick={() => {
-                                        handleMenuClose();
-                                        document.getElementById("video-upload").click();
-                                    }}
-                                >
+                                <MenuItem onClick={() => { handleMenuClose(); document.getElementById("video-upload").click(); }}>
                                     Select from Gallery
                                 </MenuItem>
                             </Menu>
 
-                            <input
-                                accept="video/*"
-                                style={{ display: "none" }}
-                                id="video-upload"
-                                type="file"
-                                onChange={handleFileChange}
-                            />
+                            <input accept="video/*" style={{ display: "none" }} id="video-upload" type="file" onChange={handleFileChange} />
 
-                            <Box
-                                sx={{
-                                    width: "90%",
-                                    maxWidth: "800px",
-                                    backgroundColor: "black",
-                                    borderRadius: "10px",
-                                    boxShadow: 24,
-                                    outline: "none",
-                                    position: "relative",
-                                    overflow: "hidden",
-                                    aspectRatio: "16/9",
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    marginTop: "20px",
-                                }}
-                            >
-
-                                <video
-                                    id="live-preview"
-                                    style={{
-                                        maxWidth: "100%",
-                                        maxHeight: "100%",
-                                        display: isRecording ? "block" : "none",
-                                    }}
-                                    autoPlay
-                                    playsInline
-                                    muted
-                                />
-
+                            <Box sx={{ width: "90%", maxWidth: "800px", backgroundColor: "black", borderRadius: "10px", boxShadow: 24, outline: "none", position: "relative", overflow: "hidden", aspectRatio: "16/9", display: "flex", justifyContent: "center", alignItems: "center", marginTop: "20px", }}>
+                                <video id="live-preview" style={{ maxWidth: "100%", maxHeight: "100%", display: isRecording ? "block" : "none", }} autoPlay playsInline muted />
                                 {previewUrl && !uploading && (
-                                    <video
-                                        controls
-                                        style={{
-                                            maxWidth: "100%",
-                                            maxHeight: "100%",
-                                        }}
-                                    >
+                                    <video controls style={{ maxWidth: "100%", maxHeight: "100%", }}>
                                         <source src={previewUrl} type="video/mp4" />
                                         Your browser does not support the video tag.
                                     </video>
@@ -379,192 +284,74 @@ export default function CreateMemory() {
                         </Box>
                     </Grid>
 
-                    <Grid
-                        container
-                        justifyContent="center"
-                        sx={{ mb: 2, display: "flex", alignItems: "center", borderRadius: "10px", padding: "20px", maxWidth: "100%", margin: "0 auto", }}
-                    >
-                        <Box
-                            sx={{ width: "100%", padding: "50px", display: "flex", flexDirection: "row", justifyContent: "center", borderRadius: "10px", border: "2px solid #d1d4e0", gap: "30px" }}>
+                    <Grid container justifyContent="center" sx={{ mb: 2, display: "flex", alignItems: "center", borderRadius: "10px", padding: "20px", maxWidth: "100%", margin: "0 auto", }} >
+                        <Box sx={{ width: "100%", padding: "50px", display: "flex", flexDirection: "row", justifyContent: "center", borderRadius: "10px", border: "2px solid #d1d4e0", gap: "30px" }}>
 
-                            <Box sx={{
-                                width: "50%",
-                            }}>
-                                <TextField
-                                    label="Title"
-                                    variant="outlined"
-                                    fullWidth
-                                    value={title}
-                                    onChange={(e) => setTitle(e.target.value)}
-                                    sx={{ marginBottom: "20px" }}
-                                />
-
-                                <TextField
-                                    label="Description"
-                                    variant="outlined"
-                                    fullWidth
-                                    value={description}
-                                    onChange={(e) => setDescription(e.target.value)}
-                                    sx={{ marginBottom: "20px" }}
-                                    multiline
-                                    rows={7}
-                                />
+                            <Box sx={{ width: "50%", }}>
+                                <TextField label="Title" variant="outlined" fullWidth value={title} onChange={(e) => setTitle(e.target.value)} sx={{ marginBottom: "20px" }} />
+                                <TextField label="Description" variant="outlined" fullWidth value={description} onChange={(e) => setDescription(e.target.value)} sx={{ marginBottom: "20px" }} multiline rows={7} />
                             </Box>
 
-                            <Box sx={{
-                                width: "50%",
-                            }}>
-
+                            <Box sx={{ width: "50%", }}>
                                 <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            checked={privacy.public}
-                                            onChange={handlePrivacyChange}
-                                            name="public"
-                                            sx={{
-                                                '&.Mui-checked': {
-                                                    color: "#32AA27",
-                                                },
-                                            }}
-                                        />
-                                    }
+                                    control={<Checkbox checked={privacy === "public"} onChange={handlePrivacyChange} name="public" />}
                                     label="Public"
-                                    sx={{ marginBottom: "20px" }}
                                 />
                                 <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            checked={privacy.private}
-                                            onChange={handlePrivacyChange}
-                                            name="private"
-                                            sx={{
-                                                '&.Mui-checked': {
-                                                    color: "#32AA27",
-                                                },
-                                            }}
-                                        />
-                                    }
+                                    control={<Checkbox checked={privacy === "private"} onChange={handlePrivacyChange} name="private" />}
                                     label="Private"
-                                    sx={{ marginBottom: "20px" }}
                                 />
                                 <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            checked={privacy.scheduled}
-                                            onChange={handlePrivacyChange}
-                                            name="scheduled"
-                                            sx={{
-                                                '&.Mui-checked': {
-                                                    color: "#32AA27",
-                                                },
-                                            }}
-                                        />
-                                    }
+                                    control={<Checkbox checked={privacy === "scheduled"} onChange={handlePrivacyChange} name="scheduled" />}
                                     label="Scheduled"
-                                    sx={{ marginBottom: "20px" }}
                                 />
-
-                                {privacy.private && (
+                                {privacy === "private" && (
                                     <>
-                                        <Box
-                                            sx={{ marginTop: "10px", marginBottom: "10px", display: "flex", gap: "10px", flexWrap: "wrap", width: "100%", padding: "10px", }}
-                                        >
+                                        <Box sx={{ marginTop: "10px", marginBottom: "10px", display: "flex", gap: "10px", flexWrap: "wrap", width: "100%", padding: "10px", }}>
                                             {emails.map((email, index) => (
-                                                <Typography
-                                                    key={index}
-                                                    sx={{ color: '#595959', backgroundColor: "#e5e7eb", padding: "3px 10px", borderRadius: "10px", marginBottom: "5px", }}
-                                                >
+                                                <Typography key={index} sx={{ color: '#595959', backgroundColor: "#e5e7eb", padding: "3px 10px", borderRadius: "10px", marginBottom: "5px", }}>
                                                     {email}
                                                 </Typography>
                                             ))}
                                         </Box>
 
-                                        <TextField
-                                            label="Email Address"
-                                            variant="outlined"
-                                            fullWidth
-                                            value={newEmail}
-                                            onChange={(e) => setNewEmail(e.target.value)}
-                                            sx={{ marginBottom: "20px" }}
-                                            type="email"
-                                            onKeyPress={handleKeyPress}
-                                            InputProps={{
-                                                endAdornment: (
-                                                    <InputAdornment position="end">
-                                                        <IconButton onClick={handleAddEmail} color="primary">
-                                                            <AddIcon />
-                                                        </IconButton>
-                                                    </InputAdornment>
-                                                ),
-                                            }}
-                                        />
+                                        <TextField label="Email Address" variant="outlined" fullWidth value={newEmail} onChange={(e) => setNewEmail(e.target.value)} sx={{ marginBottom: "20px" }} type="email" onKeyPress={handleKeyPress} InputProps={{
+                                            endAdornment: (<InputAdornment position="end">
+                                                <IconButton onClick={handleAddEmail} color="primary">
+                                                    <AddIcon />
+                                                </IconButton>
+                                            </InputAdornment>),
+                                        }} />
                                     </>
 
                                 )}
 
-                                {privacy.scheduled && (
+                                {privacy === "scheduled" && (
                                     <>
-                                        <Box
-                                            sx={{ marginTop: "10px", marginBottom: "10px", display: "flex", gap: "10px", flexWrap: "wrap", width: "100%", padding: "10px", }}
-                                        >
+                                        <Box sx={{ marginTop: "10px", marginBottom: "10px", display: "flex", gap: "10px", flexWrap: "wrap", width: "100%", padding: "10px", }}>
                                             {emails.map((email, index) => (
-                                                <Typography
-                                                    key={index}
-                                                    sx={{ color: '#595959', backgroundColor: "#e5e7eb", padding: "3px 10px", borderRadius: "10px", marginBottom: "5px", }}
-                                                >
+                                                <Typography key={index} sx={{ color: '#595959', backgroundColor: "#e5e7eb", padding: "3px 10px", borderRadius: "10px", marginBottom: "5px", }}>
                                                     {email}
                                                 </Typography>
                                             ))}
                                         </Box>
 
-                                        <TextField
-                                            label="Email Address"
-                                            variant="outlined"
-                                            fullWidth
-                                            value={newEmail}
-                                            onChange={(e) => setNewEmail(e.target.value)}
-                                            sx={{ marginBottom: "20px" }}
-                                            type="email"
-                                            onKeyPress={handleKeyPress}
+                                        <TextField label="Email Address" variant="outlined" fullWidth value={newEmail} onChange={(e) => setNewEmail(e.target.value)} sx={{ marginBottom: "20px" }} type="email" onKeyPress={handleKeyPress}
                                             InputProps={{
-                                                endAdornment: (
-                                                    <InputAdornment position="end">
-                                                        <IconButton onClick={handleAddEmail} color="primary">
-                                                            <AddIcon />
-                                                        </IconButton>
-                                                    </InputAdornment>
-                                                ),
-                                            }}
-                                        />
-                                        <TextField
-                                            label="Schedule Time"
-                                            variant="outlined"
-                                            fullWidth
-                                            value={scheduleTime}
-                                            onChange={(e) => setScheduleTime(e.target.value)}
-                                            sx={{ marginBottom: "20px" }}
-                                            type="datetime-local"
-                                            InputLabelProps={{
-                                                shrink: true,
-                                            }}
-                                        />
+                                                endAdornment: (<InputAdornment position="end"><IconButton onClick={handleAddEmail} color="primary"><AddIcon /></IconButton></InputAdornment>),
+                                            }} />
+
+                                        <TextField label="Schedule Time" variant="outlined" fullWidth value={scheduleTime} onChange={(e) => setScheduleTime(e.target.value)} sx={{ marginBottom: "20px" }} type="datetime-local" InputLabelProps={{ shrink: true, }} />
                                     </>
                                 )}
                             </Box>
-
                         </Box>
 
                         <Box sx={{ width: "100%", marginTop: "20px", display: "flex", justifyContent: "flex-end", gap: "20px" }}>
-                            <Button
-                                sx={{ padding: "0px 20px 0px 20px", height: "50px", backgroundColor: '#e5e7eb', color: '#32AA27', fontFamily: 'poppins', fontWeight: '600', fontSize: "16px", borderRadius: '0px' }}
-                            >
+                            <Button sx={{ padding: "0px 20px 0px 20px", height: "50px", backgroundColor: '#e5e7eb', color: '#32AA27', fontFamily: 'poppins', fontWeight: '600', fontSize: "16px", borderRadius: '0px' }} >
                                 Cancel
                             </Button>
-                            <Button
-                                // disabled={!canCreateMemory}
-                                onClick={handleCreateMemory}
-                                sx={{ padding: "0px 20px 0px 20px", height: "50px", backgroundColor: !canCreateMemory ? '#e5e7eb' : '#32AA27', color: '#FFFFFF', fontFamily: 'poppins', fontWeight: '600', fontSize: "16px", borderRadius: '0px' }}
-                            >
+                            <Button disabled={!canCreateMemory} onClick={handleCreateMemory} sx={{ padding: "0px 20px 0px 20px", height: "50px", backgroundColor: !canCreateMemory ? '#e5e7eb' : '#32AA27', color: '#FFFFFF', fontFamily: 'poppins', fontWeight: '600', fontSize: "16px", borderRadius: '0px' }}>
                                 <IconButton sx={{ backgroundColor: !canCreateMemory ? '#e5e7eb' : "#fff", height: "30px", width: "30px", marginRight: "20px" }} color="primary">
                                     <AddIcon sx={{ color: !canCreateMemory ? '#aaabae' : "#32AA27" }} />
                                 </IconButton>
@@ -574,6 +361,6 @@ export default function CreateMemory() {
                     </Grid>
                 </Grid>
             </Box >
-        </Box>
+        </Box >
     );
 }

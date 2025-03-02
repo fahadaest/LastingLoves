@@ -29,6 +29,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: '',
     },
+    paymentPlan: {
+        type: String,
+        default: 'free',
+    },
 });
 
 userSchema.pre('save', async function (next) {

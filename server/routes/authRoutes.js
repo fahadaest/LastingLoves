@@ -273,6 +273,7 @@ router.get('/profile', async (req, res) => {
             email: user.email,
             bio: user.bio,
             avatar: user.avatar,
+            paymentPlan: user.paymentPlan,
         });
     } catch (error) {
         return res.status(401).json({ message: 'Invalid or expired access token' });
