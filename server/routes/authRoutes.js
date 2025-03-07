@@ -391,7 +391,7 @@ router.post('/createMemory', uploadVideo.single('file'), async (req, res) => {
                     <p>${req.body.username} has left behind a special message for you—one filled with love, memories, and their thoughts just for you. 
                     They wanted to make sure you received this when the time was right.</p>
             
-                    <p>💌 <strong>To view their message and access the video, please follow this link:</strong></p>
+                    <p>💌 <strong>To view their message, Login and access the video, please follow this link:</strong></p>
                     <p>👉 <a href="${process.env.FRONTEND_URL}/public-profile/${req.body.userId}" target="_blank">${process.env.FRONTEND_URL}/public-profile/${req.body.userId}</a></p>
             
                     <hr>
@@ -429,6 +429,36 @@ router.post('/createMemory', uploadVideo.single('file'), async (req, res) => {
     }
 });
 
+router.post('/verify/:memoryId', uploadImage.single('certificate'), async (req, res) => {
+    const { memoryId } = req.params;
+
+    try {
+        const memory = await Memory.findById(memoryId);
+        if (!memory) {
+            return res.status(404).json({ message: "Memory not found" });
+        }
+
+        if (!req.file) {
+            return res.status(400).json({ message: "Death certificate is required" });
+        }
+
+        // Upload certificate to Cloudinary
+        const result = await cloudinary.uploader.upload(req.file.path, {
+            folder: 'death_certificates',
+        });
+
+        memory.verified = true;
+        memory.deathCertificateUrl = result.secure_url;
+        await memory.save();
+
+        res.status(200).json({ message: "Memory unlocked successfully", memory });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
+
 router.get('/myMemories', async (req, res) => {
     const accessToken = req.cookies.accessToken;
     if (!accessToken) {
@@ -449,14 +479,52 @@ router.get('/myMemories', async (req, res) => {
 
 router.get('/memories/:userId', async (req, res) => {
     const { userId } = req.params;
+    let accessToken = req.cookies.accessToken;
+
+    if (!accessToken && req.headers.authorization) {
+        const authHeader = req.headers.authorization;
+        if (authHeader.startsWith('Bearer ')) {
+            accessToken = authHeader.split(' ')[1];
+        }
+    }
+
+    if (!accessToken) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
 
     try {
+        const decoded = jwt.verify(accessToken, ACCESS_TOKEN_SECRET);
+        const authUser = await User.findById(decoded.id);
+
+        console.log(authUser)
+
         const userExists = await User.findById(userId);
         if (!userExists) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        const memories = await Memory.find({ userId });
+        let memories = await Memory.find({ userId });
+
+        // Process memories to check privacy settings
+        memories = memories.map(memory => {
+            // Show public memories
+            if (memory.privacy === "public") {
+                return memory;
+            }
+
+            // If memory is private or scheduled and the user's email is NOT in the allowedEmails list
+            if ((memory.privacy === "private" || memory.privacy === "scheduled") &&
+                !memory.allowedEmails.includes(authUser.email)) {
+                return {
+                    ...memory._doc,
+                    videoUrl: null,
+                    message: "This memory is private and locked until verification."
+                };
+            }
+
+            // If the email is allowed, show the memory with the video
+            return memory;
+        });
 
         res.status(200).json({ memories });
     } catch (error) {
@@ -464,6 +532,7 @@ router.get('/memories/:userId', async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 });
+
 
 
 

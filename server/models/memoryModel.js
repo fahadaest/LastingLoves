@@ -32,6 +32,14 @@ const memorySchema = new mongoose.Schema({
     thumbnailUrl: {
         type: String
     },
+    verified: {
+        type: Boolean,
+        default: false
+    },
+    deathCertificateUrl: {
+        type: String,
+        default: null
+    }
 }, { timestamps: true });
 
 const Memory = mongoose.model('Memory', memorySchema);

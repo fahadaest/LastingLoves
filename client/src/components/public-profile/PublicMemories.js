@@ -5,6 +5,8 @@ import Divider from '@mui/material/Divider';
 import { Button, Typography, Modal } from '@mui/material';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
+import LockIcon from '@mui/icons-material/Lock';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
 export default function PublicMemories() {
     const { userId, videoId } = useParams();
@@ -46,6 +48,8 @@ export default function PublicMemories() {
         navigate(`/public-profile/${userId}`);
     };
 
+    console.log(memories)
+
     return (
         <Box
             sx={{
@@ -53,7 +57,7 @@ export default function PublicMemories() {
                 maxWidth: { sm: '100%', md: '1700px' },
                 margin: '0 auto',
                 overflow: 'hidden',
-                boxShadow: "0px 4px 10px rgba(50, 170, 39, 0.4)",
+                boxShadow: "0px 4px 10px rgba(50, 170, 39, 0.4), 0px -4px 10px rgba(50, 170, 39, 0.4), 4px 0px 10px rgba(50, 170, 39, 0.4), -4px 0px 10px rgba(50, 170, 39, 0.4)",
                 borderRadius: "10px",
             }}
         >
@@ -68,13 +72,35 @@ export default function PublicMemories() {
                 {memories.map((memory) => (
                     <Grid item xs={4} sm={4} key={memory._id} sx={{ padding: "10px" }}>
                         <Box
-                            sx={{ position: "relative", width: "100%", aspectRatio: "1/1", borderRadius: "10px", overflow: "hidden", cursor: "pointer" }}
+                            sx={{ position: "relative", width: "100%", aspectRatio: "1/1", borderRadius: "10px", overflow: "hidden", cursor: "pointer", }}
                             onClick={() => navigate(`/public-profile/${userId}/${memory._id}`)}
                         >
-                            <Box component="img" src={memory.thumbnailUrl} alt={memory.title} sx={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                            <Typography sx={{ position: "absolute", bottom: 0, width: "100%", backgroundColor: "rgba(0, 0, 0, 0.6)", color: "#fff", textAlign: "center", fontSize: "14px", padding: "5px" }}>
+                            <Box component="img" src={memory.thumbnailUrl} alt={memory.title} sx={{ width: "100%", height: "100%", objectFit: "cover", filter: memory.privacy === "private" || memory.privacy === "scheduled" ? "blur(10px)" : "none", }} />
+                            {memory.privacy === "private" && (
+                                <>
+                                    <Box sx={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", backgroundColor: "rgba(0, 0, 0, 0.5)", borderRadius: "50%", padding: "10px", display: "flex", justifyContent: "center", alignItems: "center" }} >
+                                        <LockIcon sx={{ color: "#fff", fontSize: 40 }} />
+                                    </Box>
+                                    <Typography sx={{ position: "absolute", top: "65%", left: "50%", transform: "translate(-50%, -50%)", color: "#fff", fontSize: "12px", backgroundColor: "rgba(0, 0, 0, 0.5)", padding: "4px 8px", borderRadius: "5px" }} >
+                                        Private
+                                    </Typography>
+                                </>
+                            )}
+
+                            {memory.privacy === "scheduled" && (
+                                <>
+                                    <Box sx={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", backgroundColor: "rgba(0, 0, 0, 0.5)", borderRadius: "50%", padding: "10px", display: "flex", justifyContent: "center", alignItems: "center" }} >
+                                        <CalendarMonthIcon sx={{ color: "#fff", fontSize: 40 }} />
+                                    </Box>
+                                    <Typography sx={{ position: "absolute", top: "65%", left: "50%", transform: "translate(-50%, -50%)", color: "#fff", fontSize: "12px", backgroundColor: "rgba(0, 0, 0, 0.5)", padding: "4px 8px", borderRadius: "5px" }} >
+                                        scheduled
+                                    </Typography>
+                                </>
+                            )}
+
+                            {/* <Typography sx={{ position: "absolute", bottom: 0, width: "100%", backgroundColor: "rgba(0, 0, 0, 0.6)", color: "#fff", textAlign: "center", fontSize: "14px", padding: "5px" }}>
                                 {memory.title}
-                            </Typography>
+                            </Typography> */}
                         </Box>
                     </Grid>
                 ))}
