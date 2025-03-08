@@ -102,11 +102,12 @@ router.get('/google', passport.authenticate('google', {
 
 router.get(
     '/google/callback',
-    passport.authenticate('google', { failureRedirect: '/login' }),
+    // passport.authenticate('google', { failureRedirect: '/login' }),
+    passport.authenticate('google'),
     (req, res) => {
-        if (!req.user) {
-            return res.redirect('/login');
-        }
+        // if (!req.user) {
+        //     return res.redirect('/login');
+        // }
 
         const accessToken = generateAccessToken(req.user);
         const refreshToken = generateRefreshToken(req.user);
@@ -125,7 +126,7 @@ router.get(
             maxAge: 24 * 60 * 60 * 1000
         });
 
-        res.redirect(`${process.env.FRONTEND_URL}/profile`);
+        // res.redirect(`${process.env.FRONTEND_URL}/profile`);
     }
 );
 
