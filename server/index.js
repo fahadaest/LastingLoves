@@ -12,6 +12,7 @@ const app = express();
 const PORT = process.env.PORT;
 const BACKEND_URL = process.env.BACKEND_URL;
 const FRONTEND_URL = process.env.FRONTEND_URL;
+const environment = process.env.ENVIRONMENT;
 
 app.use(express.json());
 app.use(cors({
@@ -26,9 +27,9 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: process.env.ENVIRONMENT === 'production',
-        httpOnly: true,
-        sameSite: 'Lax',
+        secure: environment === "development" ? false : true,
+        httpOnly: environment === "development" ? false : true,
+        sameSite: environment === "development" ? 'Lax' : 'None',
     }
 }));
 
