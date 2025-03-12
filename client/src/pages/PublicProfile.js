@@ -7,6 +7,9 @@ import PublicProfileHeader from '../components/public-profile/PublicProfileHeade
 import PublicMemories from '../components/public-profile/PublicMemories';
 
 export default function PublicProfile() {
+    const [name, setName] = useState('');
+
+    console.log(name)
 
     return (
         <Box sx={{ display: 'flex', marginTop: "9vh" }}>
@@ -31,8 +34,8 @@ export default function PublicProfile() {
                 >
 
                     <>
-                        <PublicProfileHeader />
-                        <PublicMemories />
+                        <PublicProfileHeader setName={setName} />
+                        <PublicMemories name={name} />
                     </>
                 </Stack>
             </Box>

@@ -5,7 +5,7 @@ import { Avatar } from "@mui/material";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
-export default function PublicProfileHeader() {
+export default function PublicProfileHeader({ setName }) {
     const { userId } = useParams();
     const baseURL = process.env.REACT_APP_BASE_URL;
     const [username, setUsername] = useState('');
@@ -22,6 +22,7 @@ export default function PublicProfileHeader() {
                 if (response.status === 200) {
                     const data = response.data;
                     setUsername(data.username || "");
+                    setName(data.username || "")
                     setBio(data.bio || "Add a bio");
                     setAvatar(data.avatar);
                 }

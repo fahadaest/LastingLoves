@@ -102,12 +102,11 @@ router.get('/google', passport.authenticate('google', {
 
 router.get(
     '/google/callback',
-    // passport.authenticate('google', { failureRedirect: '/login' }),
-    passport.authenticate('google'),
+    passport.authenticate('google', { failureRedirect: '/login' }),
     (req, res) => {
-        // if (!req.user) {
-        //     return res.redirect('/login');
-        // }
+        if (!req.user) {
+            return res.redirect('/login');
+        }
 
         const accessToken = generateAccessToken(req.user);
         const refreshToken = generateRefreshToken(req.user);
@@ -116,7 +115,7 @@ router.get(
             httpOnly: environment === "development" ? false : true,
             secure: environment === "development" ? false : true,
             sameSite: environment === "development" ? 'Lax' : 'None',
-            maxAge: 60 * 60 * 1000
+            maxAge: 24 * 60 * 60 * 1000
         });
 
         res.cookie('refreshToken', refreshToken, {
@@ -126,7 +125,7 @@ router.get(
             maxAge: 24 * 60 * 60 * 1000
         });
 
-        // res.redirect(`${process.env.FRONTEND_URL}/profile`);
+        res.redirect(`${process.env.FRONTEND_URL}/profile`);
     }
 );
 
@@ -154,7 +153,7 @@ router.post('/register', async (req, res) => {
             httpOnly: environment === "development" ? false : true,
             secure: environment === "development" ? false : true,
             sameSite: environment === "development" ? 'Lax' : 'None',
-            maxAge: 60 * 60 * 1000
+            maxAge: 24 * 60 * 60 * 1000
         });
 
         res.cookie('refreshToken', refreshToken, {
@@ -192,7 +191,7 @@ router.post('/login', async (req, res) => {
             httpOnly: environment === "development" ? false : true,
             secure: environment === "development" ? false : true,
             sameSite: environment === "development" ? 'Lax' : 'None',
-            maxAge: 60 * 60 * 1000
+            maxAge: 24 * 60 * 60 * 1000
         });
 
         res.cookie('refreshToken', refreshToken, {
@@ -232,7 +231,7 @@ router.post('/refresh', (req, res) => {
             httpOnly: true,
             secure: false,
             sameSite: 'Strict',
-            maxAge: 60 * 60 * 1000 // TODO 1 hour
+            maxAge: 24 * 60 * 60 * 1000 // TODO 1 hour
         });
 
         res.cookie('refreshToken', newRefreshToken, {
@@ -401,7 +400,7 @@ router.post('/createMemory', uploadVideo.single('file'), async (req, res) => {
                     <p>If you have received this email under unfortunate circumstances, you may confirm ${req.body.username}’s passing by uploading an official death certificate. 
                     Once verified, their message will be unlocked for you.</p>
             
-                    <p>🔗 <strong>Confirm & Access the Memory:</strong> <a href="[Insert Verification Link]" target="_blank">[Insert Verification Link]</a></p>
+                    <p>🔗 <strong>Confirm & Access the Memory:</strong> <a href="${process.env.FRONTEND_URL}/public-profile/${req.body.userId}/${newMemory._id}" target="_blank">${process.env.FRONTEND_URL}/public-profile/${req.body.userId}/${newMemory._id}</a></p>
             
                     <hr>
             
@@ -430,34 +429,12 @@ router.post('/createMemory', uploadVideo.single('file'), async (req, res) => {
     }
 });
 
-router.post('/verify/:memoryId', uploadImage.single('certificate'), async (req, res) => {
+router.post('/verify/:memoryId', async (req, res) => {
     const { memoryId } = req.params;
 
-    try {
-        const memory = await Memory.findById(memoryId);
-        if (!memory) {
-            return res.status(404).json({ message: "Memory not found" });
-        }
 
-        if (!req.file) {
-            return res.status(400).json({ message: "Death certificate is required" });
-        }
-
-        // Upload certificate to Cloudinary
-        const result = await cloudinary.uploader.upload(req.file.path, {
-            folder: 'death_certificates',
-        });
-
-        memory.verified = true;
-        memory.deathCertificateUrl = result.secure_url;
-        await memory.save();
-
-        res.status(200).json({ message: "Memory unlocked successfully", memory });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Server error" });
-    }
 });
+
 
 
 router.get('/myMemories', async (req, res) => {
@@ -497,7 +474,7 @@ router.get('/memories/:userId', async (req, res) => {
         const decoded = jwt.verify(accessToken, ACCESS_TOKEN_SECRET);
         const authUser = await User.findById(decoded.id);
 
-        console.log(authUser)
+        // console.log(authUser)
 
         const userExists = await User.findById(userId);
         if (!userExists) {
@@ -506,25 +483,24 @@ router.get('/memories/:userId', async (req, res) => {
 
         let memories = await Memory.find({ userId });
 
-        // Process memories to check privacy settings
-        memories = memories.map(memory => {
-            // Show public memories
+        memories = memories.filter(memory => {
             if (memory.privacy === "public") {
-                return memory;
+                return true;
             }
 
-            // If memory is private or scheduled and the user's email is NOT in the allowedEmails list
-            if ((memory.privacy === "private" || memory.privacy === "scheduled") &&
-                !memory.allowedEmails.includes(authUser.email)) {
-                return {
-                    ...memory._doc,
-                    videoUrl: null,
-                    message: "This memory is private and locked until verification."
-                };
+            if (memory.privacy === "private") {
+                if (memory.allowedEmails && memory.allowedEmails.includes(authUser.email)) {
+                    memory.videoUrl = null;
+                    return true;
+                }
+                return false;
             }
 
-            // If the email is allowed, show the memory with the video
-            return memory;
+            if (memory.privacy === "scheduled") {
+                return false;
+            }
+
+            return true;
         });
 
         res.status(200).json({ memories });

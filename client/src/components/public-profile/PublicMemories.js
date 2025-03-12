@@ -7,8 +7,12 @@ import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import LockIcon from '@mui/icons-material/Lock';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
 
-export default function PublicMemories() {
+export default function PublicMemories({ name }) {
     const { userId, videoId } = useParams();
     const navigate = useNavigate();
     const baseURL = process.env.REACT_APP_BASE_URL;
@@ -16,6 +20,9 @@ export default function PublicMemories() {
     const [button, setActiveButton] = useState("All Memories");
     const [memories, setMemories] = useState([]);
     const [selectedMemory, setSelectedMemory] = useState(null);
+    const [hasConfirmedLoss, setHasConfirmedLoss] = useState(false);
+    const [certificate, setCertificate] = useState(null);
+    const [uploading, setUploading] = useState(false);
 
     useEffect(() => {
         const fetchMemories = async () => {
@@ -48,7 +55,52 @@ export default function PublicMemories() {
         navigate(`/public-profile/${userId}`);
     };
 
-    console.log(memories)
+    const handleFileChange = (event) => {
+        setCertificate(event.target.files[0]);
+    };
+
+    const handleUpload = async () => {
+        if (!certificate || !selectedMemory) return;
+
+        setUploading(true);
+
+        const formData = new FormData();
+        formData.append("file", certificate);
+        formData.append("upload_preset", process.env.REACT_APP_CLOUDINARY_DC_PRESET);
+
+        try {
+            const cloudinaryResponse = await axios.post(
+                `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/upload`,
+                formData
+            );
+
+            const certificateUrl = cloudinaryResponse.data.secure_url;
+
+            console.log(certificateUrl)
+
+            await axios.post(
+                `${baseURL}/api/auth/verify/${selectedMemory._id}`,
+                { certificateUrl },
+                { withCredentials: true }
+            );
+
+            // Update UI
+            setMemories(memories.map(mem =>
+                mem.privacy === "private" ? { ...mem, privacy: "privateVerified" } : mem
+            ));
+
+            setHasConfirmedLoss(false);
+            setCertificate(null);
+            handleClose(); // Close the modal
+        } catch (error) {
+            console.error("Error uploading certificate:", error);
+            alert("Failed to upload certificate. Please try again.");
+        } finally {
+            setUploading(false);
+        }
+    };
+
+
 
     return (
         <Box
@@ -109,12 +161,64 @@ export default function PublicMemories() {
                     <Box sx={{ width: "90%", maxWidth: "800px", backgroundColor: "#fff", borderRadius: "10px", boxShadow: 24, p: 2, outline: "none" }}>
                         {selectedMemory && (
                             <Box>
-                                <Typography sx={{ fontFamily: 'poppins', fontWeight: '600', fontSize: "18px", marginBottom: "10px", textAlign: "center" }}>
-                                    {selectedMemory.title}
-                                </Typography>
-                                <Box sx={{ width: "100%", height: "0", paddingBottom: "56.25%", position: "relative" }}>
-                                    <video src={selectedMemory.videoUrl} controls style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", borderRadius: "10px" }} />
-                                </Box>
+                                {selectedMemory.privacy === "private" ? (
+                                    <>
+                                        <DialogTitle>Confirm & Unlock the Memory</DialogTitle>
+                                        <DialogContent sx={{ fontSize: hasConfirmedLoss ? "15px" : "30px" }}>
+                                            {hasConfirmedLoss ? (
+                                                <>
+                                                    <p>We are deeply sorry for your loss. To ensure that this special message from <strong>{name}</strong> reaches you, we kindly ask you to confirm their passing by uploading an official <strong>death certificate</strong>. </p>
+                                                    <p>This step helps us verify and protect these deeply personal messages, ensuring they are shared at the right time.</p>
+                                                    <input
+                                                        type="file"
+                                                        accept=".pdf,.jpg,.png"
+                                                        onChange={handleFileChange}
+                                                        style={{ marginTop: "20px", width: "100%", height: "50px", padding: "10px", border: "1px solid #ccc", borderRadius: "5px" }}
+                                                    />
+                                                </>
+                                            ) : (
+                                                <p>Is <strong>{name}</strong> no longer with us?</p>
+                                            )}
+                                        </DialogContent>
+                                        <DialogActions>
+                                            {hasConfirmedLoss ? (
+                                                <Button
+                                                    sx={{ width: 'auto', height: "50px", backgroundColor: '#32AA27', color: '#FFFFFF', fontFamily: 'poppins', fontWeight: '600', fontSize: "16px", borderRadius: '0px' }}
+                                                    onClick={handleUpload}
+                                                    disabled={uploading}
+                                                >
+                                                    {uploading ? "Uploading..." : "Submit"}
+                                                </Button>
+
+                                            ) : (
+                                                <>
+                                                    <Button
+                                                        sx={{ width: 'auto', height: "50px", backgroundColor: '#e5e7eb', color: '#32AA27', fontFamily: 'poppins', fontWeight: '600', fontSize: "16px", borderRadius: '0px' }}
+                                                    >
+                                                        No, they are still alive
+                                                    </Button>
+                                                    <Button
+                                                        sx={{ width: 'auto', height: "50px", backgroundColor: '#32AA27', color: '#FFFFFF', fontFamily: 'poppins', fontWeight: '600', fontSize: "16px", borderRadius: '0px' }}
+                                                        onClick={() => setHasConfirmedLoss(true)}
+                                                    >
+                                                        Yes, they have passed away
+                                                    </Button>
+                                                </>
+                                            )}
+
+                                        </DialogActions>
+                                    </>
+
+                                ) : (
+                                    <>
+                                        <Typography sx={{ fontFamily: 'poppins', fontWeight: '600', fontSize: "18px", marginBottom: "10px", textAlign: "center" }}>
+                                            {selectedMemory.title}
+                                        </Typography>
+                                        <Box sx={{ width: "100%", height: "0", paddingBottom: "56.25%", position: "relative" }}>
+                                            <video src={selectedMemory.videoUrl} controls style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", borderRadius: "10px" }} />
+                                        </Box>
+                                    </>
+                                )}
                             </Box>
                         )}
                     </Box>
