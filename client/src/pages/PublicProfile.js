@@ -9,8 +9,6 @@ import PublicMemories from '../components/public-profile/PublicMemories';
 export default function PublicProfile() {
     const [name, setName] = useState('');
 
-    console.log(name)
-
     return (
         <Box sx={{ display: 'flex', marginTop: "9vh" }}>
             <Box

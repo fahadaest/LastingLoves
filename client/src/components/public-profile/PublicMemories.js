@@ -21,25 +21,38 @@ export default function PublicMemories({ name }) {
     const [memories, setMemories] = useState([]);
     const [selectedMemory, setSelectedMemory] = useState(null);
     const [hasConfirmedLoss, setHasConfirmedLoss] = useState(false);
+    const [userVerified, setUserVerified] = useState(false);
     const [certificate, setCertificate] = useState(null);
     const [uploading, setUploading] = useState(false);
 
-    useEffect(() => {
-        const fetchMemories = async () => {
-            try {
-                const response = await axios.get(`${baseURL}/api/auth/memories/${userId}`, {
-                    withCredentials: true,
-                });
-                setMemories(response?.data?.memories);
-            } catch (error) {
-                console.error("Error fetching memories:", error);
-            }
-        };
+    const [openModal, setOpenModal] = useState(false);
 
+    console.log(selectedMemory)
+
+    useEffect(() => {
+        if (selectedMemory === null) {
+            setOpenModal(false);
+        } else {
+            setOpenModal(true);
+        }
+    }, [selectedMemory]);
+
+    useEffect(() => {
         if (userId) {
             fetchMemories();
         }
-    }, [userId, baseURL]);
+    }, [userId]);
+
+    const fetchMemories = async () => {
+        try {
+            const response = await axios.get(`${baseURL}/api/auth/memories/${userId}`, {
+                withCredentials: true,
+            });
+            setMemories(response?.data?.memories);
+        } catch (error) {
+            console.error("Error fetching memories:", error);
+        }
+    };
 
     useEffect(() => {
         if (videoId && memories.length > 0) {
@@ -67,6 +80,7 @@ export default function PublicMemories({ name }) {
         const formData = new FormData();
         formData.append("file", certificate);
         formData.append("upload_preset", process.env.REACT_APP_CLOUDINARY_DC_PRESET);
+        const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
         try {
             const cloudinaryResponse = await axios.post(
@@ -76,22 +90,19 @@ export default function PublicMemories({ name }) {
 
             const certificateUrl = cloudinaryResponse.data.secure_url;
 
-            console.log(certificateUrl)
-
-            await axios.post(
-                `${baseURL}/api/auth/verify/${selectedMemory._id}`,
+            await axios.put(
+                `${baseURL}/api/auth/verify/${userId}`,
                 { certificateUrl },
                 { withCredentials: true }
             );
 
-            // Update UI
-            setMemories(memories.map(mem =>
-                mem.privacy === "private" ? { ...mem, privacy: "privateVerified" } : mem
-            ));
 
+            setUserVerified(true)
             setHasConfirmedLoss(false);
             setCertificate(null);
-            handleClose(); // Close the modal
+
+            await delay(3000);
+            fetchMemories();
         } catch (error) {
             console.error("Error uploading certificate:", error);
             alert("Failed to upload certificate. Please try again.");
@@ -99,8 +110,6 @@ export default function PublicMemories({ name }) {
             setUploading(false);
         }
     };
-
-
 
     return (
         <Box
@@ -157,7 +166,7 @@ export default function PublicMemories({ name }) {
                     </Grid>
                 ))}
 
-                <Modal open={Boolean(selectedMemory)} onClose={handleClose} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <Modal open={openModal} onClose={handleClose} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                     <Box sx={{ width: "90%", maxWidth: "800px", backgroundColor: "#fff", borderRadius: "10px", boxShadow: 24, p: 2, outline: "none" }}>
                         {selectedMemory && (
                             <Box>
@@ -176,6 +185,11 @@ export default function PublicMemories({ name }) {
                                                         style={{ marginTop: "20px", width: "100%", height: "50px", padding: "10px", border: "1px solid #ccc", borderRadius: "5px" }}
                                                     />
                                                 </>
+                                            ) : userVerified ? (
+                                                <>
+                                                    <p>User <strong>{name}</strong> death verified</p>
+                                                    <p>Redirecting to memory</p>
+                                                </>
                                             ) : (
                                                 <p>Is <strong>{name}</strong> no longer with us?</p>
                                             )}
@@ -190,6 +204,8 @@ export default function PublicMemories({ name }) {
                                                     {uploading ? "Uploading..." : "Submit"}
                                                 </Button>
 
+                                            ) : userVerified ? (
+                                                null
                                             ) : (
                                                 <>
                                                     <Button

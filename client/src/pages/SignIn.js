@@ -282,7 +282,6 @@ export default function SignIn(props) {
                     <Button
                         fullWidth
                         variant="outlined"
-                        onClick={() => alert('Sign in with Google')}
                         sx={{ color: "#32AA27", border: " 1px solid #32AA27" }}
                         startIcon={<GoogleIcon width={24} height={24} />}
                         onClick={handleGoogleAuth}

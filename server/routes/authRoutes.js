@@ -377,7 +377,7 @@ router.post('/createMemory', uploadVideo.single('file'), async (req, res) => {
         });
         await newMemory.save();
 
-        if (req.body.allowedEmails && req.body.allowedEmails.length > 0) {
+        if (req.body.privacy === "private" && req.body.allowedEmails && req.body.allowedEmails.length > 0) {
             const mailOptions = {
                 from: 'Lasting Love',
                 to: req.body.allowedEmails.join(','),
@@ -429,10 +429,28 @@ router.post('/createMemory', uploadVideo.single('file'), async (req, res) => {
     }
 });
 
-router.post('/verify/:memoryId', async (req, res) => {
-    const { memoryId } = req.params;
+router.put('/verify/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
 
+        const memoriesToUpdate = await Memory.find({ userId, privacy: "private" });
 
+        if (memoriesToUpdate.length === 0) {
+            return res.status(404).json({ message: "No private memories found to verify." });
+        }
+
+        const updatedMemories = await Memory.updateMany(
+            { userId, privacy: "private" },
+            { $set: { privacy: "privateVerified" } }
+        );
+
+        res.json({
+            message: "Memories successfully verified.",
+            updatedCount: updatedMemories.modifiedCount
+        });
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
 });
 
 
@@ -484,9 +502,6 @@ router.get('/memories/:userId', async (req, res) => {
         let memories = await Memory.find({ userId });
 
         memories = memories.filter(memory => {
-            if (memory.privacy === "public") {
-                return true;
-            }
 
             if (memory.privacy === "private") {
                 if (memory.allowedEmails && memory.allowedEmails.includes(authUser.email)) {

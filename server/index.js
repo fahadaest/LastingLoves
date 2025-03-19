@@ -6,6 +6,7 @@ import path from 'path';
 import authRoutes from './routes/authRoutes.js';
 import passport from 'passport';
 import session from 'express-session';
+import handleScheduledMemories from './tasks/memoryScheduler.js';
 
 dotenv.config();
 const app = express();
@@ -59,7 +60,11 @@ if (process.env.ENVIRONMENT === 'production') {
 
 
 mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log("Connected to MongoDB"))
+    .then(() => {
+        console.log("Connected to MongoDB");
+
+        handleScheduledMemories();
+    })
     .catch((err) => console.log("Error connecting to MongoDB:", err));
 
 app.listen(PORT, () => {
