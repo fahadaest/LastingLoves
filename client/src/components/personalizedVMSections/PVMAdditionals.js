@@ -29,15 +29,15 @@ function PVMAdditionals({ page }) {
     ];
 
     const heading = [
-        "Personalized video messages",
-        "Scheduled message delivery",
-        "Secure message locking"
+        "Public Video Memories",
+        "Private Messages for Later",
+        "Scheduled Message Delivery"
     ];
 
     const text = [
-        "With LASTING LOVE, you can craft personalized video messages that resonate with your loved ones. Choose from a variety of unique backgrounds to set the perfect scene for your message. Whether it's a birthday, anniversary, or just because, these videos offer a personal touch that words alone cannot convey. Schedule them for future delivery, ensuring your sentiments are shared at just the right moment. This thoughtful approach not only expresses your feelings but also leaves a lasting memory for those you cherish. Let your love shine through with a customized video that speaks from the heart.",
-        "Imagine the comfort your loved ones will feel when they receive a message from you, even after you're gone. With LASTING LOVE, you can schedule your personalized video messages for future delivery. This unique feature allows you to select the date and time that holds significance for you and your loved ones. Whether it's a special occasion or a simple reminder of your love, these scheduled messages ensure that your sentiments are shared with precision. Your legacy of love continues, providing closure and warmth to those you leave behind.",
-        "Your words are precious, and at LASTING LOVE, we prioritize the security of your messages. Our platform offers a secure message locking feature that guarantees your personalized videos are sent only after your passing. This ensures that your loved ones receive your heartfelt messages in a timely manner, providing them with closure and comfort during a difficult time. With a subscription-based or one-time fee service, you can rest easy knowing that your messages are protected and will be delivered to your cherished ones when they need it most. Let your love endure with secure message locking."
+        "Create and upload video messages that are publicly displayed on your profile page for anyone to view. These memories will remain visible indefinitely, giving your loved ones, friends, and even future generations a chance to connect with you, hear your voice, and relive the moments and lessons you’ve shared. Whether it’s cherished memories, life advice, or simple messages of love, your public video memories will form a timeless digital legacy that lives on.",
+        "Sometimes, the most meaningful words are the ones shared in private. With this feature, you can record personal video messages meant exclusively for specific individuals. These messages are securely stored and kept completely private—only to be revealed under certain conditions, like confirmation of your passing. It’s a powerful way to leave behind heartfelt goodbyes, personal reflections, or important information that remains confidential until the time is right.",
+        "Life is full of special dates and moments, and now you can be part of them, no matter where you are. This feature allows you to schedule video messages in advance, ensuring they’re delivered to your loved ones at precisely the time you choose—whether it’s a birthday, anniversary, holiday, or any meaningful occasion. Your thoughtful message will arrive right on schedule, offering comfort, encouragement, or celebration exactly when it’s needed most."
     ];
 
     return (
@@ -84,7 +84,7 @@ function PVMAdditionals({ page }) {
                     <Button
                         sx={{ width: '250px', height: "50px", backgroundColor: '#32AA27', color: '#FFFFFF', fontFamily: 'poppins', fontWeight: '600', fontSize: "16px", borderRadius: '0px' }}
                     >
-                        Schedule Appointment
+                        Create Memory
                     </Button>
                 </div>
 

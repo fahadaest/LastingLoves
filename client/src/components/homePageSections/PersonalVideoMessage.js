@@ -82,13 +82,13 @@ function PersonalVideoMessage() {
                                     className="hover-text"
                                     sx={{
                                         fontFamily: 'poppins',
-                                        fontSize: '20px',
+                                        fontSize: '22px',
                                         fontWeight: 600,
                                         letterSpacing: '.1rem',
                                         color: '#020402',
                                     }}
                                 >
-                                    Personalized video messages
+                                    Public Video Memories
                                     <NavigateNextIcon />
                                 </Typography>
 
@@ -102,7 +102,7 @@ function PersonalVideoMessage() {
                                         color: '#595959',
                                     }}
                                 >
-                                    Create heartfelt video messages tailored for your loved ones.
+                                    Create public video messages that stay on your profile forever, keeping your memories alive for everyone to see.
                                 </Typography>
                             </Box>
                         </Box>
@@ -141,7 +141,7 @@ function PersonalVideoMessage() {
                                         color: '#020402',
                                     }}
                                 >
-                                    Scheduled messages delivery
+                                    Private Messages for Later
                                     <NavigateNextIcon />
                                 </Typography>
                                 <Typography
@@ -154,7 +154,7 @@ function PersonalVideoMessage() {
                                         color: '#595959',
                                     }}
                                 >
-                                    Send your messages at the perfect moment with scheduled delivery.
+                                    Send private messages that remain locked and unseen until someone confirms your death — even after you're gone.
                                 </Typography>
                             </Box>
                         </Box>
@@ -193,7 +193,7 @@ function PersonalVideoMessage() {
                                         color: '#020402',
                                     }}
                                 >
-                                    Secure messages locking
+                                    Scheduled Message Delivery
                                     <NavigateNextIcon />
                                 </Typography>
                                 <Typography
@@ -206,7 +206,7 @@ function PersonalVideoMessage() {
                                         color: '#595959',
                                     }}
                                 >
-                                    Ensure your messages are delivered securely and on time.
+                                    Schedule your messages to be sent at specific times, ensuring they reach your loved ones right when you want them to.
                                 </Typography>
                             </Box>
                         </Box>

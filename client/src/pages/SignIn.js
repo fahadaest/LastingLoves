@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
@@ -77,12 +77,15 @@ export default function SignIn(props) {
     const [loginError, setLoginError] = React.useState('');
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
     const baseURL = process.env.REACT_APP_BASE_URL;
     const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
     const [message, setMessage] = useState('');
     const [severity, setSeverity] = useState('');
     const [duration, setDuration] = useState(null);
     const [showAlert, setShowAlert] = useState(false);
+
+    const from = location.state?.from?.pathname || "/profile";
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -124,7 +127,7 @@ export default function SignIn(props) {
                 Cookies.set('accessToken', accessToken, { expires: 1 / 24, secure: false, sameSite: 'Lax' }); //TODO change to Strict
                 Cookies.set('refreshToken', refreshToken, { expires: 1, secure: false, sameSite: 'Lax' }); //TODO change to Strict
                 dispatch(checkAuthStatus());
-                window.location.href = '/profile';
+                navigate(from, { replace: true });
                 setMessage("Logged in!");
                 setSeverity("success");
                 setShowAlert(true);

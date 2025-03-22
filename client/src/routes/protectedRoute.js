@@ -1,10 +1,11 @@
 import React, { useEffect } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { checkAuthStatus } from "../redux/slices/authSlice";
 
 const ProtectedRoute = ({ children }) => {
   const dispatch = useDispatch();
+  const location = useLocation();
 
   const { isAuthenticated, authStatus } = useSelector((state) => ({
     isAuthenticated: state.auth.isAuthenticated,
@@ -26,7 +27,13 @@ const ProtectedRoute = ({ children }) => {
   }
 
   if (authStatus === "rejected") {
-    return <Navigate to="/sign-in" replace />;
+    return (
+      <Navigate
+        to="/sign-in"
+        replace
+        state={{ from: location }}
+      />
+    );
   }
   return null;
 };

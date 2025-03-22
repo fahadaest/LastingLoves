@@ -6,9 +6,8 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
 function AffordableLove() {
     const navigate = useNavigate();
-    const monthlyPlan = 25.00;
-    const annualPlan = 240.00;
-    const lifetimePlan = 499.00;
+    const monthlyPlan = 10.00;
+    const annualPlan = 300.00;
 
     return (
         <section className="flex justify-center items-center pt-12 pb-12 min-h-[80vh] bg-header-white">
@@ -78,7 +77,7 @@ function AffordableLove() {
                                         color: '#595959',
                                     }}
                                 >
-                                    Memories stay uploaded for 2 years
+                                    Memories stay uploaded for 60 days after last payment
                                 </Typography>
 
                                 <Typography
@@ -160,7 +159,7 @@ function AffordableLove() {
                                         color: '#595959',
                                     }}
                                 >
-                                    Pay once, save more, Memories stay uploaded for 2 years
+                                    Pay once, save more, Memories stay uploaded forever
                                 </Typography>
 
                                 <Typography
@@ -192,88 +191,6 @@ function AffordableLove() {
 
                                 <Typography
                                     onClick={() => navigate('/scheduled-message-delivery')}
-                                    variant="h1"
-                                    sx={{
-                                        fontFamily: 'poppins',
-                                        fontSize: '18px',
-                                        fontWeight: 500,
-                                        letterSpacing: '.1rem',
-                                        color: '#595959',
-                                        textDecoration: 'underline'
-                                    }}
-                                >
-                                    Read More
-                                </Typography>
-                            </Box>
-                        </Box>
-
-                        <Box>
-
-                            <Box className="relative w-[30%] aspect-square mb-8">
-                                <img
-                                    src="https://cdn.b12.io/client_media/cQFRBNdt/0ca1a88a-c694-11ef-9cfc-0242ac110002-jpg-regular_image.jpeg"
-                                    alt="Hero Image"
-                                    className="w-[100%] h-[100%] object-cover rounded-full"
-                                />
-                            </Box>
-
-                            <Box sx={{ display: "flex", flexDirection: "column", gap: "12px", paddingRight: "10%" }}>
-                                <Typography
-                                    variant="h1"
-                                    className="hover-text"
-                                    sx={{
-                                        fontFamily: 'poppins',
-                                        fontSize: '20px',
-                                        fontWeight: 600,
-                                        letterSpacing: '.1rem',
-                                        color: '#020402',
-                                    }}
-                                >
-                                    Lifetime Plan
-                                </Typography>
-
-                                <Typography
-                                    variant="h1"
-                                    sx={{
-                                        fontFamily: 'poppins',
-                                        fontSize: '18px',
-                                        fontWeight: 400,
-                                        letterSpacing: '.1rem',
-                                        color: '#595959',
-                                    }}
-                                >
-                                    Memories stays forever uploaded
-                                </Typography>
-
-                                <Typography
-                                    variant="h1"
-                                    sx={{
-                                        fontFamily: 'poppins',
-                                        fontSize: '18px',
-                                        fontWeight: 400,
-                                        letterSpacing: '.1rem',
-                                        color: '#595959',
-                                    }}
-                                >
-                                    ${lifetimePlan}
-                                </Typography>
-
-                                <Typography
-                                    variant="h1"
-                                    sx={{
-                                        fontFamily: 'poppins',
-                                        fontSize: '18px',
-                                        fontWeight: 400,
-                                        letterSpacing: '.05rem',
-                                        color: '#595959',
-                                        lineHeight: "25px"
-                                    }}
-                                >
-                                    At LASTING LOVE, security and privacy are our top priorities. Our secure message locking feature allows users to create and store personal video messages safely. You can set up your messages to be sent only after verification, ensuring that your heartfelt words reach your loved ones when they need them most. This thoughtful approach offers closure and a sense of comfort in difficult times. With an array of customizable options and the assurance of secure delivery, you can express your love and leave a lasting legacy that transcends time.
-                                </Typography>
-
-                                <Typography
-                                    onClick={() => navigate('/secure-message-locking')}
                                     variant="h1"
                                     sx={{
                                         fontFamily: 'poppins',
