@@ -18,7 +18,6 @@ const ACCESS_TOKEN_SECRET = 'your_access_token_secret';
 const REFRESH_TOKEN_SECRET = 'your_refresh_token_secret';
 const environment = process.env.ENVIRONMENT;
 
-
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,

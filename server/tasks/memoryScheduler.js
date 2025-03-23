@@ -68,7 +68,6 @@ const handleScheduledMemories = async () => {
                 });
             }
         }
-        console.log("Scheduled memories checked and updated.");
     } catch (error) {
         console.error("Error handling scheduled memories:", error);
     }
