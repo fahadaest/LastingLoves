@@ -1,7 +1,14 @@
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import { useNavigate } from 'react-router-dom';
 
 function CherishYourLove() {
+    const navigate = useNavigate();
+
+    const handleRegisterClick = () => {
+        navigate('/sign-up');
+    };
+
     return (
         <section className="flex justify-center items-center min-h-[90vh] bg-header-white  pt-12 pb-12">
 
@@ -49,6 +56,7 @@ function CherishYourLove() {
                     </Typography>
 
                     <Button
+                        onClick={handleRegisterClick}
                         sx={{
                             color: '#595959',
                             fontFamily: 'poppins',
@@ -59,7 +67,7 @@ function CherishYourLove() {
                             textDecoration: 'underline',
                         }}
                     >
-                        Get in touch
+                        Register Now
                     </Button>
                 </div>
 

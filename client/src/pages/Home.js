@@ -3,6 +3,7 @@ import MessagesOfLove from '../components/homePageSections/MessagesOfLove';
 import CherishYourLove from '../components/homePageSections/CherishYourLove';
 import PersonalVideoMessage from '../components/homePageSections/PersonalVideoMessage';
 import GetInTouch from '../components/homePageSections/GetInTouch';
+import RegisterNow from '../components/homePageSections/RegisterNow';
 import { useSelector } from 'react-redux';
 
 function Home({ url }) {
@@ -39,7 +40,8 @@ function Home({ url }) {
         <PersonalVideoMessage />
       </div>
       <div ref={getInTouchRef}>
-        <GetInTouch />
+        {/* <GetInTouch /> */}
+        <RegisterNow />
       </div>
     </div >
   );
