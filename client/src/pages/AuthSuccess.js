@@ -1,18 +1,30 @@
 import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { checkAuthStatus } from '../redux/slices/authSlice';
 import { useNavigate } from 'react-router-dom';
-import { Box, CircularProgress, Typography } from '@mui/material';
+import { Box, CircularProgress } from '@mui/material';
 
 const AuthSuccess = () => {
+    const { isAuthenticated, authStatus } = useSelector((state) => ({
+        isAuthenticated: state.auth.isAuthenticated,
+        authStatus: state.auth.authStatus,
+    }));
+
+    console.log(isAuthenticated)
+    console.log(authStatus)
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     useEffect(() => {
         dispatch(checkAuthStatus()).then(() => {
             // navigate('/profile');
+
+
         });
+
     }, [dispatch, navigate]);
+
+
 
     return (
         <Box
