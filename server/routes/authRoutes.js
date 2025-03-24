@@ -115,16 +115,16 @@ router.get(
         const refreshToken = generateRefreshToken(req.user);
 
         res.cookie('accessToken', accessToken, {
-            httpOnly: environment === "development" ? false : true,
-            secure: environment === "development" ? false : true,
-            sameSite: environment === "development" ? 'Lax' : 'None',
+            httpOnly: true,
+            secure: true,
+            sameSite: 'None',
             maxAge: 24 * 60 * 60 * 1000
         });
 
         res.cookie('refreshToken', refreshToken, {
-            httpOnly: environment === "development" ? false : true,
-            secure: environment === "development" ? false : true,
-            sameSite: environment === "development" ? 'Lax' : 'None',
+            httpOnly: true,
+            secure: true,
+            sameSite: 'None',
             maxAge: 24 * 60 * 60 * 1000
         });
 
