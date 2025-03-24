@@ -124,7 +124,7 @@ router.get(
             maxAge: 24 * 60 * 60 * 1000
         });
 
-        // res.redirect(`${process.env.FRONTEND_URL}/profile`);
+        res.redirect(`${process.env.FRONTEND_URL}/profile`);
     }
 );
 
