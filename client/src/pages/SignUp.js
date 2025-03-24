@@ -169,7 +169,6 @@ export default function SignUp(props) {
         try {
             window.open(`${process.env.REACT_APP_BASE_URL}/api/auth/google`, "_self");
             dispatch(checkAuthStatus());
-            navigate(from, { replace: true });
             setMessage("Logged in!");
             setSeverity("success");
             setShowAlert(true);
