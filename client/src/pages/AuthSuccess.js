@@ -10,7 +10,7 @@ const AuthSuccess = () => {
 
     useEffect(() => {
         dispatch(checkAuthStatus()).then(() => {
-            navigate('/profile');
+            // navigate('/profile');
         });
     }, [dispatch, navigate]);
 
