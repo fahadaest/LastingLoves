@@ -29,10 +29,6 @@ export default function Profile() {
     const [duration, setDuration] = useState(null);
     const [showAlert, setShowAlert] = useState(false);
 
-    useEffect(() => {
-        dispatch(checkAuthStatus());
-    }, []);
-
     React.useEffect(() => {
         if (profileData) {
             setUsername(profileData.username || "");

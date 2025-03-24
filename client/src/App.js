@@ -14,6 +14,7 @@ import Dashboard from './pages/Dashboard';
 import { useDispatch } from "react-redux";
 import { checkAuthStatus } from "./redux/slices/authSlice";
 import PublicProfile from './pages/PublicProfile';
+import AuthSuccess from './pages/AuthSuccess';
 
 function App() {
   const dispatch = useDispatch();
@@ -37,6 +38,7 @@ function App() {
           <Route path="/scheduled-message-delivery" element={<MainLayout><PersonalizedVideoMessages page={"SMD"} /></MainLayout>} />
           <Route path="/secure-message-locking" element={<MainLayout><PersonalizedVideoMessages page={"SML"} /></MainLayout>} />
 
+          <Route path="/auth-success" element={<AuthSuccess />} />
 
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/sign-up" element={<SignUp />} />
