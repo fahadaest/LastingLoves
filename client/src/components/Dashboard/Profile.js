@@ -31,7 +31,7 @@ export default function Profile() {
 
     useEffect(() => {
         dispatch(checkAuthStatus());
-    }, [dispatch]);
+    }, []);
 
     React.useEffect(() => {
         if (profileData) {
