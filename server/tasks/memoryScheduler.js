@@ -73,7 +73,7 @@ const handleScheduledMemories = async () => {
     }
 };
 
-// Run every 10 minutes (adjust timing as needed)
+// Run every 1 minutes (adjust timing as needed)
 cron.schedule('*/1 * * * *', handleScheduledMemories);
 
 export default handleScheduledMemories;
