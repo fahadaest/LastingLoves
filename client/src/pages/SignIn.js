@@ -179,7 +179,6 @@ export default function SignIn(props) {
     const handleGoogleAuth = async () => {
         try {
             window.open(`${process.env.REACT_APP_BASE_URL}/api/auth/google`, "_self");
-            dispatch(checkAuthStatus());
         } catch (error) {
             console.error("Google Auth Error:", error);
         }
