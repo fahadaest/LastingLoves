@@ -180,10 +180,10 @@ export default function SignIn(props) {
         try {
             window.open(`${process.env.REACT_APP_BASE_URL}/api/auth/google`, "_self");
 
-            setTimeout(async () => {
-                dispatch(checkAuthStatus());
-                navigate("/profile");
-            }, 2000);
+            // setTimeout(async () => {
+            //     dispatch(checkAuthStatus());
+            //     navigate("/profile");
+            // }, 2000);
         } catch (error) {
             console.error("Google Auth Error:", error);
         }

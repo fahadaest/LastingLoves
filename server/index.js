@@ -52,13 +52,6 @@ if (process.env.ENVIRONMENT === 'production') {
 }
 
 
-// app.use(express.static(path.join(__dirname, 'client/build')));
-
-// app.get('*', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
-// });
-
-
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
         console.log("Connected to MongoDB");
