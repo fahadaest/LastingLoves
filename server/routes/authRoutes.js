@@ -105,30 +105,30 @@ router.get('/google', passport.authenticate('google', {
 
 router.get(
     '/google/callback',
-    passport.authenticate('google', { failureRedirect: '/login' }),
+    passport.authenticate('google', { failureRedirect: '/sign-in' }),
     (req, res) => {
         if (!req.user) {
-            return res.redirect('/login');
+            return res.redirect('/sign-in');
         }
 
         const accessToken = generateAccessToken(req.user);
         const refreshToken = generateRefreshToken(req.user);
 
         res.cookie('accessToken', accessToken, {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'None',
+            httpOnly: environment === "development" ? false : true,
+            secure: environment === "development" ? false : true,
+            sameSite: environment === "development" ? 'Lax' : 'None',
             maxAge: 24 * 60 * 60 * 1000
         });
 
         res.cookie('refreshToken', refreshToken, {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'None',
+            httpOnly: environment === "development" ? false : true,
+            secure: environment === "development" ? false : true,
+            sameSite: environment === "development" ? 'Lax' : 'None',
             maxAge: 24 * 60 * 60 * 1000
         });
 
-        res.redirect(`${process.env.FRONTEND_URL}/auth-success`);
+        // res.redirect(`${process.env.FRONTEND_URL}/auth-success`);
     }
 );
 

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { checkAuthStatus } from '../redux/slices/authSlice';
 import { useNavigate } from 'react-router-dom';
 import { Box, CircularProgress } from '@mui/material';
+import axios from 'axios';
 
 const AuthSuccess = () => {
     const { isAuthenticated, authStatus } = useSelector((state) => ({
@@ -12,19 +13,17 @@ const AuthSuccess = () => {
 
     console.log(isAuthenticated)
     console.log(authStatus)
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     useEffect(() => {
+
         dispatch(checkAuthStatus()).then(() => {
             // navigate('/profile');
 
-
         });
-
     }, [dispatch, navigate]);
-
-
 
     return (
         <Box
