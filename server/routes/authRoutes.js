@@ -42,21 +42,25 @@ passport.use(
         },
         async (accessToken, refreshToken, profile, done) => {
             try {
-                let user = await User.findOne({ googleId: profile.id });
+                const existingUser = await User.findOne({ email: profile.emails[0].value });
 
-                if (!user) {
-                    user = new User({
-                        googleId: profile.id,
+                if (existingUser) {
+                    if (!existingUser.googleId) {
+                        existingUser.googleId = profile.id;
+                        await existingUser.save();
+                    }
+                    return done(null, existingUser);
+                } else {
+                    const newUser = await User.create({
                         username: profile.displayName,
                         email: profile.emails[0].value,
+                        googleId: profile.id,
                         avatar: profile.photos[0].value,
                     });
-                    await user.save();
+                    return done(null, newUser);
                 }
-
-                done(null, user);
-            } catch (error) {
-                done(error, null);
+            } catch (err) {
+                return done(err, null);
             }
         }
     )
