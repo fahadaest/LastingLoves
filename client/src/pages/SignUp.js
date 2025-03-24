@@ -169,9 +169,6 @@ export default function SignUp(props) {
         try {
             window.open(`${process.env.REACT_APP_BASE_URL}/api/auth/google`, "_self");
             dispatch(checkAuthStatus());
-            setMessage("Logged in!");
-            setSeverity("success");
-            setShowAlert(true);
         } catch (error) {
             console.error("Google Auth Error:", error);
         }

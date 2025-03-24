@@ -27,14 +27,13 @@ const ProtectedRoute = ({ children }) => {
   }
 
   if (authStatus === "rejected") {
-    return children;
-    // return (
-    //   <Navigate
-    //     to="/sign-in"
-    //     replace
-    //     state={{ from: location }}
-    //   />
-    // );
+    return (
+      <Navigate
+        to="/sign-in"
+        replace
+        state={{ from: location }}
+      />
+    );
   }
   return null;
 };
