@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import CustomAlert from "../Alert/Alert";
 import { refetchProfile } from "../../redux/slices/authSlice";
+import { checkAuthStatus } from "../../redux/slices/authSlice";
 
 export default function Profile() {
     const profileData = useSelector((state) => state.auth.user);
