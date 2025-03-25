@@ -24,9 +24,10 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
@@ -132,7 +133,6 @@ router.get(
         res.redirect(redirectUrl);
     }
 );
-
 
 
 router.post('/register', async (req, res) => {
@@ -416,14 +416,17 @@ router.post('/createMemory', uploadVideo.single('file'), async (req, res) => {
                     <p>Visit Our Website: <a href="${process.env.FRONTEND_URL}" target="_blank">${process.env.FRONTEND_URL}</a></p>
                 `
             };
+            try {
+                await transporter.verify();
+                console.log("SMTP Server Ready");
 
-            transporter.sendMail(mailOptions, (error, info) => {
-                if (error) {
-                    console.error("Email error:", error);
-                } else {
-                    console.log("Emails sent:", info.response);
-                }
-            });
+                const info = await transporter.sendMail(mailOptions);
+                console.log("Email sent successfully:", info);
+            } catch (error) {
+                console.error("Error sending email:", error);
+            }
+
+
         }
 
         res.status(201).json({ message: "Memory created successfully", memory: newMemory });
