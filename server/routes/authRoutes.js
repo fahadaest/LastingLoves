@@ -128,7 +128,8 @@ router.get(
             maxAge: 24 * 60 * 60 * 1000
         });
 
-        // res.redirect(`${process.env.FRONTEND_URL}/auth-success`);
+        const redirectUrl = `${process.env.FRONTEND_URL}/auth-success?${accessToken}&${refreshToken}`;
+        res.redirect(redirectUrl);
     }
 );
 
