@@ -7,9 +7,10 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Email setup (can reuse the one in authRoutes)
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
@@ -59,13 +60,15 @@ const handleScheduledMemories = async () => {
                 };
 
 
-                transporter.sendMail(mailOptions, (error, info) => {
-                    if (error) {
-                        console.error("Email error:", error);
-                    } else {
-                        console.log("Emails sent:", info.response);
-                    }
-                });
+                try {
+                    await transporter.verify();
+                    console.log("SMTP Server Ready");
+
+                    const info = await transporter.sendMail(mailOptions);
+                    console.log("Email sent successfully:", info);
+                } catch (error) {
+                    console.error("Error sending email:", error);
+                }
             }
         }
     } catch (error) {

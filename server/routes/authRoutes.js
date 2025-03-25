@@ -425,8 +425,6 @@ router.post('/createMemory', uploadVideo.single('file'), async (req, res) => {
             } catch (error) {
                 console.error("Error sending email:", error);
             }
-
-
         }
 
         res.status(201).json({ message: "Memory created successfully", memory: newMemory });
