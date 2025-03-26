@@ -34,8 +34,8 @@ function App() {
 
           <Route path="/Pricing" element={<MainLayout><Pricing /></MainLayout>} />
           <Route path="/how-it-works" element={<MainLayout><HowItWorks /></MainLayout>} />
-          <Route path="/personalized-video-messages" element={<MainLayout><PersonalizedVideoMessages page={"PVM"} /></MainLayout>} />
-          <Route path="/scheduled-message-delivery" element={<MainLayout><PersonalizedVideoMessages page={"SMD"} /></MainLayout>} />
+          <Route path="/monthly-plan" element={<MainLayout><PersonalizedVideoMessages page={"PVM"} /></MainLayout>} />
+          <Route path="/annual-plan" element={<MainLayout><PersonalizedVideoMessages page={"SMD"} /></MainLayout>} />
           <Route path="/secure-message-locking" element={<MainLayout><PersonalizedVideoMessages page={"SML"} /></MainLayout>} />
 
           <Route path="/auth-success" element={<AuthSuccess />} />

@@ -108,7 +108,7 @@ function AffordableLove() {
                                 </Typography>
 
                                 <Typography
-                                    onClick={() => navigate('/personalized-video-messages')}
+                                    onClick={() => navigate('/monthly-plan')}
                                     variant="h1"
                                     sx={{
                                         fontFamily: 'poppins',
@@ -190,7 +190,7 @@ function AffordableLove() {
                                 </Typography>
 
                                 <Typography
-                                    onClick={() => navigate('/scheduled-message-delivery')}
+                                    onClick={() => navigate('/annual-plan')}
                                     variant="h1"
                                     sx={{
                                         fontFamily: 'poppins',

@@ -1,13 +1,19 @@
 import { useState, useEffect } from 'react';
+import { loadStripe } from '@stripe/stripe-js';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import personalizedVMImg from '../../assets/personalizedVM-Img.jpeg';
 import ScheduledMDImg from '../../assets/ScheduledMDImg.jpeg';
 import SecureMLImg from '../../assets/SecureMLImg.jpeg';
 
-function PVMAdditionals({ page }) {
+const stripePromise = loadStripe("pk_test_51QvF3XPkxI72CVL7UiA4c2FI1d2Ca9ZPzw7nDbC4isiZNPBi4cybmFHpueHrJBKmjxtNgzZXcPpPS4j7sQNcdD0m00sqKDOVJJ");
 
+function PVMAdditionals({ page }) {
+    const navigate = useNavigate();
     const [currentIndex, setCurrentIndex] = useState(0);
+    const baseURL = process.env.REACT_APP_BASE_URL;
 
     useEffect(() => {
         if (page === 'PVM') {
@@ -18,9 +24,6 @@ function PVMAdditionals({ page }) {
             setCurrentIndex(2);
         }
     }, [page]);
-
-    console.log(page)
-    console.log(currentIndex)
 
     const images = [
         personalizedVMImg,
@@ -39,6 +42,21 @@ function PVMAdditionals({ page }) {
         "Sometimes, the most meaningful words are the ones shared in private. With this feature, you can record personal video messages meant exclusively for specific individuals. These messages are securely stored and kept completely private—only to be revealed under certain conditions, like confirmation of your passing. It’s a powerful way to leave behind heartfelt goodbyes, personal reflections, or important information that remains confidential until the time is right.",
         "Life is full of special dates and moments, and now you can be part of them, no matter where you are. This feature allows you to schedule video messages in advance, ensuring they’re delivered to your loved ones at precisely the time you choose—whether it’s a birthday, anniversary, holiday, or any meaningful occasion. Your thoughtful message will arrive right on schedule, offering comfort, encouragement, or celebration exactly when it’s needed most."
     ];
+
+    const handleUpgrade = async () => {
+        const stripe = await stripePromise;
+        const response = await axios.post(`${baseURL}/api/auth/checkout-session`, {
+            priceId: 'monthly',
+            userId: 1,
+        });
+
+        const session = response.data;
+        const result = await stripe.redirectToCheckout({ sessionId: session.id });
+
+        if (result.error) {
+            console.error(result.error.message);
+        }
+    };
 
     return (
         <section className="flex justify-center items-center bg-pm-message-bg pt-12 pb-12">
@@ -82,9 +100,10 @@ function PVMAdditionals({ page }) {
                     </Typography>
 
                     <Button
+                        onClick={handleUpgrade}
                         sx={{ width: '250px', height: "50px", backgroundColor: '#32AA27', color: '#FFFFFF', fontFamily: 'poppins', fontWeight: '600', fontSize: "16px", borderRadius: '0px' }}
                     >
-                        Create Memory
+                        Upgrade Plan
                     </Button>
                 </div>
 

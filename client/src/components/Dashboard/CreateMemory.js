@@ -9,6 +9,7 @@ import Cookies from "js-cookie";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import CustomAlert from "../Alert/Alert";
+import CloseIcon from "@mui/icons-material/Close";
 
 export default function CreateMemory() {
     const [button, setActiveButton] = React.useState("Video");
@@ -146,6 +147,10 @@ export default function CreateMemory() {
             setEmails([...emails, newEmail]);
             setNewEmail("");
         }
+    };
+
+    const handleDeleteEmail = (emailToDelete) => {
+        setEmails(emails.filter((email) => email !== emailToDelete));
     };
 
     const handleKeyPress = (event) => {
@@ -381,11 +386,15 @@ export default function CreateMemory() {
                                             {emails.map((email, index) => (
                                                 <Typography key={index} sx={{ color: '#595959', backgroundColor: "#e5e7eb", padding: "3px 10px", borderRadius: "10px", marginBottom: "5px", }}>
                                                     {email}
+                                                    <IconButton size="small" onClick={() => handleDeleteEmail(email)}>
+                                                        <CloseIcon fontSize="small" />
+                                                    </IconButton>
                                                 </Typography>
+
                                             ))}
                                         </Box>
 
-                                        <TextField label="Email Address" variant="outlined" fullWidth value={newEmail} onChange={(e) => setNewEmail(e.target.value)} sx={{ marginBottom: "20px" }} type="email" onKeyPress={handleKeyPress} InputProps={{
+                                        <TextField label="Email Address or Phone Nummber" variant="outlined" fullWidth value={newEmail} onChange={(e) => setNewEmail(e.target.value)} sx={{ marginBottom: "20px" }} type="email" onKeyPress={handleKeyPress} InputProps={{
                                             endAdornment: (<InputAdornment position="end">
                                                 <IconButton onClick={handleAddEmail} color="primary">
                                                     <AddIcon />
@@ -402,11 +411,14 @@ export default function CreateMemory() {
                                             {emails.map((email, index) => (
                                                 <Typography key={index} sx={{ color: '#595959', backgroundColor: "#e5e7eb", padding: "3px 10px", borderRadius: "10px", marginBottom: "5px", }}>
                                                     {email}
+                                                    <IconButton size="small" onClick={() => handleDeleteEmail(email)}>
+                                                        <CloseIcon fontSize="small" />
+                                                    </IconButton>
                                                 </Typography>
                                             ))}
                                         </Box>
 
-                                        <TextField label="Email Address" variant="outlined" fullWidth value={newEmail} onChange={(e) => setNewEmail(e.target.value)} sx={{ marginBottom: "20px" }} type="email" onKeyPress={handleKeyPress}
+                                        <TextField label="Email Address or Phone Nummber" variant="outlined" fullWidth value={newEmail} onChange={(e) => setNewEmail(e.target.value)} sx={{ marginBottom: "20px" }} type="email" onKeyPress={handleKeyPress}
                                             InputProps={{
                                                 endAdornment: (<InputAdornment position="end"><IconButton onClick={handleAddEmail} color="primary"><AddIcon /></IconButton></InputAdornment>),
                                             }} />

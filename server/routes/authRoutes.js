@@ -9,6 +9,7 @@ import dotenv from 'dotenv';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import nodemailer from 'nodemailer';
+import Stripe from 'stripe';
 
 const router = express.Router();
 router.use(cookieParser());
@@ -17,6 +18,7 @@ dotenv.config();
 const ACCESS_TOKEN_SECRET = 'your_access_token_secret';
 const REFRESH_TOKEN_SECRET = 'your_refresh_token_secret';
 const environment = process.env.ENVIRONMENT;
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -79,7 +81,6 @@ passport.deserializeUser(async (id, done) => {
         done(error, null);
     }
 });
-
 
 router.use(passport.initialize());
 
@@ -313,8 +314,6 @@ router.get('/publicProfile/:userId', async (req, res) => {
     }
 });
 
-
-
 router.put('/profile/update', uploadImage.single('profilePic'), async (req, res) => {
     const accessToken = req.cookies.accessToken;
     if (!accessToken) {
@@ -458,8 +457,6 @@ router.put('/verify/:userId', async (req, res) => {
     }
 });
 
-
-
 router.get('/myMemories', async (req, res) => {
     const accessToken = req.cookies.accessToken;
     if (!accessToken) {
@@ -530,8 +527,35 @@ router.get('/memories/:userId', async (req, res) => {
     }
 });
 
+router.post('/checkout-session', async (req, res) => {
+    const { priceId, userId } = req.body;
 
+    if (!priceId || !userId) {
+        return res.status(400).json({ message: 'Price ID and User ID are required' });
+    }
 
+    try {
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            mode: 'subscription',
+            customer_email: req.body.email,
+            line_items: [
+                {
+                    price: priceId,
+                    quantity: 1,
+                },
+            ],
+            success_url: `${process.env.FRONTEND_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${process.env.FRONTEND_URL}/payment-cancelled`,
+            metadata: { userId },
+        });
+
+        res.status(200).json({ sessionId: session.id, url: session.url });
+    } catch (error) {
+        console.error('Stripe error:', error);
+        res.status(500).json({ message: 'Payment session creation failed', error: error.message });
+    }
+});
 
 
 export default router;
