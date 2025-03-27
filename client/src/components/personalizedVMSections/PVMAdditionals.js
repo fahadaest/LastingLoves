@@ -46,7 +46,7 @@ function PVMAdditionals({ page }) {
     const handleUpgrade = async () => {
         const stripe = await stripePromise;
         const response = await axios.post(`${baseURL}/api/auth/checkout-session`, {
-            priceId: 'monthly',
+            priceId: 'price_1R73kRB7YFJjaXJwbHN3dhcq',
             userId: 1,
         });
 
