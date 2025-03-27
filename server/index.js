@@ -39,14 +39,15 @@ app.use('/api/auth', authRoutes);
 const __dirname = path.resolve();
 
 
-if (process.env.ENVIRONMENT === 'development') {
-    console.log('Running in development mode. Frontend is not served from the backend.');
-} else {
+if (process.env.ENVIRONMENT === 'production') {
     app.use(express.static(path.join(__dirname, 'client/build')));
     app.get('*', (req, res) => {
         res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
     });
+} else if (process.env.ENVIRONMENT === 'development') {
+    console.log('Running in development mode. Frontend is not served from the backend.');
 }
+
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
