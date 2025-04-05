@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
@@ -8,11 +8,10 @@ import EmergencyRecordingIcon from '@mui/icons-material/EmergencyRecording';
 import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
 import NotStartedIcon from '@mui/icons-material/NotStarted';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
-import { InputAdornment, Button, LinearProgress, Typography, TextField, FormControlLabel, Checkbox, IconButton, Menu, MenuItem } from "@mui/material";
+import { InputAdornment, Button, Typography, TextField, FormControlLabel, Checkbox, IconButton } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import AddIcon from '@mui/icons-material/Add';
-import Cookies from "js-cookie";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import axios from "axios";
 import CustomAlert from "../Alert/Alert";
 import CloseIcon from "@mui/icons-material/Close";
@@ -42,9 +41,7 @@ export default function CreateMemory() {
     const videoRef = useRef(null);
     const [isPaused, setIsPaused] = useState(false);  // Track whether the recording is paused
 
-
     const [mediaRecorder, setMediaRecorder] = useState(null);
-    const [recordedChunks, setRecordedChunks] = useState([]);
     const [userStoppedRecording, setUserStoppedRecording] = useState(false);
 
 
@@ -290,7 +287,6 @@ export default function CreateMemory() {
         setVideoFile(null);
         setPreviewUrl(null);
         setThumbnailUrl(null);
-        setRecordedChunks([]);
         setDuration(0);
         const videoElement = document.getElementById("live-preview");
         if (videoElement && videoElement.srcObject) {
