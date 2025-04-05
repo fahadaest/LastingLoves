@@ -122,8 +122,9 @@ export default function Profile() {
                     setShowAlert={setShowAlert}
                 />
             )}
+
             <Box
-                sx={{ display: "flex", gap: "20px", width: "100%", mt: "15px", borderRadius: "10px", padding: "20px", boxShadow: "0px 4px 10px rgba(50, 170, 39, 0.4), 0px -4px 10px rgba(50, 170, 39, 0.4), 4px 0px 10px rgba(50, 170, 39, 0.4), -4px 0px 10px rgba(50, 170, 39, 0.4)" }}
+                sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: "20px", alignItems: "center", justifyContent: "space-between", width: "100%", mt: "15px", borderRadius: "10px", padding: "20px", boxShadow: "0px 4px 10px rgba(50, 170, 39, 0.4), 0px -4px 10px rgba(50, 170, 39, 0.4), 4px 0px 10px rgba(50, 170, 39, 0.4), -4px 0px 10px rgba(50, 170, 39, 0.4)" }}
             >
 
                 <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "10px", position: "relative" }}>
@@ -168,8 +169,8 @@ export default function Profile() {
                     )}
                 </Box>
 
-                <Box sx={{ width: "70%" }}>
-                    <Box sx={{ color: '#595959', fontFamily: 'poppins', fontWeight: '600', fontSize: "30px" }}>
+                <Box sx={{ width: { xs: "100%", sm: "70%" } }}>
+                    <Box sx={{ color: '#595959', fontFamily: 'poppins', fontWeight: '600', fontSize: "30px", textAlign: { xs: "center", sm: "left" } }}>
                         {isEditing ? (
                             <TextField
                                 value={username}
@@ -178,13 +179,13 @@ export default function Profile() {
                                 size="small"
                             />
                         ) : (
-                            <Typography sx={{ fontSize: "24px", fontWeight: "bold" }}>
+                            <Typography sx={{ fontSize: { xs: "16px", sm: "20px", md: "24px", lg: "28px" }, fontWeight: "bold" }}>
                                 {username}
                             </Typography>
                         )}
                     </Box>
 
-                    <Box sx={{ display: "flex" }}>
+                    <Box sx={{ display: "flex", textAlign: { xs: "center", sm: "left" } }}>
                         {isEditing ? (
                             <TextField
                                 value={bio}
@@ -222,6 +223,6 @@ export default function Profile() {
                 </Box>
 
             </Box>
-        </Box>
+        </Box >
     );
 }

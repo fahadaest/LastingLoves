@@ -6,8 +6,8 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
 function AffordableLove() {
     const navigate = useNavigate();
-    const monthlyPlan = 10.00;
-    const annualPlan = 300.00;
+    const monthlyPlan = process.env.REACT_APP_MONTHLY_PLAN;
+    const annualPlan = process.env.REACT_APP_ANNUAL_PLAN;
 
     return (
         <section className="flex justify-center items-center pt-12 pb-12 min-h-[80vh] bg-header-white">

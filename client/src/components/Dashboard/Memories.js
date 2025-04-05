@@ -73,12 +73,12 @@ export default function Memories() {
                             color: '#595959',
                             fontFamily: 'poppins',
                             fontWeight: '600',
-                            fontSize: "30px",
+                            fontSize: { xs: "20px", sm: "30px" },
                         }}
                     >
                         My Memories
                     </Typography>
-                    <Typography
+                    {/* <Typography
                         sx={{
                             color: '#595959',
                             fontFamily: 'poppins',
@@ -87,7 +87,7 @@ export default function Memories() {
                         }}
                     >
                         Filter & Stuff
-                    </Typography>
+                    </Typography> */}
                 </Box>
 
                 <Divider sx={{ width: '97%', my: 2, border: "1px solid #d1d4e0" }} />
@@ -137,7 +137,7 @@ export default function Memories() {
                         item
                         xs={4} sm={4}
                         key={memory._id}
-                        sx={{ padding: "10px" }}
+                        sx={{ padding: { xs: "5px", sm: "10px" } }}
                     >
                         <Box
                             sx={{
@@ -179,7 +179,6 @@ export default function Memories() {
                         </Box>
                     </Grid>
                 ))}
-
 
                 <Modal
                     open={Boolean(selectedMemory)}
@@ -243,6 +242,6 @@ export default function Memories() {
                 </Modal>
 
             </Grid>
-        </Box>
+        </Box >
     );
 }

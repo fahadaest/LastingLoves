@@ -5,9 +5,9 @@
 .hero-background-img {
   background-image: url('assets/Jamie-Lambros.jpg');
   background-size: cover;
-  background-position: center -150px;
   background-repeat: no-repeat;
   background-attachment: fixed;
+  background-position: center;
 }
 
 .pricing-background-img {

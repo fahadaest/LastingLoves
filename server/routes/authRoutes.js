@@ -10,6 +10,7 @@ import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import nodemailer from 'nodemailer';
 import Stripe from 'stripe';
+import twilio from 'twilio';
 
 const router = express.Router();
 router.use(cookieParser());
@@ -19,6 +20,7 @@ const ACCESS_TOKEN_SECRET = 'your_access_token_secret';
 const REFRESH_TOKEN_SECRET = 'your_refresh_token_secret';
 const environment = process.env.ENVIRONMENT;
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -374,18 +376,22 @@ router.post('/createMemory', uploadVideo.single('file'), async (req, res) => {
             description: req.body.description,
             privacy: req.body.privacy,
             scheduledTime: req.body.scheduledTime,
-            allowedEmails: req.body.allowedEmails,
+            contacts: req.body.contacts,
             videoUrl: req.body.videoUrl,
             thumbnailUrl: req.body.thumbnailUrl,
         });
         await newMemory.save();
 
-        if (req.body.privacy === "private" && req.body.allowedEmails && req.body.allowedEmails.length > 0) {
-            const mailOptions = {
-                from: 'Lasting Love',
-                to: req.body.allowedEmails.join(','),
-                subject: `${req.body.username} shared a memory with you!`,
-                html: `
+        if (req.body.privacy === "private" && req.body.contacts && req.body.contacts.length > 0) {
+            const emails = req.body.contacts.filter((contact) => /\S+@\S+\.\S+/.test(contact));
+            const phoneNumbers = req.body.contacts.filter((contact) => /^\+?[0-9]+$/.test(contact));
+
+            if (emails.length > 0) {
+                const mailOptions = {
+                    from: 'Lasting Love',
+                    to: emails.join(','),
+                    subject: `${req.body.username} shared a memory with you!`,
+                    html: `
                     <h2>A Special Memory from ${req.body.username}</h2>
                     <p>Hi there,</p>
             
@@ -414,15 +420,33 @@ router.post('/createMemory', uploadVideo.single('file'), async (req, res) => {
                     <p><strong>Lasting Love</strong></p>
                     <p>Visit Our Website: <a href="${process.env.FRONTEND_URL}" target="_blank">${process.env.FRONTEND_URL}</a></p>
                 `
-            };
-            try {
-                await transporter.verify();
-                console.log("SMTP Server Ready");
+                };
+                try {
+                    await transporter.verify();
+                    console.log("SMTP Server Ready");
 
-                const info = await transporter.sendMail(mailOptions);
-                console.log("Email sent successfully:", info);
-            } catch (error) {
-                console.error("Error sending email:", error);
+                    const info = await transporter.sendMail(mailOptions);
+                    console.log("Email sent successfully:", info);
+                } catch (error) {
+                    console.error("Error sending email:", error);
+
+                }
+            }
+
+            if (phoneNumbers.length > 0) {
+                for (const number of phoneNumbers) {
+                    try {
+                        await twilioClient.messages.create({
+                            body: `${req.body.username} has shared a special memory with you. To view, visit`,
+                            // body: `${req.body.username} has shared a special memory with you. To view, visit: ${process.env.FRONTEND_URL}/public-profile/${req.body.userId}`,
+                            from: process.env.TWILIO_PHONE_NUMBER,
+                            to: number,
+                        });
+                        console.log("SMS sent successfully to:", number);
+                    } catch (error) {
+                        console.error("Error sending SMS to", number, ":", error);
+                    }
+                }
             }
         }
 
