@@ -102,6 +102,10 @@ const handleScheduledMemories = async () => {
     }
 };
 
-cron.schedule('*/1 * * * *', handleScheduledMemories);
+cron.schedule('*/1 * * * *', () => {
+    console.log("Running cron job...");
+    handleScheduledMemories();
+});
+
 
 export default handleScheduledMemories;
