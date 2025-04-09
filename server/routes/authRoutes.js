@@ -459,6 +459,16 @@ router.put('/verify/:userId', async (req, res) => {
     try {
         const { userId } = req.params;
 
+        const userUpdateResult = await User.findByIdAndUpdate(
+            userId,
+            { isAlive: false },
+            { new: true }
+        );
+
+        if (!userUpdateResult) {
+            return res.status(404).json({ message: "User not found." });
+        }
+
         const memoriesToUpdate = await Memory.find({ userId, privacy: "private" });
 
         if (memoriesToUpdate.length === 0) {

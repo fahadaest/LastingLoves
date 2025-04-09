@@ -504,7 +504,7 @@ export default function CreateMemory() {
                                         <IconButton sx={{ backgroundColor: !canCreateMemory ? '#e5e7eb' : "#fff", height: "30px", width: "30px", marginRight: "20px" }} color="primary">
                                             <AddIcon sx={{ color: !canCreateMemory ? '#aaabae' : "#32AA27" }} />
                                         </IconButton>
-                                        "Create Memory"
+                                        Create Memory
                                     </>
                                 )}
                             </Button>
