@@ -36,15 +36,14 @@ export default function CreateMemory() {
     const [isRecording, setIsRecording] = useState(false);
     const [message, setMessage] = useState('');
     const [severity, setSeverity] = useState('');
-    const [duration, setDuration] = useState(null);
+    const [duration, setDuration] = useState("4000");
     const [showAlert, setShowAlert] = useState(false);
     const videoRef = useRef(null);
     const [isPaused, setIsPaused] = useState(false);
 
     const [mediaRecorder, setMediaRecorder] = useState(null);
     const [userStoppedRecording, setUserStoppedRecording] = useState(false);
-
-    console.log(scheduleTime)
+    const [creatingMemory, setCreatingMemory] = useState(false);
 
 
     const handleRecordVideo = async () => {
@@ -227,6 +226,7 @@ export default function CreateMemory() {
     };
 
     const handleCreateMemory = async () => {
+        setCreatingMemory(true);
         if (!videoFile) {
             setMessage("Please upload a video before creating memory.");
             setSeverity("error");
@@ -264,6 +264,7 @@ export default function CreateMemory() {
             );
 
             if (response.status === 201) {
+                setCreatingMemory(false);
                 setMessage("Memory created successfully!");
                 setSeverity("success");
                 setShowAlert(true);
@@ -278,6 +279,7 @@ export default function CreateMemory() {
                 setProgress(0);
             }
         } catch (error) {
+            setCreatingMemory(false);
             console.error("Upload error:", error);
             setMessage("Unknown error, Please try again!");
             setSeverity("error");
@@ -333,7 +335,7 @@ export default function CreateMemory() {
 
                 <Grid container justifyContent="center" sx={{ mb: 2, display: "flex", alignItems: "center", borderRadius: "10px", padding: { xs: '20px 5px 20px 5px', sm: '20px' }, maxWidth: "100%", }} >
 
-                    <Box onClick={handleCreateMemory} sx={{ color: '#595959', fontFamily: 'poppins', fontWeight: '600', fontSize: "30px", width: "97%", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <Box sx={{ color: '#595959', fontFamily: 'poppins', fontWeight: '600', fontSize: "30px", width: "97%", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                         <Typography sx={{ color: '#595959', fontFamily: 'poppins', fontWeight: '600', fontSize: { xs: "20px", sm: "30px" }, marginLeft: "15px" }}>
                             Create Memory
                         </Typography>
@@ -495,10 +497,16 @@ export default function CreateMemory() {
                                 Cancel
                             </Button>
                             <Button disabled={!canCreateMemory} onClick={handleCreateMemory} sx={{ padding: "0px 20px 0px 20px", height: "50px", backgroundColor: !canCreateMemory ? '#e5e7eb' : '#32AA27', color: '#FFFFFF', fontFamily: 'poppins', fontWeight: '600', fontSize: { xs: "0.7rem", sm: "0.875rem" }, borderRadius: '0px' }}>
-                                <IconButton sx={{ backgroundColor: !canCreateMemory ? '#e5e7eb' : "#fff", height: "30px", width: "30px", marginRight: "20px" }} color="primary">
-                                    <AddIcon sx={{ color: !canCreateMemory ? '#aaabae' : "#32AA27" }} />
-                                </IconButton>
-                                Create Memory
+                                {creatingMemory ? (
+                                    <CircularProgress size={24} color="inherit" />
+                                ) : (
+                                    <>
+                                        <IconButton sx={{ backgroundColor: !canCreateMemory ? '#e5e7eb' : "#fff", height: "30px", width: "30px", marginRight: "20px" }} color="primary">
+                                            <AddIcon sx={{ color: !canCreateMemory ? '#aaabae' : "#32AA27" }} />
+                                        </IconButton>
+                                        "Create Memory"
+                                    </>
+                                )}
                             </Button>
                         </Box>
                     </Grid>
