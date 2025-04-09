@@ -21,7 +21,7 @@ const memorySchema = new mongoose.Schema({
         type: Date,
         default: null,
     },
-    allowedEmails: {
+    contacts: {
         type: [String],
         default: [],
     },

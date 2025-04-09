@@ -39,10 +39,12 @@ export default function CreateMemory() {
     const [duration, setDuration] = useState(null);
     const [showAlert, setShowAlert] = useState(false);
     const videoRef = useRef(null);
-    const [isPaused, setIsPaused] = useState(false);  // Track whether the recording is paused
+    const [isPaused, setIsPaused] = useState(false);
 
     const [mediaRecorder, setMediaRecorder] = useState(null);
     const [userStoppedRecording, setUserStoppedRecording] = useState(false);
+
+    console.log(scheduleTime)
 
 
     const handleRecordVideo = async () => {
@@ -442,7 +444,7 @@ export default function CreateMemory() {
                             </Box>
 
                             <Box sx={{ width: { xs: "100%", sm: "50%" } }}>
-                                <Box sx={{ display: "flex" }}>
+                                <Box sx={{ display: "flex", flexWrap: "wrap" }}>
                                     <FormControlLabel
                                         control={<Checkbox checked={privacy === "public"} onChange={handlePrivacyChange} name="public" />}
                                         label="Public"
@@ -455,9 +457,13 @@ export default function CreateMemory() {
                                         control={<Checkbox checked={privacy === "scheduled"} onChange={handlePrivacyChange} name="scheduled" />}
                                         label="Scheduled"
                                     />
+                                    <FormControlLabel
+                                        control={<Checkbox checked={privacy === "scheduledAfterDeath"} onChange={handlePrivacyChange} name="scheduledAfterDeath" />}
+                                        label="Scheduled after Death"
+                                    />
                                 </Box>
 
-                                {privacy === "private" || privacy === "scheduled" ? (
+                                {privacy === "private" || privacy === "scheduled" || privacy === "scheduledAfterDeath" ? (
                                     <>
                                         <Box sx={{ marginTop: "10px", marginBottom: "10px", display: "flex", gap: "10px", flexWrap: "wrap", width: "100%", padding: "10px", }}>
                                             {contacts.map((contact, index) => (
@@ -475,7 +481,7 @@ export default function CreateMemory() {
                                                 endAdornment: (<InputAdornment position="end"><IconButton onClick={handleAddContact} color="primary"><AddIcon /></IconButton></InputAdornment>),
                                             }} />
 
-                                        {privacy === "scheduled" && (
+                                        {(privacy === "scheduled" || privacy === "scheduledAfterDeath") && (
                                             <TextField label="Schedule Time" variant="outlined" fullWidth value={scheduleTime} onChange={(e) => setScheduleTime(e.target.value)} sx={{ marginBottom: "20px" }} type="datetime-local" InputLabelProps={{ shrink: true, }} />
                                         )}
                                     </>

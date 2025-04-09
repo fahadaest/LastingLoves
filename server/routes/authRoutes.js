@@ -521,6 +521,7 @@ router.get('/memories/:userId', async (req, res) => {
         // console.log(authUser)
 
         const userExists = await User.findById(userId);
+        console.log(userExists)
         if (!userExists) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -530,7 +531,7 @@ router.get('/memories/:userId', async (req, res) => {
         memories = memories.filter(memory => {
 
             if (memory.privacy === "private") {
-                if (memory.allowedEmails && memory.allowedEmails.includes(authUser.email)) {
+                if (memory.contacts && memory.contacts.includes(authUser.email)) {
                     memory.videoUrl = null;
                     return true;
                 }
@@ -539,6 +540,10 @@ router.get('/memories/:userId', async (req, res) => {
 
             if (memory.privacy === "scheduled") {
                 return false;
+            }
+
+            if (memory.privacy === "scheduledAfterDeathVerified") {
+                return userExists.isAlive === false;
             }
 
             return true;

@@ -34,6 +34,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: 'free',
     },
+    isAlive: {
+        type: Boolean,
+        default: true,
+    }
 });
 
 userSchema.pre('save', async function (next) {
