@@ -107,9 +107,7 @@ router.get('/google', passport.authenticate('google', {
     prompt: 'select_account'
 }));
 
-router.get(
-    '/google/callback',
-    passport.authenticate('google', { failureRedirect: '/sign-in' }),
+router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/sign-in' }),
     (req, res) => {
         if (!req.user) {
             return res.redirect('/sign-in');
