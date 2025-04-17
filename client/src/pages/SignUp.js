@@ -119,6 +119,9 @@ export default function SignUp(props) {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
+        Cookies.remove('accessToken');
+        Cookies.remove('refreshToken');
+
         if (!validateInputs()) {
             setMessage("Enter Valid Inputs!");
             setSeverity("error");
