@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import PVMAdditionals from "../components/personalizedVMSections/PVMAdditionals";
+import UpgradePlan from "../components/personalizedVMSections/UpgradePlan";
 import LetsTalk from "../components/personalizedVMSections/LetsTalk";
 
 function PersonalizedVideoMessages({ page }) {
@@ -10,7 +10,7 @@ function PersonalizedVideoMessages({ page }) {
 
   return (
     <div>
-      <PVMAdditionals page={page} />
+      <UpgradePlan page={page} />
       <LetsTalk />
     </div >
   );

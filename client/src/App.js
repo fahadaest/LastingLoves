@@ -7,7 +7,7 @@ import ProtectedRoute from './routes/protectedRoute';
 import Home from './pages/Home';
 import Pricing from './pages/Pricing';
 import HowItWorks from './pages/HowItWorks';
-import PersonalizedVideoMessages from './pages/PVMAdditionals';
+import UpgradePlan from './components/personalizedVMSections/UpgradePlan';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import Dashboard from './pages/Dashboard';
@@ -34,10 +34,8 @@ function App() {
 
           <Route path="/Pricing" element={<MainLayout><Pricing /></MainLayout>} />
           <Route path="/how-it-works" element={<MainLayout><HowItWorks /></MainLayout>} />
-          <Route path="/monthly-plan" element={<MainLayout><PersonalizedVideoMessages page={"PVM"} /></MainLayout>} />
-          <Route path="/annual-plan" element={<MainLayout><PersonalizedVideoMessages page={"SMD"} /></MainLayout>} />
-          <Route path="/secure-message-locking" element={<MainLayout><PersonalizedVideoMessages page={"SML"} /></MainLayout>} />
-
+          <Route path="/monthly-plan" element={<MainLayout><UpgradePlan page={"MON"} /></MainLayout>} />
+          <Route path="/annual-plan" element={<MainLayout><UpgradePlan page={"ANN"} /></MainLayout>} />
           <Route path="/auth-success" element={<AuthSuccess />} />
 
           <Route path="/sign-in" element={<SignIn />} />

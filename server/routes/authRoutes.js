@@ -564,34 +564,21 @@ router.get('/memories/:userId', async (req, res) => {
 });
 
 router.post('/checkout-session', async (req, res) => {
-    const { priceId, userId } = req.body;
-
-    if (!priceId || !userId) {
-        return res.status(400).json({ message: 'Price ID and User ID are required' });
-    }
+    const { amount } = req.body;
 
     try {
-        const session = await stripe.checkout.sessions.create({
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount,
+            currency: 'usd',
             payment_method_types: ['card'],
-            mode: 'subscription',
-            customer_email: req.body.email,
-            line_items: [
-                {
-                    price: priceId,
-                    quantity: 1,
-                },
-            ],
-            success_url: `${process.env.FRONTEND_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${process.env.FRONTEND_URL}/payment-cancelled`,
-            metadata: { userId },
         });
 
-        res.status(200).json({ sessionId: session.id, url: session.url });
-    } catch (error) {
-        console.error('Stripe error:', error);
-        res.status(500).json({ message: 'Payment session creation failed', error: error.message });
+        res.send({
+            clientSecret: paymentIntent.client_secret,
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 });
-
 
 export default router;

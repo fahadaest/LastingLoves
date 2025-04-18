@@ -119,7 +119,7 @@ function AffordableLove() {
                                         textDecoration: 'underline'
                                     }}
                                 >
-                                    Read More
+                                    Upgrade Plan
                                 </Typography>
                             </Box>
                         </Box>
@@ -201,7 +201,7 @@ function AffordableLove() {
                                         textDecoration: 'underline'
                                     }}
                                 >
-                                    Read More
+                                    Upgrade Plan
                                 </Typography>
                             </Box>
                         </Box>
