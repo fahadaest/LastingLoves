@@ -6,6 +6,8 @@ export const CheckoutForm = () => {
     const elements = useElements();
     const frontendUrl = process.env.FRONTEND_URL;
 
+    console.log('Frontend URL:', frontendUrl);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!stripe || !elements) return;
