@@ -13,7 +13,7 @@ export const CheckoutForm = () => {
         const result = await stripe.confirmPayment({
             elements,
             confirmParams: {
-                return_url: `${frontendUrl}/profile`,
+                return_url: `https://lastinglove-frontend.vercel.app/profile`,
             },
         });
         if (result.error) {
