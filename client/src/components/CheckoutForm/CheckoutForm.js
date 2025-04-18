@@ -16,7 +16,6 @@ export const CheckoutForm = () => {
                 return_url: `${frontendUrl}/profile`,
             },
         });
-
         if (result.error) {
             console.error(result.error.message);
         }
