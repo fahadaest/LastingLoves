@@ -8,12 +8,7 @@
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-position: center;
-}
-
-@media (max-width: 768px) {
-  .hero-background-img {
-    background-attachment: scroll;
-  }
+  max-height: 100vh;
 }
 
 .pricing-background-img {
