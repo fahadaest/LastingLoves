@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import { useNavigate } from 'react-router-dom';
+import { CircularProgress } from '@mui/material';
 import axios from 'axios';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -10,13 +11,14 @@ import ScheduledMDImg from '../../assets/ScheduledMDImg.jpeg';
 import SecureMLImg from '../../assets/SecureMLImg.jpeg';
 import { CheckoutForm } from '../CheckoutForm/CheckoutForm';
 
-const stripePromise = loadStripe("pk_test_51QvF3XPkxI72CVL7UiA4c2FI1d2Ca9ZPzw7nDbC4isiZNPBi4cybmFHpueHrJBKmjxtNgzZXcPpPS4j7sQNcdD0m00sqKDOVJJ");
+const stripePromise = loadStripe(`${process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY}`);
 
 function UpgradePlan({ page }) {
     const navigate = useNavigate();
     const [currentIndex, setCurrentIndex] = useState(0);
     const [clientSecret, setClientSecret] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [paymentMethod, setPaymentMethod] = useState('card');
     const baseURL = process.env.REACT_APP_BASE_URL;
 
     useEffect(() => {
@@ -29,7 +31,7 @@ function UpgradePlan({ page }) {
             else if (page === 'ANN') amount = 30000;
 
             try {
-                const response = await axios.post(`${baseURL}/api/auth/checkout-session`, { amount });
+                const response = await axios.post(`${baseURL}/api/auth/checkout-session`, { amount, page });
                 setClientSecret(response.data.clientSecret);
                 setIsLoading(false);
             } catch (error) {
@@ -81,11 +83,11 @@ function UpgradePlan({ page }) {
 
                     {isLoading ? (
                         <Typography variant="body2" sx={{ fontFamily: 'poppins' }}>
-                            Loading payment form...
+                            <CircularProgress size={44} sx={{ color: '#32AA27' }} />
                         </Typography>
                     ) : clientSecret ? (
                         <Elements stripe={stripePromise} options={{ clientSecret }}>
-                            <CheckoutForm />
+                            <CheckoutForm page={page} />
                         </Elements>
                     ) : (
                         <Typography variant="body2" sx={{ fontFamily: 'poppins' }}>

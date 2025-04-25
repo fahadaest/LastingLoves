@@ -30,10 +30,9 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: '',
     },
-    paymentPlan: {
-        type: String,
-        default: 'free',
-    },
+    paymentPlan: { type: String, enum: ['free', 'monthly', 'annual'], default: 'free' },
+    subscriptionStartDate: { type: Date },
+    subscriptionEndDate: { type: Date },
     isAlive: {
         type: Boolean,
         default: true,

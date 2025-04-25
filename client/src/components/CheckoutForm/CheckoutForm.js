@@ -1,25 +1,34 @@
 import { useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js';
 import { Button } from '@mui/material';
+import axios from 'axios';
 
-export const CheckoutForm = () => {
+export const CheckoutForm = ({ page }) => {
     const stripe = useStripe();
     const elements = useElements();
-    const frontendUrl = process.env.FRONTEND_URL;
-
-    console.log('Frontend URL:', frontendUrl);
+    const frontendUrl = process.env.REACT_APP_FRONTEND_URL;
+    const baseURL = process.env.REACT_APP_BASE_URL;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!stripe || !elements) return;
 
-        const result = await stripe.confirmPayment({
+        const { error, paymentIntent } = await stripe.confirmPayment({
             elements,
-            confirmParams: {
-                return_url: `https://lastinglove-frontend.vercel.app/profile`,
-            },
+            redirect: "if_required"
         });
-        if (result.error) {
-            console.error(result.error.message);
+
+        if (error) {
+            console.error("Payment failed:", error.message);
+            return;
+        }
+
+        if (paymentIntent && paymentIntent.status === "succeeded") {
+            try {
+                await axios.post(`${baseURL}/api/auth/payment/success`, { page }, { withCredentials: true });
+                window.location.href = `${frontendUrl}/profile`;
+            } catch (err) {
+                console.error("Error updating payment plan:", err.message);
+            }
         }
     };
 
@@ -40,7 +49,7 @@ export const CheckoutForm = () => {
                     marginTop: '1rem'
                 }}
             >
-                Upgrade Plan
+                Pay {page === 'MON' ? '$10.00' : '$300.00'}
             </Button>
         </form>
     );

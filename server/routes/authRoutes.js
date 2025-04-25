@@ -565,6 +565,7 @@ router.get('/memories/:userId', async (req, res) => {
 
 router.post('/checkout-session', async (req, res) => {
     const { amount } = req.body;
+    console.log(req.body)
 
     try {
         const paymentIntent = await stripe.paymentIntents.create({
@@ -580,5 +581,59 @@ router.post('/checkout-session', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
+router.post('/payment/success', async (req, res) => {
+    const accessToken = req.cookies.accessToken;
+
+    if (!accessToken) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    try {
+        const decoded = jwt.verify(accessToken, ACCESS_TOKEN_SECRET);
+        const userId = decoded.id;
+
+        const { page } = req.body;
+        let paymentPlan;
+        let subscriptionStartDate = new Date();
+        let subscriptionEndDate;
+
+        if (page === 'MON') {
+            paymentPlan = 'monthly';
+            subscriptionEndDate = new Date();
+            subscriptionEndDate.setMonth(subscriptionEndDate.getMonth() + 1); // Set expiry to 1 month later
+        } else if (page === 'ANN') {
+            paymentPlan = 'annual';
+            subscriptionEndDate = new Date();
+            subscriptionEndDate.setFullYear(subscriptionEndDate.getFullYear() + 1); // Set expiry to 1 year later
+        } else {
+            return res.status(400).json({ message: 'Invalid payment plan type' });
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            {
+                paymentPlan,
+                subscriptionStartDate,
+                subscriptionEndDate
+            },
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        console.log(`User ${updatedUser.username} upgraded to ${paymentPlan}`);
+        res.status(200).json({
+            message: 'Payment plan updated successfully',
+            paymentPlan: updatedUser.paymentPlan
+        });
+    } catch (error) {
+        console.error('Error updating payment plan:', error);
+        res.status(500).json({ message: 'Server error while updating plan' });
+    }
+});
+
 
 export default router;

@@ -66,7 +66,7 @@ function Header() {
       navigate('/');
     }
     if (page === 'About') {
-      navigate('/about');
+      navigate('/About');
     }
     if (page === 'Services') {
       navigate('/Services');
