@@ -10,6 +10,12 @@
   background-position: center;
 }
 
+@media (max-width: 768px) {
+  .hero-background-img {
+    background-attachment: scroll;
+  }
+}
+
 .pricing-background-img {
   background-image: url('https://cdn.b12.io/client_media/cQFRBNdt/08a53332-c694-11ef-9cfc-0242ac110002-jpg-hero_image.jpeg');
   background-size: cover;
