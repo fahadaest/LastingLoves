@@ -13,6 +13,8 @@
 @media (max-width: 768px) {
   .hero-background-img {
     background-image: url('assets/Jamie-Lambros-mobile.png');
+    background-size: cover;
+    background-position: center;
   }
 }
 
