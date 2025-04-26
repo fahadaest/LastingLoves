@@ -3,18 +3,20 @@
 @import "tailwindcss/utilities";
 
 .hero-background-img {
-  background-image: url('assets/Jamie-Lambros.jpg');
+  background-image: url('assets/Jamie-Lambros-mobile.png');
   background-size: cover;
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-position: center;
 }
 
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   .hero-background-img {
-    background-image: url('');
+    background-image: url('assets/Jamie-Lambros-mobile.png');
+    background-size: cover;
+    background-position: center;
   }
-}
+} */
 
 .pricing-background-img {
   background-image: url('https://cdn.b12.io/client_media/cQFRBNdt/08a53332-c694-11ef-9cfc-0242ac110002-jpg-hero_image.jpeg');
