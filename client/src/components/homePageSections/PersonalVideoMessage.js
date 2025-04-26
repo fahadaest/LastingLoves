@@ -11,13 +11,13 @@ function PersonalVideoMessage() {
 
     const handleNavigate = (page) => {
         if (page === 'PVM') {
-            navigate('/personalized-video-messages');
+            navigate('/pricing');
         }
         if (page === 'SMD') {
-            navigate('/scheduled-message-delivery');
+            navigate('/pricing');
         }
         if (page === 'SML') {
-            navigate('/secure-message-locking');
+            navigate('/pricing');
         }
     };
 
