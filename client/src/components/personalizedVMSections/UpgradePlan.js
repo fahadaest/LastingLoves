@@ -44,7 +44,6 @@ function UpgradePlan({ page }) {
     }, [page, baseURL]);
 
     const images = [personalizedVMImg, ScheduledMDImg, SecureMLImg];
-
     const heading = [
         "Monthly Plan: $10.00",
         "Annual Plan: $300.00",
