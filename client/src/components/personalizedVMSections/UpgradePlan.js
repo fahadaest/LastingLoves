@@ -11,7 +11,7 @@ import ScheduledMDImg from '../../assets/ScheduledMDImg.jpeg';
 import SecureMLImg from '../../assets/SecureMLImg.jpeg';
 import { CheckoutForm } from '../CheckoutForm/CheckoutForm';
 
-const stripePromise = loadStripe(`${process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY}`);
+const stripePromise = loadStripe(`${process.env.REACT_APP_STRIPE_PUBLISHABLE}`);
 
 function UpgradePlan({ page }) {
     const navigate = useNavigate();
