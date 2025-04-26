@@ -1,12 +1,22 @@
 import { useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js';
+import { useState, useEffect } from 'react';
 import { Button } from '@mui/material';
+import { CircularProgress } from '@mui/material';
+import Typography from '@mui/material/Typography';
 import axios from 'axios';
 
 export const CheckoutForm = ({ page }) => {
     const stripe = useStripe();
     const elements = useElements();
+    const [isStripeReady, setIsStripeReady] = useState(false);
     const frontendUrl = process.env.REACT_APP_FRONTEND_URL;
     const baseURL = process.env.REACT_APP_BASE_URL;
+
+    useEffect(() => {
+        if (stripe && elements) {
+            setIsStripeReady(true);
+        }
+    }, [stripe, elements]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -34,23 +44,32 @@ export const CheckoutForm = ({ page }) => {
 
     return (
         <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-            <PaymentElement />
-            <Button
-                type="submit"
-                sx={{
-                    width: '250px',
-                    height: "50px",
-                    backgroundColor: '#32AA27',
-                    color: '#FFFFFF',
-                    fontFamily: 'poppins',
-                    fontWeight: '600',
-                    fontSize: "16px",
-                    borderRadius: '0px',
-                    marginTop: '1rem'
-                }}
-            >
-                Pay {page === 'MON' ? '$10.00' : '$300.00'}
-            </Button>
+            {isStripeReady ? (
+                <>
+                    <PaymentElement />
+                    <Button
+                        type="submit"
+                        sx={{
+                            width: '250px',
+                            height: "50px",
+                            backgroundColor: '#32AA27',
+                            color: '#FFFFFF',
+                            fontFamily: 'poppins',
+                            fontWeight: '600',
+                            fontSize: "16px",
+                            borderRadius: '0px',
+                            marginTop: '1rem'
+                        }}
+                    >
+                        Pay {page === 'MON' ? '$10.00' : '$300.00'}
+                    </Button>
+                </>
+            ) : (
+                <Typography variant="body2" sx={{ fontFamily: 'poppins' }}>
+                    <CircularProgress size={44} sx={{ color: '#32AA27' }} />
+                </Typography>
+            )}
+
         </form>
     );
 };

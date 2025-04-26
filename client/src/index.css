@@ -14,7 +14,7 @@
   .hero-background-img {
     background-image: url('assets/Jamie-Lambros-mobile.png');
     background-size: contain;
-    background-repeat: no-repeat;
+    background-repeat: repeat;
     background-position: center top;
     background-attachment: scroll;
   }
