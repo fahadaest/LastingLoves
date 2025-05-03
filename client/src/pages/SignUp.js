@@ -141,7 +141,9 @@ export default function SignUp(props) {
         };
 
         try {
-            const response = await axios.post(`${baseURL}/api/auth/register`, userData);
+            const response = await axios.post(`${baseURL}/api/auth/register`, userData, {
+                withCredentials: true,
+            });
             console.log('User registered:', response.data);
 
             const { accessToken, refreshToken } = response.data;
