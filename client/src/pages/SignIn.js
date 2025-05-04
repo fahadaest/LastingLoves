@@ -124,8 +124,8 @@ export default function SignIn(props) {
             const { accessToken, refreshToken } = response.data;
 
             if (accessToken && refreshToken) {
-                Cookies.set('accessToken', accessToken, { expires: 1 / 24, secure: true, sameSite: 'None' });
-                Cookies.set('refreshToken', refreshToken, { expires: 1, secure: true, sameSite: 'None' });
+                // Cookies.set('accessToken', accessToken, { expires: 1 / 24, secure: false, sameSite: 'Lax' });
+                // Cookies.set('refreshToken', refreshToken, { expires: 1, secure: false, sameSite: 'Lax' });
                 dispatch(checkAuthStatus());
                 navigate(from, { replace: true });
                 setMessage("Logged in!");
