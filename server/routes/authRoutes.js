@@ -155,11 +155,12 @@ router.post('/register', async (req, res) => {
         const refreshToken = generateRefreshToken(user);
 
         res.cookie('accessToken', accessToken, {
-            httpOnly: environment === "development" ? false : true,
-            secure: environment === "development" ? false : true,
-            sameSite: environment === "development" ? 'Lax' : 'None',
-            maxAge: 24 * 60 * 60 * 1000
+            httpOnly: true,
+            secure: true, // required for cross-site cookies
+            sameSite: 'None', // required for cross-site cookies
+            maxAge: 24 * 60 * 60 * 1000, // 1 day
         });
+
 
         res.cookie('refreshToken', refreshToken, {
             httpOnly: environment === "development" ? false : true,
@@ -193,11 +194,12 @@ router.post('/login', async (req, res) => {
         const refreshToken = generateRefreshToken(user);
 
         res.cookie('accessToken', accessToken, {
-            httpOnly: environment === "development" ? false : true,
-            secure: environment === "development" ? false : true,
-            sameSite: environment === "development" ? 'Lax' : 'None',
-            maxAge: 24 * 60 * 60 * 1000
+            httpOnly: true,
+            secure: true, // required for cross-site cookies
+            sameSite: 'None', // required for cross-site cookies
+            maxAge: 24 * 60 * 60 * 1000, // 1 day
         });
+
 
         res.cookie('refreshToken', refreshToken, {
             httpOnly: environment === "development" ? false : true,
@@ -489,10 +491,10 @@ router.put('/verify/:userId', async (req, res) => {
 });
 
 router.get('/myMemories', async (req, res) => {
-    // const accessToken = req.cookies.accessToken;
-    // if (!accessToken) {
-    //     return res.status(401).json({ message: "Unauthorized" });
-    // }
+    const accessToken = req.cookies.accessToken;
+    if (!accessToken) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
 
     try {
         const decoded = jwt.verify(accessToken, ACCESS_TOKEN_SECRET);
