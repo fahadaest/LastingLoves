@@ -490,8 +490,16 @@ router.put('/verify/:userId', async (req, res) => {
 
 router.get('/myMemories', async (req, res) => {
     let accessToken = req.cookies.accessToken;
+
+    if (!accessToken && req.headers.authorization) {
+        const authHeader = req.headers.authorization;
+        if (authHeader.startsWith('Bearer ')) {
+            accessToken = authHeader.split(' ')[1];
+        }
+    }
+
     if (!accessToken) {
-        return res.status(401).json({ message: "Unauthorized" });
+        return res.status(401).json({ message: 'No access token provided' });
     }
 
     try {
