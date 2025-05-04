@@ -149,8 +149,8 @@ export default function SignUp(props) {
             const { accessToken, refreshToken } = response.data;
 
             if (accessToken && refreshToken) {
-                Cookies.set('accessToken', accessToken, { expires: 1 / 24, secure: false, sameSite: 'Lax' }); //TODO change to Strict
-                Cookies.set('refreshToken', refreshToken, { expires: 1, secure: false, sameSite: 'Lax' }); //TODO change to Strict
+                Cookies.set('accessToken', accessToken, { expires: 1 / 24, secure: true, sameSite: 'None' }); //TODO change to Strict
+                Cookies.set('refreshToken', refreshToken, { expires: 1, secure: true, sameSite: 'None' }); //TODO change to Strict
                 // dispatch(checkAuthStatus());
                 setMessage("User Registered Successfully!");
                 setSeverity("success");
