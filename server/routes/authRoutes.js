@@ -155,12 +155,11 @@ router.post('/register', async (req, res) => {
         const refreshToken = generateRefreshToken(user);
 
         res.cookie('accessToken', accessToken, {
-            httpOnly: true,
-            secure: true, // required for cross-site cookies
-            sameSite: 'None', // required for cross-site cookies
-            maxAge: 24 * 60 * 60 * 1000, // 1 day
+            httpOnly: environment === "development" ? false : true,
+            secure: environment === "development" ? false : true,
+            sameSite: environment === "development" ? 'Lax' : 'None',
+            maxAge: 24 * 60 * 60 * 1000
         });
-
 
         res.cookie('refreshToken', refreshToken, {
             httpOnly: environment === "development" ? false : true,
@@ -194,12 +193,11 @@ router.post('/login', async (req, res) => {
         const refreshToken = generateRefreshToken(user);
 
         res.cookie('accessToken', accessToken, {
-            httpOnly: true,
-            secure: true, // required for cross-site cookies
-            sameSite: 'None', // required for cross-site cookies
-            maxAge: 24 * 60 * 60 * 1000, // 1 day
+            httpOnly: environment === "development" ? false : true,
+            secure: environment === "development" ? false : true,
+            sameSite: environment === "development" ? 'Lax' : 'None',
+            maxAge: 24 * 60 * 60 * 1000
         });
-
 
         res.cookie('refreshToken', refreshToken, {
             httpOnly: environment === "development" ? false : true,
