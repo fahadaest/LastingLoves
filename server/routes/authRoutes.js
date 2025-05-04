@@ -214,9 +214,15 @@ router.post('/login', async (req, res) => {
 });
 
 router.post('/refresh', (req, res) => {
-    const refreshToken = req.cookies.refreshToken;
-    if (!refreshToken) {
-        return res.status(401).json({ message: 'No refresh token provided' });
+    let accessToken = req.cookies.accessToken;
+    if (!accessToken && req.headers.authorization) {
+        const authHeader = req.headers.authorization;
+        if (authHeader.startsWith('Bearer ')) {
+            accessToken = authHeader.split(' ')[1];
+        }
+    }
+    if (!accessToken) {
+        return res.status(401).json({ message: 'No access token provided' });
     }
 
     jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, async (err, decoded) => {
@@ -315,9 +321,15 @@ router.get('/publicProfile/:userId', async (req, res) => {
 });
 
 router.put('/profile/update', uploadImage.single('profilePic'), async (req, res) => {
-    const accessToken = req.cookies.accessToken;
+    let accessToken = req.cookies.accessToken;
+    if (!accessToken && req.headers.authorization) {
+        const authHeader = req.headers.authorization;
+        if (authHeader.startsWith('Bearer ')) {
+            accessToken = authHeader.split(' ')[1];
+        }
+    }
     if (!accessToken) {
-        return res.status(401).json({ message: "Unauthorized" });
+        return res.status(401).json({ message: 'No access token provided' });
     }
 
     try {
@@ -346,10 +358,17 @@ router.put('/profile/update', uploadImage.single('profilePic'), async (req, res)
 });
 
 router.post('/createMemory', uploadVideo.single('file'), async (req, res) => {
-    const accessToken = req.cookies.accessToken;
-    if (!accessToken) {
-        return res.status(401).json({ message: "Unauthorized" });
+    let accessToken = req.cookies.accessToken;
+    if (!accessToken && req.headers.authorization) {
+        const authHeader = req.headers.authorization;
+        if (authHeader.startsWith('Bearer ')) {
+            accessToken = authHeader.split(' ')[1];
+        }
     }
+    if (!accessToken) {
+        return res.status(401).json({ message: 'No access token provided' });
+    }
+
     try {
 
         let videoUrl = "";
@@ -591,10 +610,17 @@ router.post('/checkout-session', async (req, res) => {
 });
 
 router.post('/payment/success', async (req, res) => {
-    const accessToken = req.cookies.accessToken;
+    let accessToken = req.cookies.accessToken;
+
+    if (!accessToken && req.headers.authorization) {
+        const authHeader = req.headers.authorization;
+        if (authHeader.startsWith('Bearer ')) {
+            accessToken = authHeader.split(' ')[1];
+        }
+    }
 
     if (!accessToken) {
-        return res.status(401).json({ message: "Unauthorized" });
+        return res.status(401).json({ message: 'No access token provided' });
     }
 
     try {
