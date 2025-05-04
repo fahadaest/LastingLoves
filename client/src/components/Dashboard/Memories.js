@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import { Button, Typography, Modal } from '@mui/material';
 import axios from 'axios';
+import Cookies from "js-cookie";
 
 export default function Memories() {
     const [button, setActiveButton] = useState("All Memories");
@@ -11,11 +12,13 @@ export default function Memories() {
     const [memories, setMemories] = useState([]);
     const [selectedMemory, setSelectedMemory] = useState(null);
     const baseURL = process.env.REACT_APP_BASE_URL;
+    const accessToken = Cookies.get("accessToken");
 
     useEffect(() => {
         const fetchMemories = async () => {
             try {
                 const response = await axios.get(`${baseURL}/api/auth/myMemories`, {
+                    headers: { Authorization: `Bearer ${accessToken}` },
                     withCredentials: true,
                 });
                 setMemories(response?.data?.memories);
@@ -28,7 +31,7 @@ export default function Memories() {
     }, []);
 
     const handleClose = () => {
-        setSelectedMemory(null); // Close the modal
+        setSelectedMemory(null);
     };
 
     return (
