@@ -489,10 +489,10 @@ router.put('/verify/:userId', async (req, res) => {
 });
 
 router.get('/myMemories', async (req, res) => {
-    const accessToken = req.cookies.accessToken;
-    if (!accessToken) {
-        return res.status(401).json({ message: "Unauthorized" });
-    }
+    // const accessToken = req.cookies.accessToken;
+    // if (!accessToken) {
+    //     return res.status(401).json({ message: "Unauthorized" });
+    // }
 
     try {
         const decoded = jwt.verify(accessToken, ACCESS_TOKEN_SECRET);
