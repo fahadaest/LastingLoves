@@ -5,6 +5,7 @@ import Divider from '@mui/material/Divider';
 import { Button, Typography, Modal } from '@mui/material';
 import axios from 'axios';
 import Cookies from "js-cookie";
+import api from '../../api';
 
 export default function Memories() {
     const [button, setActiveButton] = useState("All Memories");
@@ -17,7 +18,7 @@ export default function Memories() {
     useEffect(() => {
         const fetchMemories = async () => {
             try {
-                const response = await axios.get(`${baseURL}/api/auth/myMemories`, {
+                const response = await api.get(`/api/auth/myMemories`, {
                     headers: { Authorization: `Bearer ${accessToken}` },
                     withCredentials: true,
                 });
