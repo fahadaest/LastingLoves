@@ -9,6 +9,7 @@ import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
 import NotStartedIcon from '@mui/icons-material/NotStarted';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import { InputAdornment, Button, Typography, TextField, FormControlLabel, Checkbox, IconButton } from "@mui/material";
+import { FormControl, FormLabel, FormGroup, FormHelperText } from '@mui/material';
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import AddIcon from '@mui/icons-material/Add';
 import { useSelector } from "react-redux";
@@ -40,11 +41,15 @@ export default function CreateMemory() {
     const [showAlert, setShowAlert] = useState(false);
     const videoRef = useRef(null);
     const [isPaused, setIsPaused] = useState(false);
-
     const [mediaRecorder, setMediaRecorder] = useState(null);
     const [userStoppedRecording, setUserStoppedRecording] = useState(false);
     const [creatingMemory, setCreatingMemory] = useState(false);
-
+    const contactRequired = (privacy === 'private' || privacy === 'scheduled' || privacy === 'scheduledAfterDeath') && contacts.length === 0;
+    const [errors, setErrors] = useState({
+        title: false,
+        description: false,
+        privacy: false,
+    });
 
     const handleRecordVideo = async () => {
         try {
@@ -155,8 +160,10 @@ export default function CreateMemory() {
     };
 
     const handlePrivacyChange = (event) => {
-        const { name } = event.target;
-        setPrivacy(name);
+        setPrivacy(event.target.name);
+        if (errors.privacy) {
+            setErrors((prev) => ({ ...prev, privacy: false }));
+        }
     };
 
     const handleAddEmail = () => {
@@ -173,9 +180,13 @@ export default function CreateMemory() {
     };
 
     const handleAddContact = () => {
-        if (newContact && !contacts.includes(newContact)) {
-            setContacts([...contacts, newContact]);
-            setNewContact("");
+        if (newContact.trim() === "") return;
+
+        setContacts((prev) => [...prev, newContact.trim()]);
+        setNewContact("");
+
+        if (errors.contacts) {
+            setErrors((prev) => ({ ...prev, contacts: false }));
         }
     };
 
@@ -226,6 +237,23 @@ export default function CreateMemory() {
     };
 
     const handleCreateMemory = async () => {
+        const newErrors = {
+            title: !title.trim(),
+            description: !description.trim(),
+            privacy: !privacy,
+            contacts: contactRequired,
+            scheduleTime: (privacy === "scheduled" || privacy === "scheduledAfterDeath") && !scheduleTime,
+        };
+
+        setErrors(newErrors);
+        const hasError = Object.values(newErrors).some(Boolean);
+        if (hasError) {
+            setMessage("Enter all required fields");
+            setSeverity("error");
+            setShowAlert(true);
+            return;
+        }
+
         setCreatingMemory(true);
         if (!videoFile) {
             setMessage("Please upload a video before creating memory.");
@@ -441,29 +469,44 @@ export default function CreateMemory() {
                         <Box sx={{ width: "100%", padding: { xs: "10px", sm: "30px" }, display: "flex", flexDirection: { xs: 'column', sm: 'row' }, justifyContent: "center", borderRadius: "10px", border: "2px solid #d1d4e0", gap: { xs: "0px", sm: "30px" } }}>
 
                             <Box sx={{ width: { xs: "100%", sm: "50%" } }}>
-                                <TextField label="Title" variant="outlined" fullWidth value={title} onChange={(e) => setTitle(e.target.value)} sx={{ marginBottom: "20px" }} />
-                                <TextField label="Description" variant="outlined" fullWidth value={description} onChange={(e) => setDescription(e.target.value)} sx={{ marginBottom: "20px" }} multiline rows={7} />
+                                <TextField label="Title" variant="outlined" fullWidth value={title} onChange={(e) => {
+                                    setTitle(e.target.value);
+                                    if (errors.title && e.target.value.trim() !== '') {
+                                        setErrors((prev) => ({ ...prev, title: false }));
+                                    }
+                                }} sx={{ marginBottom: "20px" }} error={errors.title} helperText={errors.title ? "Title is required" : ""} />
+
+                                <TextField label="Description" variant="outlined" fullWidth value={description} onChange={(e) => {
+                                    setDescription(e.target.value);
+                                    if (errors.description && e.target.value.trim() !== '') {
+                                        setErrors((prev) => ({ ...prev, description: false }));
+                                    }
+                                }} sx={{ marginBottom: "20px" }} multiline rows={7} error={errors.description} helperText={errors.description ? "Description is required" : ""} />
                             </Box>
 
                             <Box sx={{ width: { xs: "100%", sm: "50%" } }}>
-                                <Box sx={{ display: "flex", flexWrap: "wrap" }}>
-                                    <FormControlLabel
-                                        control={<Checkbox checked={privacy === "public"} onChange={handlePrivacyChange} name="public" />}
-                                        label="Public"
-                                    />
-                                    <FormControlLabel
-                                        control={<Checkbox checked={privacy === "private"} onChange={handlePrivacyChange} name="private" />}
-                                        label="Private"
-                                    />
-                                    <FormControlLabel
-                                        control={<Checkbox checked={privacy === "scheduled"} onChange={handlePrivacyChange} name="scheduled" />}
-                                        label="Scheduled"
-                                    />
-                                    <FormControlLabel
-                                        control={<Checkbox checked={privacy === "scheduledAfterDeath"} onChange={handlePrivacyChange} name="scheduledAfterDeath" />}
-                                        label="Scheduled after Death"
-                                    />
-                                </Box>
+                                <FormControl component="fieldset" error={errors.privacy} sx={{ width: "100%", marginBottom: "10px" }}>
+                                    <FormGroup row>
+                                        <FormControlLabel
+                                            control={<Checkbox checked={privacy === "public"} onChange={handlePrivacyChange} name="public" />}
+                                            label="Public"
+                                        />
+                                        <FormControlLabel
+                                            control={<Checkbox checked={privacy === "private"} onChange={handlePrivacyChange} name="private" />}
+                                            label="Private"
+                                        />
+                                        <FormControlLabel
+                                            control={<Checkbox checked={privacy === "scheduled"} onChange={handlePrivacyChange} name="scheduled" />}
+                                            label="Scheduled"
+                                        />
+                                        <FormControlLabel
+                                            control={<Checkbox checked={privacy === "scheduledAfterDeath"} onChange={handlePrivacyChange} name="scheduledAfterDeath" />}
+                                            label="Scheduled after Death"
+                                        />
+                                    </FormGroup>
+                                    {errors.privacy && <FormHelperText>Please select a privacy option.</FormHelperText>}
+                                </FormControl>
+
 
                                 {privacy === "private" || privacy === "scheduled" || privacy === "scheduledAfterDeath" ? (
                                     <>
@@ -478,13 +521,23 @@ export default function CreateMemory() {
                                             ))}
                                         </Box>
 
-                                        <TextField label="Email Address or Phone Number" variant="outlined" fullWidth value={newContact} onChange={(e) => setNewContact(e.target.value)} sx={{ marginBottom: "20px" }} type="text" onKeyPress={handleKeyPress}
+                                        <TextField label="Email Address or Phone Number" variant="outlined" fullWidth value={newContact} onChange={(e) => {
+                                            setNewContact(e.target.value);
+                                            if (errors.contacts && e.target.value.trim() !== '') {
+                                                setErrors((prev) => ({ ...prev, contacts: false }));
+                                            }
+                                        }} error={errors.contacts} helperText={errors.contacts ? "At least one contact is required" : ""} sx={{ marginBottom: "20px" }} type="text" onKeyPress={handleKeyPress}
                                             InputProps={{
                                                 endAdornment: (<InputAdornment position="end"><IconButton onClick={handleAddContact} color="primary"><AddIcon /></IconButton></InputAdornment>),
                                             }} />
 
                                         {(privacy === "scheduled" || privacy === "scheduledAfterDeath") && (
-                                            <TextField label="Schedule Time" variant="outlined" fullWidth value={scheduleTime} onChange={(e) => setScheduleTime(e.target.value)} sx={{ marginBottom: "20px" }} type="datetime-local" InputLabelProps={{ shrink: true, }} />
+                                            <TextField label="Schedule Time" variant="outlined" fullWidth value={scheduleTime} onChange={(e) => {
+                                                setScheduleTime(e.target.value);
+                                                if (errors.scheduleTime && e.target.value) {
+                                                    setErrors((prev) => ({ ...prev, scheduleTime: false }));
+                                                }
+                                            }} error={errors.scheduleTime} helperText={errors.scheduleTime ? "Schedule time is required" : ""} sx={{ marginBottom: "20px" }} type="datetime-local" InputLabelProps={{ shrink: true, }} />
                                         )}
                                     </>
 
@@ -496,13 +549,14 @@ export default function CreateMemory() {
                             <Button sx={{ padding: "0px 20px 0px 20px", height: "50px", backgroundColor: '#e5e7eb', color: '#32AA27', fontFamily: 'poppins', fontSize: { xs: "0.7rem", sm: "0.875rem" }, borderRadius: '0px' }} >
                                 Cancel
                             </Button>
-                            <Button disabled={!canCreateMemory} onClick={handleCreateMemory} sx={{ padding: "0px 20px 0px 20px", height: "50px", backgroundColor: !canCreateMemory ? '#e5e7eb' : '#32AA27', color: '#FFFFFF', fontFamily: 'poppins', fontWeight: '600', fontSize: { xs: "0.7rem", sm: "0.875rem" }, borderRadius: '0px' }}>
+                            <Button
+                                onClick={handleCreateMemory} sx={{ padding: "0px 20px 0px 20px", height: "50px", backgroundColor: '#32AA27', color: '#FFFFFF', fontFamily: 'poppins', fontWeight: '600', fontSize: { xs: "0.7rem", sm: "0.875rem" }, borderRadius: '0px' }}>
                                 {creatingMemory ? (
                                     <CircularProgress size={24} color="inherit" />
                                 ) : (
                                     <>
-                                        <IconButton sx={{ backgroundColor: !canCreateMemory ? '#e5e7eb' : "#fff", height: "30px", width: "30px", marginRight: "20px" }} color="primary">
-                                            <AddIcon sx={{ color: !canCreateMemory ? '#aaabae' : "#32AA27" }} />
+                                        <IconButton sx={{ backgroundColor: "#fff", height: "30px", width: "30px", marginRight: "20px" }} color="primary">
+                                            <AddIcon sx={{ color: "#32AA27" }} />
                                         </IconButton>
                                         Create Memory
                                     </>

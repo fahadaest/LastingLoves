@@ -3,7 +3,6 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import { Button, Typography, Modal } from '@mui/material';
-import axios from 'axios';
 import Cookies from "js-cookie";
 import api from '../../api';
 
