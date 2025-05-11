@@ -9,7 +9,7 @@ import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
 import NotStartedIcon from '@mui/icons-material/NotStarted';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import { InputAdornment, Button, Typography, TextField, FormControlLabel, Checkbox, IconButton } from "@mui/material";
-import { FormControl, FormLabel, FormGroup, FormHelperText } from '@mui/material';
+import { FormControl, FormGroup, FormHelperText } from '@mui/material';
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import AddIcon from '@mui/icons-material/Add';
 import { useSelector } from "react-redux";
@@ -33,7 +33,7 @@ export default function CreateMemory() {
     const [description, setDescription] = useState("");
     const profileData = useSelector((state) => state.auth.user);
     const baseURL = process.env.REACT_APP_BASE_URL;
-    const canCreateMemory = videoFile && title.trim() && description.trim() && Object.values(privacy).some(val => val);
+    // const canCreateMemory = videoFile && title.trim() && description.trim() && Object.values(privacy).some(val => val);
     const [isRecording, setIsRecording] = useState(false);
     const [message, setMessage] = useState('');
     const [severity, setSeverity] = useState('');
@@ -42,7 +42,7 @@ export default function CreateMemory() {
     const videoRef = useRef(null);
     const [isPaused, setIsPaused] = useState(false);
     const [mediaRecorder, setMediaRecorder] = useState(null);
-    const [userStoppedRecording, setUserStoppedRecording] = useState(false);
+    // const [userStoppedRecording, setUserStoppedRecording] = useState(false);
     const [creatingMemory, setCreatingMemory] = useState(false);
     const contactRequired = (privacy === 'private' || privacy === 'scheduled' || privacy === 'scheduledAfterDeath') && contacts.length === 0;
     const [errors, setErrors] = useState({

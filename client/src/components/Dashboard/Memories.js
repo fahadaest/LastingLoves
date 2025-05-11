@@ -11,7 +11,7 @@ export default function Memories() {
     const buttons = ["All Memories"];
     const [memories, setMemories] = useState([]);
     const [selectedMemory, setSelectedMemory] = useState(null);
-    const baseURL = process.env.REACT_APP_BASE_URL;
+    // const baseURL = process.env.REACT_APP_BASE_URL;
     const accessToken = Cookies.get("accessToken");
 
     useEffect(() => {
@@ -28,7 +28,7 @@ export default function Memories() {
         };
 
         fetchMemories();
-    }, []);
+    }, [accessToken]);
 
     const handleClose = () => {
         setSelectedMemory(null);
