@@ -39,6 +39,7 @@
     "redux": "^5.0.1",
     "redux-persist": "^6.0.0",
     "redux-thunk": "^3.1.0",
+    "serve": "^14.2.4",
     "vercel": "^41.1.2",
     "web-vitals": "^4.2.4"
   },
