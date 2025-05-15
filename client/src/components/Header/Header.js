@@ -31,7 +31,7 @@ function Header() {
     dispatch(logout());
   };
 
-  const pages = ['Home', 'About', 'Services', 'Pricing', 'How it Works'];
+  const pages = ['Home', 'About', 'Services', 'Pricing', 'How it Works', 'Terms of Service', 'Privacy Policy'];
   const settings = isAuthenticated
     ? ['Profile', 'Create Memory', 'Logout']
     : ['Profile', 'Create Memory', 'Login / Register'];
@@ -76,6 +76,12 @@ function Header() {
     }
     if (page === 'How it Works') {
       navigate('/how-it-works');
+    }
+    if (page === 'Terms of Service') {
+      navigate('/terms-of-service');
+    }
+    if (page === 'Privacy Policy') {
+      navigate('/privacy-policy');
     }
     setAnchorElNav(null);
   };

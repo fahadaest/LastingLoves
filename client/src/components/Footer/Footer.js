@@ -23,8 +23,8 @@ function Footer() {
                   fontFamily: "poppins",
                   color: "#fff",
                   textDecoration: "underline",
-                }} href="/intake-form" color="inherit" underline="hover">
-                  Complete intake
+                }} href="/terms-of-service" color="inherit" underline="hover">
+                  Terms of Service
                 </Link>
               </li>
               <li>

@@ -10,6 +10,8 @@ import HowItWorks from './pages/HowItWorks';
 import UpgradePlan from './components/personalizedVMSections/UpgradePlan';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
+import TermsOfService from './pages/TermsOfService';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 import Dashboard from './pages/Dashboard';
 import { useDispatch } from "react-redux";
 import { checkAuthStatus } from "./redux/slices/authSlice";
@@ -31,6 +33,8 @@ function App() {
           <Route path="/about" element={<MainLayout><Home url={"about"} /></MainLayout>} />
           <Route path="/Services" element={<MainLayout><Home url={"services"} /></MainLayout>} />
           <Route path="/Contact" element={<MainLayout><Home url={"contact"} /></MainLayout>} />
+          <Route path="/terms-of-service" element={<MainLayout><TermsOfService /></MainLayout>} />
+          <Route path="/privacy-policy" element={<MainLayout><PrivacyPolicy /></MainLayout>} />
 
           <Route path="/Pricing" element={<MainLayout><Pricing /></MainLayout>} />
           <Route path="/how-it-works" element={<MainLayout><HowItWorks /></MainLayout>} />
