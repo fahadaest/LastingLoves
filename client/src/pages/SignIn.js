@@ -23,6 +23,7 @@ import { useSelector } from 'react-redux';
 import { checkAuthStatus } from "../redux/slices/authSlice";
 import CustomAlert from '../components/Alert/Alert';
 import { ReactComponent as GoogleIcon } from '../assets/google.svg';
+import { ReactComponent as AppleIcon } from '../assets/apple.svg';
 
 const Card = styled(MuiCard)(({ theme }) => ({
     display: 'flex',
@@ -285,6 +286,15 @@ export default function SignIn(props) {
                         onClick={handleGoogleAuth}
                     >
                         Sign in with Google
+                    </Button>
+                    <Button
+                        fullWidth
+                        variant="outlined"
+                        sx={{ color: "#32AA27", border: "1px solid #32AA27" }}
+                        startIcon={<AppleIcon width={24} height={24} />}
+                        onClick={handleGoogleAuth}
+                    >
+                        Sign in with Apple
                     </Button>
                     <Typography sx={{ textAlign: 'center' }}>
                         Don&apos;t have an account?{' '}

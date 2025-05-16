@@ -40,9 +40,24 @@ function AffordableLove() {
                         Cherish memories with ease
                     </Typography>
 
-                    <Box className="flex flex-col bp900:flex-row gap-5">
+                    <Box className="flex flex-col bp900:flex-row gap-10">
 
-                        <Box>
+                        <Box
+                            onClick={() => navigate('/monthly-plan')}
+                            sx={{
+                                padding: "20px",
+                                backgroundColor: "#fff",
+                                boxShadow: "0 5px 20px 0 rgba(0, 0, 0, 0.15)",
+                                transition: "transform 0.1s ease-in-out",
+                                "&:hover": {
+                                    cursor: "pointer",
+                                    transform: "scale(1.05)",
+                                    boxShadow: "0 5px 20px 0 #32AA27",
+                                    "& .hover-text": {
+                                        color: "#32AA27",
+                                    },
+                                },
+                            }}>
 
                             <Box className="relative w-[30%] aspect-square mb-8">
                                 <img
@@ -124,7 +139,22 @@ function AffordableLove() {
                             </Box>
                         </Box>
 
-                        <Box>
+                        <Box
+                            onClick={() => navigate('/annual-plan')}
+                            sx={{
+                                padding: "20px",
+                                backgroundColor: "#fff",
+                                boxShadow: "0 5px 20px 0 rgba(0, 0, 0, 0.15)",
+                                transition: "transform 0.1s ease-in-out",
+                                "&:hover": {
+                                    cursor: "pointer",
+                                    transform: "scale(1.05)",
+                                    boxShadow: "0 5px 20px 0 #32AA27",
+                                    "& .hover-text": {
+                                        color: "#32AA27",
+                                    },
+                                },
+                            }}>
 
                             <Box className="relative w-[30%] aspect-square mb-8">
                                 <img

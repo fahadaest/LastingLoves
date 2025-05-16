@@ -254,7 +254,6 @@ export default function CreateMemory() {
             return;
         }
 
-        setCreatingMemory(true);
         if (!videoFile) {
             setMessage("Please upload a video before creating memory.");
             setSeverity("error");
@@ -272,6 +271,7 @@ export default function CreateMemory() {
             ?.split('=')[1];
 
         try {
+            setCreatingMemory(true);
             const response = await axios.post(
                 `${baseURL}/api/auth/createMemory`,
                 {
