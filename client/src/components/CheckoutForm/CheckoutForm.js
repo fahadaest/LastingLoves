@@ -4,6 +4,7 @@ import { Button } from '@mui/material';
 import { CircularProgress } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import axios from 'axios';
+import CustomAlert from '../Alert/Alert';
 
 export const CheckoutForm = ({ page }) => {
     const stripe = useStripe();
@@ -11,6 +12,13 @@ export const CheckoutForm = ({ page }) => {
     const [isStripeReady, setIsStripeReady] = useState(false);
     const frontendUrl = process.env.REACT_APP_FRONTEND_URL;
     const baseURL = process.env.REACT_APP_BASE_URL;
+    const [paymentProcessing, setPaymentProcessing] = useState(false);
+    const [message, setMessage] = useState('');
+    const [severity, setSeverity] = useState('');
+    const [duration, setDuration] = useState("4000");
+    const [showAlert, setShowAlert] = useState(false);
+
+    console.log(showAlert)
 
     useEffect(() => {
         if (stripe && elements) {
@@ -21,6 +29,7 @@ export const CheckoutForm = ({ page }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!stripe || !elements) return;
+        setPaymentProcessing(true);
 
         const { error, paymentIntent } = await stripe.confirmPayment({
             elements,
@@ -28,17 +37,31 @@ export const CheckoutForm = ({ page }) => {
         });
 
         if (error) {
-            console.error("Payment failed:", error.message);
+            setMessage(error.message);
+            setSeverity("error");
+            setShowAlert(true);
+            setPaymentProcessing(false);
             return;
         }
 
         if (paymentIntent && paymentIntent.status === "succeeded") {
             try {
                 await axios.post(`${baseURL}/api/auth/payment/success`, { page }, { withCredentials: true });
-                window.location.href = `${frontendUrl}/profile`;
+                setMessage("Payment successful!");
+                setSeverity("success");
+                setShowAlert(true);
+                setTimeout(() => {
+                    window.location.href = `${frontendUrl}/profile`;
+                }, 2000);
             } catch (err) {
-                console.error("Error updating payment plan:", err.message);
+                setMessage(err.message);
+                setSeverity("error");
+                setShowAlert(true);
+                setPaymentProcessing(false);
             }
+        }
+        else {
+            setPaymentProcessing(false);
         }
     };
 
@@ -49,6 +72,7 @@ export const CheckoutForm = ({ page }) => {
                     <PaymentElement />
                     <Button
                         type="submit"
+                        disabled={paymentProcessing}
                         sx={{
                             width: '250px',
                             height: "50px",
@@ -61,7 +85,11 @@ export const CheckoutForm = ({ page }) => {
                             marginTop: '1rem'
                         }}
                     >
-                        Pay {page === 'MON' ? '$10.00' : '$300.00'}
+                        {paymentProcessing ? (
+                            <CircularProgress size={24} sx={{ color: '#FFFFFF' }} />
+                        ) : (
+                            `Pay ${page === 'MON' ? '$10.00' : '$300.00'}`
+                        )}
                     </Button>
                 </>
             ) : (
@@ -69,6 +97,16 @@ export const CheckoutForm = ({ page }) => {
                     <CircularProgress size={44} sx={{ color: '#32AA27' }} />
                 </Typography>
             )}
+
+            {showAlert && (
+                <CustomAlert
+                    message={message}
+                    severity={severity}
+                    duration={duration}
+                    setShowAlert={setShowAlert}
+                />
+            )}
+
 
         </form>
     );
