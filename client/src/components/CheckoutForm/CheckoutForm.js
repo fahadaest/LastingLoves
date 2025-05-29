@@ -7,6 +7,7 @@ import axios from 'axios';
 import CustomAlert from '../Alert/Alert';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import TextField from '@mui/material/TextField';
 
 export const CheckoutForm = ({ page }) => {
     const stripe = useStripe();
@@ -21,6 +22,8 @@ export const CheckoutForm = ({ page }) => {
     const [showAlert, setShowAlert] = useState(false);
     const [smsConsent, setSmsConsent] = useState(false);
     const [smsConsentError, setSmsConsentError] = useState(false);
+    const [contactNumber, setContactNumber] = useState('');
+    const [contactNumberError, setContactNumberError] = useState(false);
 
     console.log(showAlert)
 
@@ -79,6 +82,17 @@ export const CheckoutForm = ({ page }) => {
             {isStripeReady ? (
                 <>
                     <PaymentElement />
+
+                    <TextField
+                        label="Contact Number"
+                        variant="outlined"
+                        fullWidth
+                        value={contactNumber}
+                        onChange={(e) => setContactNumber(e.target.value)}
+                        error={contactNumberError}
+                        helperText={contactNumberError ? "Please enter your contact number." : ""}
+                        sx={{ marginTop: '1.5rem', fontFamily: 'poppins', backgroundColor: "#fff" }}
+                    />
 
                     <FormControlLabel
                         control={
