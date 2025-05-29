@@ -5,6 +5,8 @@ import { CircularProgress } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import axios from 'axios';
 import CustomAlert from '../Alert/Alert';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 export const CheckoutForm = ({ page }) => {
     const stripe = useStripe();
@@ -17,6 +19,8 @@ export const CheckoutForm = ({ page }) => {
     const [severity, setSeverity] = useState('');
     const [duration, setDuration] = useState("4000");
     const [showAlert, setShowAlert] = useState(false);
+    const [smsConsent, setSmsConsent] = useState(false);
+    const [smsConsentError, setSmsConsentError] = useState(false);
 
     console.log(showAlert)
 
@@ -29,7 +33,12 @@ export const CheckoutForm = ({ page }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!stripe || !elements) return;
+        if (!smsConsent) {
+            setSmsConsentError(true);
+            return;
+        }
         setPaymentProcessing(true);
+        setSmsConsentError(false);
 
         const { error, paymentIntent } = await stripe.confirmPayment({
             elements,
@@ -70,6 +79,30 @@ export const CheckoutForm = ({ page }) => {
             {isStripeReady ? (
                 <>
                     <PaymentElement />
+
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={smsConsent}
+                                onChange={(e) => setSmsConsent(e.target.checked)}
+                                name="smsConsent"
+                                color="primary"
+                            />
+                        }
+                        label={
+                            <Typography variant="body2" sx={{ fontFamily: 'poppins' }}>
+                                I agree to receive promotional and marketing text messages sent via an autodialer. Message frequency varies. Message and data rates may apply. Consent is not a condition of purchase. View our <a href="/terms" target="_blank" rel="noopener noreferrer">Terms</a> and <a href="/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.
+                            </Typography>
+                        }
+                        sx={{ marginTop: '1rem' }}
+                    />
+
+                    {smsConsentError && (
+                        <Typography color="error" variant="body2" sx={{ fontFamily: 'poppins', mb: 1 }}>
+                            You must agree to receive SMS marketing messages to proceed.
+                        </Typography>
+                    )}
+
                     <Button
                         type="submit"
                         disabled={paymentProcessing}
@@ -106,9 +139,8 @@ export const CheckoutForm = ({ page }) => {
                     setShowAlert={setShowAlert}
                 />
             )}
-
-
         </form>
     );
+
 };
 
