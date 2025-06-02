@@ -170,7 +170,7 @@ export default function SignUp(props) {
 
     const handleOAuth = async (provider) => {
         try {
-            window.open(`${process.env.REACT_APP_BASE_URL}/api/auth/${provider}/callback`, "_self");
+            window.open(`${process.env.REACT_APP_BASE_URL}/api/auth/${provider}`, "_self");
         } catch (error) {
             console.error("Google Auth Error:", error);
         }
