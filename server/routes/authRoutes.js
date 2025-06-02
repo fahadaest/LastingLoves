@@ -125,7 +125,7 @@ passport.use(
 router.get('/apple', passport.authenticate('apple'));
 
 // Apple OAuth callback
-router.post('/apple/callback', passport.authenticate('apple', {
+router.get('/apple/callback', passport.authenticate('apple', {
     failureRedirect: '/sign-in',
     session: false,
 }), (req, res) => {
