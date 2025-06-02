@@ -8,6 +8,7 @@ import Memory from '../models/memoryModel.js';
 import dotenv from 'dotenv';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import { Strategy as AppleStrategy } from 'passport-apple';
 import nodemailer from 'nodemailer';
 import Stripe from 'stripe';
 import twilio from 'twilio';
@@ -83,6 +84,76 @@ passport.deserializeUser(async (id, done) => {
         done(error, null);
     }
 });
+
+passport.use(
+    new AppleStrategy(
+        {
+            // clientID: process.env.APPLE_CLIENT_ID,
+            // teamID: process.env.APPLE_TEAM_ID,
+            // keyID: process.env.APPLE_KEY_ID,
+            // privateKey: process.env.APPLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+            clientID: "com.lastingloves.app",
+            teamID: "3P7ZHT7XCK",
+            keyID: "58NB222VVZ",
+            privateKey: "-----BEGIN PRIVATE KEY-----\nMIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgKtVPPsSKs0dLxKMYbXmE/qyUp2KFfgaMXZQLMtmFDTmgCgYIKoZIzj0DAQehRANCAARcHok5lEzdXamhqV5XXnk/NOr8EPi197xkkzA7NveXQdWtm/dwkYWkCkMtahAT6JIKMQKYETU0diNdmLRiA5cH\n-----END PRIVATE KEY-----",
+            callbackURL: `${process.env.BACKEND_URL}/api/auth/apple/callback`,
+            passReqToCallback: false,
+        },
+        async (accessToken, refreshToken, idToken, profile, done) => {
+            try {
+                const email = idToken.email;
+                const appleId = idToken.sub;
+
+                let user = await User.findOne({ email });
+
+                if (!user) {
+                    user = await User.create({
+                        username: profile.name?.firstName || "Apple User",
+                        email,
+                        appleId,
+                    });
+                } else if (!user.appleId) {
+                    user.appleId = appleId;
+                    await user.save();
+                }
+
+                return done(null, user);
+            } catch (err) {
+                return done(err, null);
+            }
+        }
+    )
+);
+
+// Route to trigger Apple OAuth
+router.get('/apple', passport.authenticate('apple'));
+
+// Apple OAuth callback
+router.post('/apple/callback', passport.authenticate('apple', {
+    failureRedirect: '/sign-in',
+    session: false,
+}), (req, res) => {
+    const accessToken = generateAccessToken(req.user);
+    const refreshToken = generateRefreshToken(req.user);
+
+    res.cookie('accessToken', accessToken, {
+        httpOnly: environment === "development" ? false : true,
+        secure: environment === "development" ? false : true,
+        sameSite: environment === "development" ? 'Lax' : 'None',
+        maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    res.cookie('refreshToken', refreshToken, {
+        httpOnly: environment === "development" ? false : true,
+        secure: environment === "development" ? false : true,
+        sameSite: environment === "development" ? 'Lax' : 'None',
+        maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    res.redirect(`${process.env.FRONTEND_URL}/auth-success`);
+});
+
+
 
 router.use(passport.initialize());
 
