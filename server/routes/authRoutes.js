@@ -88,10 +88,6 @@ passport.deserializeUser(async (id, done) => {
 passport.use(
     new AppleStrategy(
         {
-            // clientID: process.env.APPLE_CLIENT_ID,
-            // teamID: process.env.APPLE_TEAM_ID,
-            // keyID: process.env.APPLE_KEY_ID,
-            // privateKey: process.env.APPLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
             clientID: "com.lastingloves.web",
             teamID: "3P7ZHT7XCK",
             keyID: "YX8L4C6Q4U",
@@ -150,7 +146,8 @@ router.post('/apple/callback', passport.authenticate('apple', {
         maxAge: 24 * 60 * 60 * 1000,
     });
 
-    res.redirect(`${process.env.FRONTEND_URL}/auth-success`);
+    const redirectUrl = `${process.env.FRONTEND_URL}/auth-success?${accessToken}&${refreshToken}`;
+    res.redirect(redirectUrl);
 });
 
 
