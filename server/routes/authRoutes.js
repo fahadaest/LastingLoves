@@ -81,7 +81,13 @@ passport.use(
         passReqToCallback: true
     },
         async (req, accessToken, refreshToken, idToken, profile, done) => {
+            console.log("ID Token:", idToken);
+            console.log("Profile:", profile);
+            console.log("AccessToken:", accessToken);
+            console.log("RefreshToken:", refreshToken);
+
             try {
+                console.log("trying");
                 const email = idToken.email || profile?.email;
                 if (!email) return done(null, false);
 
@@ -97,6 +103,7 @@ passport.use(
 
                 return done(null, user);
             } catch (err) {
+                console.log("error", err);
                 return done(err, null);
             }
         })
