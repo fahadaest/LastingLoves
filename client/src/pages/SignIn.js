@@ -177,9 +177,9 @@ export default function SignIn(props) {
         return isValid;
     };
 
-    const handleGoogleAuth = async () => {
+    const handleOAuth = async (provider) => {
         try {
-            window.open(`${process.env.REACT_APP_BASE_URL}/api/auth/google`, "_self");
+            window.open(`${process.env.REACT_APP_BASE_URL}/api/auth/${provider}`, "_self");
         } catch (error) {
             console.error("Google Auth Error:", error);
         }
@@ -283,7 +283,7 @@ export default function SignIn(props) {
                         variant="outlined"
                         sx={{ color: "#32AA27", border: " 1px solid #32AA27" }}
                         startIcon={<GoogleIcon width={24} height={24} />}
-                        onClick={handleGoogleAuth}
+                        onClick={() => handleOAuth('google')}
                     >
                         Sign in with Google
                     </Button>
@@ -292,7 +292,7 @@ export default function SignIn(props) {
                         variant="outlined"
                         sx={{ color: "#32AA27", border: "1px solid #32AA27" }}
                         startIcon={<AppleIcon width={24} height={24} />}
-                        onClick={handleGoogleAuth}
+                        onClick={() => handleOAuth('apple')}
                     >
                         Sign in with Apple
                     </Button>

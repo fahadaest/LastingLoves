@@ -39,6 +39,97 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+passport.serializeUser((user, done) => {
+    done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+    try {
+        const user = await User.findById(id);
+        done(null, user);
+    } catch (error) {
+        done(error, null);
+    }
+});
+
+router.use(passport.initialize());
+
+const generateAccessToken = (user) => {
+    return jwt.sign(
+        { id: user._id, username: user.username },
+        ACCESS_TOKEN_SECRET,
+        { expiresIn: '1h' }
+    );
+};
+
+const generateRefreshToken = (user) => {
+    return jwt.sign(
+        { id: user._id },
+        REFRESH_TOKEN_SECRET,
+        { expiresIn: '1d' }
+    );
+};
+
+passport.use(
+    new AppleStrategy({
+        clientID: "com.lastingloves.web",
+        teamID: "3P7ZHT7XCK",
+        keyID: "YX8L4C6Q4U",
+        privateKey: "-----BEGIN PRIVATE KEY-----\nMIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQg53OXsMYwczOTknpyuZIRufAzBtgYaR5tDlNFQaQoJ3egCgYIKoZIzj0DAQehRANCAAQQ//Z0B+uQyDeedeR44WtpcXXZevLuZhRK9ERFcBjgUJpJbcSp22nrjcrzHbi9/BVgGypJnNpzYLfPfzVcFqMY\n-----END PRIVATE KEY-----",
+        callbackURL: `${process.env.BACKEND_URL}/api/auth/apple/callback`,
+        scope: ['name', 'email'],
+        passReqToCallback: true
+    },
+        async (req, accessToken, refreshToken, idToken, profile, done) => {
+            try {
+                const email = idToken.email || profile?.email;
+                if (!email) return done(null, false);
+
+                let user = await User.findOne({ email });
+
+                if (!user) {
+                    user = await User.create({
+                        email,
+                        username: profile?.name?.firstName || 'AppleUser',
+                        appleId: idToken.sub
+                    });
+                }
+
+                return done(null, user);
+            } catch (err) {
+                return done(err, null);
+            }
+        })
+);
+
+router.get('/apple', passport.authenticate('apple'));
+
+router.post('/apple/callback',
+    passport.authenticate('apple', { failureRedirect: '/sign-in' }),
+    (req, res) => {
+        const accessToken = generateAccessToken(req.user);
+        const refreshToken = generateRefreshToken(req.user);
+
+        res.cookie('accessToken', accessToken, {
+            httpOnly: environment === "development" ? false : true,
+            secure: environment === "development" ? false : true,
+            sameSite: environment === "development" ? 'Lax' : 'None',
+            maxAge: 24 * 60 * 60 * 1000
+        });
+
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: environment === "development" ? false : true,
+            secure: environment === "development" ? false : true,
+            sameSite: environment === "development" ? 'Lax' : 'None',
+            maxAge: 24 * 60 * 60 * 1000
+        });
+
+        const redirectUrl = `${process.env.FRONTEND_URL}/auth-success?${accessToken}&${refreshToken}`;
+        res.redirect(redirectUrl);
+    }
+);
+
+
 passport.use(
     new GoogleStrategy(
         {
@@ -72,104 +163,6 @@ passport.use(
     )
 );
 
-passport.serializeUser((user, done) => {
-    done(null, user.id);
-});
-
-passport.deserializeUser(async (id, done) => {
-    try {
-        const user = await User.findById(id);
-        done(null, user);
-    } catch (error) {
-        done(error, null);
-    }
-});
-
-passport.use(
-    new AppleStrategy(
-        {
-            clientID: "com.lastingloves.web",
-            teamID: "3P7ZHT7XCK",
-            keyID: "YX8L4C6Q4U",
-            privateKey: "-----BEGIN PRIVATE KEY-----\nMIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQg53OXsMYwczOTknpyuZIRufAzBtgYaR5tDlNFQaQoJ3egCgYIKoZIzj0DAQehRANCAAQQ//Z0B+uQyDeedeR44WtpcXXZevLuZhRK9ERFcBjgUJpJbcSp22nrjcrzHbi9/BVgGypJnNpzYLfPfzVcFqMY\n-----END PRIVATE KEY-----",
-            callbackURL: `${process.env.BACKEND_URL}/api/auth/apple/callback`,
-            passReqToCallback: false,
-        },
-        async (accessToken, refreshToken, idToken, profile, done) => {
-            try {
-                const email = idToken.email;
-                const appleId = idToken.sub;
-
-                let user = await User.findOne({ email });
-
-                if (!user) {
-                    user = await User.create({
-                        username: profile.name?.firstName || "Apple User",
-                        email,
-                        appleId,
-                    });
-                } else if (!user.appleId) {
-                    user.appleId = appleId;
-                    await user.save();
-                }
-
-                return done(null, user);
-            } catch (err) {
-                return done(err, null);
-            }
-        }
-    )
-);
-
-// Route to trigger Apple OAuth
-router.get('/apple', passport.authenticate('apple'));
-
-// Apple OAuth callback
-router.post('/apple/callback', passport.authenticate('apple', {
-    failureRedirect: '/sign-in',
-    session: false,
-}), (req, res) => {
-    const accessToken = generateAccessToken(req.user);
-    const refreshToken = generateRefreshToken(req.user);
-
-    res.cookie('accessToken', accessToken, {
-        httpOnly: environment === "development" ? false : true,
-        secure: environment === "development" ? false : true,
-        sameSite: environment === "development" ? 'Lax' : 'None',
-        maxAge: 24 * 60 * 60 * 1000,
-    });
-
-    res.cookie('refreshToken', refreshToken, {
-        httpOnly: environment === "development" ? false : true,
-        secure: environment === "development" ? false : true,
-        sameSite: environment === "development" ? 'Lax' : 'None',
-        maxAge: 24 * 60 * 60 * 1000,
-    });
-
-    const redirectUrl = `${process.env.FRONTEND_URL}/auth-success?${accessToken}&${refreshToken}`;
-    res.redirect(redirectUrl);
-});
-
-
-
-router.use(passport.initialize());
-
-const generateAccessToken = (user) => {
-    return jwt.sign(
-        { id: user._id, username: user.username },
-        ACCESS_TOKEN_SECRET,
-        { expiresIn: '1h' }
-    );
-};
-
-const generateRefreshToken = (user) => {
-    return jwt.sign(
-        { id: user._id },
-        REFRESH_TOKEN_SECRET,
-        { expiresIn: '1d' }
-    );
-};
-
 router.get('/google', passport.authenticate('google', {
     scope: ['profile', 'email'],
     prompt: 'select_account'
@@ -202,7 +195,6 @@ router.get('/google/callback', passport.authenticate('google', { failureRedirect
         res.redirect(redirectUrl);
     }
 );
-
 
 router.post('/register', async (req, res) => {
     const { username, email, password } = req.body;
