@@ -81,14 +81,8 @@ passport.use(
         passReqToCallback: true
     },
         async (req, accessToken, refreshToken, idToken, profile, done) => {
-            console.log("6");
-            console.log("ID Token:", idToken);
-            console.log("Profile:", profile);
-            console.log("AccessToken:", accessToken);
-            console.log("RefreshToken:", refreshToken);
 
             try {
-                console.log("7");
                 const email = idToken.email || profile?.email;
                 if (!email) return done(null, false);
 
@@ -104,7 +98,6 @@ passport.use(
 
                 return done(null, user);
             } catch (err) {
-                console.log("error", err);
                 return done(err, null);
             }
         })
@@ -112,15 +105,12 @@ passport.use(
 
 router.get('/apple', passport.authenticate('apple'));
 
-router.get('/apple/callback', passport.authenticate('apple', { failureRedirect: '/sign-in' }),
+router.post('/apple/callback', passport.authenticate('apple', { failureRedirect: '/sign-in' }),
     (req, res) => {
-        console.log("1");
         if (!req.user) {
-            console.log("2");
             return res.redirect('/sign-in');
         }
 
-        console.log("3");
         const accessToken = generateAccessToken(req.user);
         const refreshToken = generateRefreshToken(req.user);
 
@@ -138,12 +128,8 @@ router.get('/apple/callback', passport.authenticate('apple', { failureRedirect: 
             maxAge: 24 * 60 * 60 * 1000
         });
 
-        console.log("4");
-
         const redirectUrl = `${process.env.FRONTEND_URL}/auth-success?${accessToken}&${refreshToken}`;
         res.redirect(redirectUrl);
-
-        console.log("5");
     }
 );
 
