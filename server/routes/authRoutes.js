@@ -76,7 +76,7 @@ passport.use(
         teamID: "3P7ZHT7XCK",
         keyID: "YX8L4C6Q4U",
         privateKey: "-----BEGIN PRIVATE KEY-----\nMIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQg53OXsMYwczOTknpyuZIRufAzBtgYaR5tDlNFQaQoJ3egCgYIKoZIzj0DAQehRANCAAQQ//Z0B+uQyDeedeR44WtpcXXZevLuZhRK9ERFcBjgUJpJbcSp22nrjcrzHbi9/BVgGypJnNpzYLfPfzVcFqMY\n-----END PRIVATE KEY-----",
-        callbackURL: `${process.env.BACKEND_URL}/api/auth/apple/callback`,
+        callbackURL: `${process.env.BACKEND_URL}/api/auth/apple`,
         scope: ['name', 'email'],
         passReqToCallback: true
     },
@@ -111,9 +111,12 @@ passport.use(
 
 router.get('/apple', passport.authenticate('apple'));
 
-router.post('/apple/callback',
-    passport.authenticate('apple', { failureRedirect: '/sign-in' }),
+router.get('/apple/callback', passport.authenticate('apple', { failureRedirect: '/sign-in' }),
     (req, res) => {
+        if (!req.user) {
+            return res.redirect('/sign-in');
+        }
+
         const accessToken = generateAccessToken(req.user);
         const refreshToken = generateRefreshToken(req.user);
 
@@ -135,7 +138,6 @@ router.post('/apple/callback',
         res.redirect(redirectUrl);
     }
 );
-
 
 passport.use(
     new GoogleStrategy(
