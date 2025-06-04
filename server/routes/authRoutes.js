@@ -76,18 +76,19 @@ passport.use(
         teamID: "3P7ZHT7XCK",
         keyID: "YX8L4C6Q4U",
         privateKey: "-----BEGIN PRIVATE KEY-----\nMIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQg53OXsMYwczOTknpyuZIRufAzBtgYaR5tDlNFQaQoJ3egCgYIKoZIzj0DAQehRANCAAQQ//Z0B+uQyDeedeR44WtpcXXZevLuZhRK9ERFcBjgUJpJbcSp22nrjcrzHbi9/BVgGypJnNpzYLfPfzVcFqMY\n-----END PRIVATE KEY-----",
-        callbackURL: `${process.env.BACKEND_URL}/api/auth/apple`,
+        callbackURL: `${process.env.BACKEND_URL}/api/auth/apple/callback`,
         scope: ['name', 'email'],
         passReqToCallback: true
     },
         async (req, accessToken, refreshToken, idToken, profile, done) => {
+            console.log("6");
             console.log("ID Token:", idToken);
             console.log("Profile:", profile);
             console.log("AccessToken:", accessToken);
             console.log("RefreshToken:", refreshToken);
 
             try {
-                console.log("trying");
+                console.log("7");
                 const email = idToken.email || profile?.email;
                 if (!email) return done(null, false);
 
@@ -113,10 +114,13 @@ router.get('/apple', passport.authenticate('apple'));
 
 router.get('/apple/callback', passport.authenticate('apple', { failureRedirect: '/sign-in' }),
     (req, res) => {
+        console.log("1");
         if (!req.user) {
+            console.log("2");
             return res.redirect('/sign-in');
         }
 
+        console.log("3");
         const accessToken = generateAccessToken(req.user);
         const refreshToken = generateRefreshToken(req.user);
 
@@ -134,8 +138,12 @@ router.get('/apple/callback', passport.authenticate('apple', { failureRedirect: 
             maxAge: 24 * 60 * 60 * 1000
         });
 
+        console.log("4");
+
         const redirectUrl = `${process.env.FRONTEND_URL}/auth-success?${accessToken}&${refreshToken}`;
         res.redirect(redirectUrl);
+
+        console.log("5");
     }
 );
 
