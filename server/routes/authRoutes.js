@@ -75,11 +75,19 @@ const generateRefreshToken = (user) => {
 };
 
 const privateKey = process.env.APPLE_PRIVATE_KEY.replace(/\\n/g, '\n');
+const clientId = process.env.APPLE_CLIENT_ID;
+const teamId = process.env.APPLE_TEAM_ID;
+const keyId = process.env.APPLE_KEY_ID;
+
+console.log("privateKey", privateKey)
+console.log("clientId", clientId)
+console.log("teamId", teamId)
+console.log("keyId", keyId)
 
 passport.use(new AppleStrategy({
-    clientID: process.env.APPLE_CLIENT_ID,
-    teamID: process.env.APPLE_TEAM_ID,
-    keyID: process.env.APPLE_KEY_ID,
+    clientID: clientId,
+    teamID: teamId,
+    keyID: keyId,
     privateKey: privateKey,
     callbackURL: `${process.env.BACKEND_URL}/api/auth/apple/callback`,
     scope: ['name', 'email'],
