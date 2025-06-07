@@ -23,6 +23,8 @@ const environment = process.env.ENVIRONMENT;
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
+console.log("Api running")
+
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
@@ -70,6 +72,17 @@ const generateRefreshToken = (user) => {
     );
 };
 
+
+
+
+
+
+
+
+
+
+
+
 passport.use(
     new AppleStrategy({
         clientID: "com.lastingloves.web",
@@ -81,22 +94,26 @@ passport.use(
         passReqToCallback: true
     },
         async (req, accessToken, refreshToken, idToken, profile, done) => {
-
+            console.log('Apple Strategy Callback Triggered', { accessToken, idToken, profile });
             try {
-                const email = idToken.email || profile?.email;
-                if (!email) return done(null, false);
+                const appleId = idToken.sub;
 
-                let user = await User.findOne({ email });
-
-                if (!user) {
+                let user = await User.findOne({ appleId });
+                if (!user && email) {
                     user = await User.create({
                         email,
                         username: profile?.name?.firstName || 'AppleUser',
-                        appleId: idToken.sub
+                        appleId
+                    });
+                } else if (!user) {
+                    user = await User.create({
+                        username: 'AppleUser',
+                        appleId
                     });
                 }
 
                 return done(null, user);
+
             } catch (err) {
                 return done(err, null);
             }
@@ -105,33 +122,46 @@ passport.use(
 
 router.get('/apple', passport.authenticate('apple'));
 
-router.post('/apple/callback', passport.authenticate('apple', { failureRedirect: '/sign-in' }),
-    (req, res) => {
-        if (!req.user) {
+router.post('/apple/callback', (req, res, next) => {
+    passport.authenticate('apple', (err, user, info) => {
+        console.log("trying apple")
+        if (err) {
+            console.error("Auth error", err);
+            return res.redirect('/sign-in');
+        }
+        if (!user) {
+            console.log("No user returned from Apple");
             return res.redirect('/sign-in');
         }
 
-        const accessToken = generateAccessToken(req.user);
-        const refreshToken = generateRefreshToken(req.user);
+        req.logIn(user, (err) => {
+            if (err) {
+                console.error("Login error", err);
+                return res.redirect('/sign-in');
+            }
 
-        res.cookie('accessToken', accessToken, {
-            httpOnly: environment === "development" ? false : true,
-            secure: environment === "development" ? false : true,
-            sameSite: environment === "development" ? 'Lax' : 'None',
-            maxAge: 24 * 60 * 60 * 1000
+            const accessToken = generateAccessToken(user);
+            const refreshToken = generateRefreshToken(user);
+
+            res.cookie('accessToken', accessToken, {
+                httpOnly: environment === "development" ? false : true,
+                secure: environment === "development" ? false : true,
+                sameSite: environment === "development" ? 'Lax' : 'None',
+                maxAge: 24 * 60 * 60 * 1000
+            });
+
+            res.cookie('refreshToken', refreshToken, {
+                httpOnly: environment === "development" ? false : true,
+                secure: environment === "development" ? false : true,
+                sameSite: environment === "development" ? 'Lax' : 'None',
+                maxAge: 24 * 60 * 60 * 1000
+            });
+
+            res.redirect(`${process.env.FRONTEND_URL}/auth-success?${accessToken}&${refreshToken}`);
         });
+    })(req, res, next);
+});
 
-        res.cookie('refreshToken', refreshToken, {
-            httpOnly: environment === "development" ? false : true,
-            secure: environment === "development" ? false : true,
-            sameSite: environment === "development" ? 'Lax' : 'None',
-            maxAge: 24 * 60 * 60 * 1000
-        });
-
-        const redirectUrl = `${process.env.FRONTEND_URL}/auth-success?${accessToken}&${refreshToken}`;
-        res.redirect(redirectUrl);
-    }
-);
 
 passport.use(
     new GoogleStrategy(
@@ -141,6 +171,7 @@ passport.use(
             callbackURL: `${process.env.BACKEND_URL}/api/auth/google/callback`,
         },
         async (accessToken, refreshToken, profile, done) => {
+            console.log("trying google 1")
             try {
                 const existingUser = await User.findOne({ email: profile.emails[0].value });
 
@@ -173,6 +204,7 @@ router.get('/google', passport.authenticate('google', {
 
 router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/sign-in' }),
     (req, res) => {
+        console.log("trying google 2")
         if (!req.user) {
             return res.redirect('/sign-in');
         }
@@ -198,6 +230,27 @@ router.get('/google/callback', passport.authenticate('google', { failureRedirect
         res.redirect(redirectUrl);
     }
 );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 router.post('/register', async (req, res) => {
     const { username, email, password } = req.body;
