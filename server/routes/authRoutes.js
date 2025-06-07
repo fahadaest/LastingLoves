@@ -74,16 +74,13 @@ const generateRefreshToken = (user) => {
     );
 };
 
-
-
 passport.use(new AppleStrategy({
-    clientID: "com.lastingloves.web",
-    teamID: "3P7ZHT7XCK",
-    keyID: "YX8L4C6Q4U",
-    privateKey: "-----BEGIN PRIVATE KEY-----\nMIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQg53OXsMYwczOTknpyuZIRufAzBtgYaR5tDlNFQaQoJ3egCgYIKoZIzj0DAQehRANCAAQQ//Z0B+uQyDeedeR44WtpcXXZevLuZhRK9ERFcBjgUJpJbcSp22nrjcrzHbi9/BVgGypJnNpzYLfPfzVcFqMY\n-----END PRIVATE KEY-----",
+    clientID: process.env.APPLE_CLIENT_ID,
+    teamID: process.env.APPLE_TEAM_ID,
+    keyID: process.env.APPLE_KEY_ID,
+    privateKey: process.env.APPLE_PRIVATE_KEY,
     callbackURL: `${process.env.BACKEND_URL}/api/auth/apple/callback`,
-    scope: ['name', 'email'],
-    passReqToCallback: true
+    passReqToCallback: true,
 }, async (req, accessToken, refreshToken, idToken, profile, done) => {
     console.log("Apple login callback hit");
     console.log("idToken:", idToken);
