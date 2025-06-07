@@ -84,87 +84,67 @@ console.log("clientId", clientId)
 console.log("teamId", teamId)
 console.log("keyId", keyId)
 
+
+
 passport.use(new AppleStrategy({
-    clientID: clientId,
-    teamID: teamId,
-    keyID: keyId,
-    privateKey: privateKey,
+    clientID: process.env.APPLE_CLIENT_ID,
+    teamID: process.env.APPLE_TEAM_ID,
     callbackURL: `${process.env.BACKEND_URL}/api/auth/apple/callback`,
-    scope: ['name', 'email'],
-    passReqToCallback: true
+    keyID: process.env.APPLE_KEY_ID,
+    privateKey: process.env.APPLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+    passReqToCallback: true,
 }, async (req, accessToken, refreshToken, idToken, profile, done) => {
-    console.log("Apple login callback hit");
-    console.log("idToken:", idToken);
-    console.log("profile:", profile);
-    console.log("req.body.user:", req.body.user);
-
     try {
-        console.log("hello from apple")
-        const email = profile?.email || idToken?.email || req.body.user?.email;
-
-        if (!email) {
-            console.log("failed")
-            return done(new Error("Email not provided by Apple"), null);
-        }
-
-        let existingUser = await User.findOne({ email });
+        const email = idToken.email || profile.email;
+        const existingUser = await User.findOne({ email });
 
         if (existingUser) {
             if (!existingUser.appleId) {
-                existingUser.appleId = idToken.sub; // Apple user id
+                existingUser.appleId = idToken.sub;
                 await existingUser.save();
             }
             return done(null, existingUser);
         } else {
             const newUser = await User.create({
-                username: profile.name ? `${profile.name.firstName} ${profile.name.lastName}` : "AppleUser",
-                email: email,
+                username: profile.name?.firstName || "Apple User",
+                email,
                 appleId: idToken.sub,
-                avatar: null,
             });
             return done(null, newUser);
         }
-    } catch (error) {
-        return done(error, null);
+    } catch (err) {
+        return done(err, null);
     }
 }));
-// Initiate Apple login
-router.get('/apple', passport.authenticate('apple', {
-    scope: ['name', 'email'],
-    response_type: 'code',
-    response_mode: 'form_post'
-}));
 
+// Start Apple auth
+router.get('/apple', passport.authenticate('apple'));
 
-// Callback route Apple will redirect to
-router.post('/apple/callback', passport.authenticate('apple', { failureRedirect: '/sign-in' }),
-    (req, res) => {
-        console.log("Hello from apple 2")
-        if (!req.user) {
-            return res.redirect('/sign-in');
-        }
+// Handle Apple auth callback
+router.post('/apple/callback', passport.authenticate('apple', { failureRedirect: '/sign-in', session: false }), (req, res) => {
+    if (!req.user) return res.redirect('/sign-in');
 
-        const accessToken = generateAccessToken(req.user);
-        const refreshToken = generateRefreshToken(req.user);
+    const accessToken = generateAccessToken(req.user);
+    const refreshToken = generateRefreshToken(req.user);
 
-        res.cookie('accessToken', accessToken, {
-            httpOnly: environment === "development" ? false : true,
-            secure: environment === "development" ? false : true,
-            sameSite: environment === "development" ? 'Lax' : 'None',
-            maxAge: 24 * 60 * 60 * 1000
-        });
+    res.cookie('accessToken', accessToken, {
+        httpOnly: environment !== "development",
+        secure: environment !== "development",
+        sameSite: environment !== "development" ? 'None' : 'Lax',
+        maxAge: 24 * 60 * 60 * 1000,
+    });
 
-        res.cookie('refreshToken', refreshToken, {
-            httpOnly: environment === "development" ? false : true,
-            secure: environment === "development" ? false : true,
-            sameSite: environment === "development" ? 'Lax' : 'None',
-            maxAge: 24 * 60 * 60 * 1000
-        });
+    res.cookie('refreshToken', refreshToken, {
+        httpOnly: environment !== "development",
+        secure: environment !== "development",
+        sameSite: environment !== "development" ? 'None' : 'Lax',
+        maxAge: 24 * 60 * 60 * 1000,
+    });
 
-        const redirectUrl = `${process.env.FRONTEND_URL}/auth-success?${accessToken}&${refreshToken}`;
-        res.redirect(redirectUrl);
-    }
-);
+    const redirectUrl = `${process.env.FRONTEND_URL}/auth-success?${accessToken}&${refreshToken}`;
+    res.redirect(redirectUrl);
+});
+
 
 
 
