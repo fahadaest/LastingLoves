@@ -12,8 +12,8 @@ import AppleStrategy from 'passport-apple';
 import nodemailer from 'nodemailer';
 import Stripe from 'stripe';
 import twilio from 'twilio';
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 const router = express.Router();
 router.use(cookieParser());
