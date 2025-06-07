@@ -8,7 +8,7 @@ import Memory from '../models/memoryModel.js';
 import dotenv from 'dotenv';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-const AppleStrategy = require('passport-apple');
+import AppleStrategy from 'passport-apple';
 import nodemailer from 'nodemailer';
 import Stripe from 'stripe';
 import twilio from 'twilio';
@@ -87,9 +87,10 @@ passport.use(new AppleStrategy({
 }, async (req, accessToken, refreshToken, idToken, profile, done) => {
     try {
         console.log("hello from apple")
-        const email = profile.email || (idToken && idToken.email);
+        const email = profile?.email || idToken?.email || req.body.user?.email;
 
         if (!email) {
+            console.log("failed")
             return done(new Error("Email not provided by Apple"), null);
         }
 
@@ -115,7 +116,12 @@ passport.use(new AppleStrategy({
     }
 }));
 // Initiate Apple login
-router.get('/apple', passport.authenticate('apple'));
+router.get('/apple', passport.authenticate('apple', {
+    scope: ['name', 'email'],
+    response_type: 'code',
+    response_mode: 'form_post'
+}));
+
 
 // Callback route Apple will redirect to
 router.post('/apple/callback', passport.authenticate('apple', { failureRedirect: '/sign-in' }),
