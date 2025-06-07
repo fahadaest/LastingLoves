@@ -85,6 +85,11 @@ passport.use(new AppleStrategy({
     scope: ['name', 'email'],
     passReqToCallback: true
 }, async (req, accessToken, refreshToken, idToken, profile, done) => {
+    console.log("Apple login callback hit");
+    console.log("idToken:", idToken);
+    console.log("profile:", profile);
+    console.log("req.body.user:", req.body.user);
+
     try {
         console.log("hello from apple")
         const email = profile?.email || idToken?.email || req.body.user?.email;
