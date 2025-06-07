@@ -74,11 +74,13 @@ const generateRefreshToken = (user) => {
     );
 };
 
+const privateKey = process.env.APPLE_PRIVATE_KEY.replace(/\\n/g, '\n');
+
 passport.use(new AppleStrategy({
-    clientID: "com.lastingloves.web",
-    teamID: "3P7ZHT7XCK",
-    keyID: "YX8L4C6Q4U",
-    privateKey: "MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQg53OXsMYwczOTknpyuZIRufAzBtgYaR5tDlNFQaQoJ3egCgYIKoZIzj0DAQehRANCAAQQ//Z0B+uQyDeedeR44WtpcXXZevLuZhRK9ERFcBjgUJpJbcSp22nrjcrzHbi9/BVgGypJnNpzYLfPfzVcFqMY",
+    clientID: process.env.APPLE_CLIENT_ID,
+    teamID: process.env.APPLE_TEAM_ID,
+    keyID: process.env.APPLE_KEY_ID,
+    privateKey: privateKey,
     callbackURL: `${process.env.BACKEND_URL}/api/auth/apple/callback`,
     scope: ['name', 'email'],
     passReqToCallback: true
