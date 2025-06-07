@@ -93,12 +93,15 @@ passport.use(
         scope: ['name', 'email'],
         passReqToCallback: true
     },
-        async (req, accessToken, refreshToken, idToken, profile, done) => {
-            console.log('Apple Strategy Callback Triggered', { accessToken, idToken, profile });
+        async (req, accessToken, refreshToken, params, profile, done) => {
             try {
-                const appleId = idToken.sub;
+                const idToken = params.id_token;
+                const decoded = jwt.decode(idToken);
+                const appleId = decoded.sub;
+                const email = decoded.email;
 
                 let user = await User.findOne({ appleId });
+
                 if (!user && email) {
                     user = await User.create({
                         email,
@@ -113,16 +116,15 @@ passport.use(
                 }
 
                 return done(null, user);
-
             } catch (err) {
                 return done(err, null);
             }
-        })
-);
+        }
+    ));
 
 router.get('/apple', passport.authenticate('apple'));
 
-router.post('/apple/callback', (req, res, next) => {
+router.all('/apple/callback', (req, res, next) => {
     passport.authenticate('apple', (err, user, info) => {
         console.log("trying apple")
         if (err) {
