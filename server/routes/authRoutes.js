@@ -8,10 +8,12 @@ import Memory from '../models/memoryModel.js';
 import dotenv from 'dotenv';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import { Strategy as AppleStrategy } from 'passport-apple';
+const AppleStrategy = require('passport-apple');
 import nodemailer from 'nodemailer';
 import Stripe from 'stripe';
 import twilio from 'twilio';
+const fs = require('fs');
+const path = require('path');
 
 const router = express.Router();
 router.use(cookieParser());
@@ -74,95 +76,77 @@ const generateRefreshToken = (user) => {
 
 
 
+passport.use(new AppleStrategy({
+    clientID: "com.lastingloves.web",
+    teamID: "3P7ZHT7XCK",
+    keyID: "YX8L4C6Q4U",
+    privateKey: "-----BEGIN PRIVATE KEY-----\nMIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQg53OXsMYwczOTknpyuZIRufAzBtgYaR5tDlNFQaQoJ3egCgYIKoZIzj0DAQehRANCAAQQ//Z0B+uQyDeedeR44WtpcXXZevLuZhRK9ERFcBjgUJpJbcSp22nrjcrzHbi9/BVgGypJnNpzYLfPfzVcFqMY\n-----END PRIVATE KEY-----",
+    callbackURL: `${process.env.BACKEND_URL}/api/auth/apple/callback`,
+    scope: ['name', 'email'],
+    passReqToCallback: true
+}, async (req, accessToken, refreshToken, idToken, profile, done) => {
+    try {
+        console.log("hello from apple")
+        const email = profile.email || (idToken && idToken.email);
 
-
-
-
-
-
-
-
-
-passport.use(
-    new AppleStrategy({
-        clientID: "com.lastingloves.web",
-        teamID: "3P7ZHT7XCK",
-        keyID: "YX8L4C6Q4U",
-        privateKey: "-----BEGIN PRIVATE KEY-----\nMIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQg53OXsMYwczOTknpyuZIRufAzBtgYaR5tDlNFQaQoJ3egCgYIKoZIzj0DAQehRANCAAQQ//Z0B+uQyDeedeR44WtpcXXZevLuZhRK9ERFcBjgUJpJbcSp22nrjcrzHbi9/BVgGypJnNpzYLfPfzVcFqMY\n-----END PRIVATE KEY-----",
-        callbackURL: `${process.env.BACKEND_URL}/api/auth/apple/callback`,
-        scope: ['name', 'email'],
-        passReqToCallback: true
-    },
-        async (req, accessToken, refreshToken, params, profile, done) => {
-            try {
-                const idToken = params.id_token;
-                const decoded = jwt.decode(idToken);
-                const appleId = decoded.sub;
-                const email = decoded.email;
-
-                let user = await User.findOne({ appleId });
-
-                if (!user && email) {
-                    user = await User.create({
-                        email,
-                        username: profile?.name?.firstName || 'AppleUser',
-                        appleId
-                    });
-                } else if (!user) {
-                    user = await User.create({
-                        username: 'AppleUser',
-                        appleId
-                    });
-                }
-
-                return done(null, user);
-            } catch (err) {
-                return done(err, null);
-            }
+        if (!email) {
+            return done(new Error("Email not provided by Apple"), null);
         }
-    ));
 
+        let existingUser = await User.findOne({ email });
+
+        if (existingUser) {
+            if (!existingUser.appleId) {
+                existingUser.appleId = idToken.sub; // Apple user id
+                await existingUser.save();
+            }
+            return done(null, existingUser);
+        } else {
+            const newUser = await User.create({
+                username: profile.name ? `${profile.name.firstName} ${profile.name.lastName}` : "AppleUser",
+                email: email,
+                appleId: idToken.sub,
+                avatar: null,
+            });
+            return done(null, newUser);
+        }
+    } catch (error) {
+        return done(error, null);
+    }
+}));
+// Initiate Apple login
 router.get('/apple', passport.authenticate('apple'));
 
-router.all('/apple/callback', (req, res, next) => {
-    passport.authenticate('apple', (err, user, info) => {
-        console.log("trying apple")
-        if (err) {
-            console.error("Auth error", err);
-            return res.redirect('/sign-in');
-        }
-        if (!user) {
-            console.log("No user returned from Apple");
+// Callback route Apple will redirect to
+router.post('/apple/callback', passport.authenticate('apple', { failureRedirect: '/sign-in' }),
+    (req, res) => {
+        console.log("Hello from apple 2")
+        if (!req.user) {
             return res.redirect('/sign-in');
         }
 
-        req.logIn(user, (err) => {
-            if (err) {
-                console.error("Login error", err);
-                return res.redirect('/sign-in');
-            }
+        const accessToken = generateAccessToken(req.user);
+        const refreshToken = generateRefreshToken(req.user);
 
-            const accessToken = generateAccessToken(user);
-            const refreshToken = generateRefreshToken(user);
-
-            res.cookie('accessToken', accessToken, {
-                httpOnly: environment === "development" ? false : true,
-                secure: environment === "development" ? false : true,
-                sameSite: environment === "development" ? 'Lax' : 'None',
-                maxAge: 24 * 60 * 60 * 1000
-            });
-
-            res.cookie('refreshToken', refreshToken, {
-                httpOnly: environment === "development" ? false : true,
-                secure: environment === "development" ? false : true,
-                sameSite: environment === "development" ? 'Lax' : 'None',
-                maxAge: 24 * 60 * 60 * 1000
-            });
-
-            res.redirect(`${process.env.FRONTEND_URL}/auth-success?${accessToken}&${refreshToken}`);
+        res.cookie('accessToken', accessToken, {
+            httpOnly: environment === "development" ? false : true,
+            secure: environment === "development" ? false : true,
+            sameSite: environment === "development" ? 'Lax' : 'None',
+            maxAge: 24 * 60 * 60 * 1000
         });
-    })(req, res, next);
-});
+
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: environment === "development" ? false : true,
+            secure: environment === "development" ? false : true,
+            sameSite: environment === "development" ? 'Lax' : 'None',
+            maxAge: 24 * 60 * 60 * 1000
+        });
+
+        const redirectUrl = `${process.env.FRONTEND_URL}/auth-success?${accessToken}&${refreshToken}`;
+        res.redirect(redirectUrl);
+    }
+);
+
 
 
 passport.use(

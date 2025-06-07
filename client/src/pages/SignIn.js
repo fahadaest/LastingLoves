@@ -181,7 +181,7 @@ export default function SignIn(props) {
         try {
             window.open(`${process.env.REACT_APP_BASE_URL}/api/auth/${provider}`, "_self");
         } catch (error) {
-            console.error("Google Auth Error:", error);
+            console.error("Auth Error:", error);
         }
     };
 
