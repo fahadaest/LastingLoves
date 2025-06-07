@@ -14,6 +14,7 @@ const PORT = process.env.PORT;
 const BACKEND_URL = process.env.BACKEND_URL;
 const environment = process.env.ENVIRONMENT;
 
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors({
     origin: process.env.FRONTEND_URL,
