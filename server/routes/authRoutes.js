@@ -98,8 +98,10 @@ zT4FBXp4
     passReqToCallback: true,
 }, async (req, accessToken, refreshToken, idToken, profile, done) => {
     try {
-        console.log('APPLE TOKEN:', { accessToken, refreshToken, idToken, profile });
-        const { email, sub: appleId } = idToken;
+        const decoded = jwt.decode(idToken);
+        const email = decoded?.email;
+        const appleId = decoded?.sub;
+        console.log('APPLE TOKEN:', { decoded, email, appleId, idToken, profile });
 
         let user = await User.findOne({ email });
 
