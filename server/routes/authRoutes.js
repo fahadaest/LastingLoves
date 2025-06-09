@@ -87,28 +87,35 @@ console.log("keyId", keyId)
 
 
 passport.use(new AppleStrategy({
-    clientID: process.env.APPLE_CLIENT_ID,
-    teamID: process.env.APPLE_TEAM_ID,
+    clientID: 'com.lastingloves.web.login', // e.g., com.lastingloves.web.login
+    teamID: 'com.lastingloves.web.login',
+    keyID: '52922RVCRW',
     callbackURL: `${process.env.BACKEND_URL}/api/auth/apple/callback`,
-    keyID: process.env.APPLE_KEY_ID,
-    privateKey: process.env.APPLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-    passReqToCallback: true,
+    privateKeyString: `-----BEGIN PRIVATE KEY-----
+MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgXYfVjL7NN23WzoD3
+GCuw1hNtUwJq3i6yNs7dijT+C1SgCgYIKoZIzj0DAQehRANCAAR7RbKtOaSgcoew
+AtpeJyPgJS76PmdFLdqlSOv3JsccYZYIYpKkmUnrivApzINyBJThdwdsX2Jluhtv
+zT4FBXp4
+-----END PRIVATE KEY-----`.trim(),
+    scope: ['name', 'email'],
+    passReqToCallback: true
 }, async (req, accessToken, refreshToken, idToken, profile, done) => {
     try {
-        const email = idToken.email || profile.email;
-        const existingUser = await User.findOne({ email });
+        const { email, sub: appleId } = idToken;
 
-        if (existingUser) {
-            if (!existingUser.appleId) {
-                existingUser.appleId = idToken.sub;
-                await existingUser.save();
+        let user = await User.findOne({ email });
+
+        if (user) {
+            if (!user.appleId) {
+                user.appleId = appleId;
+                await user.save();
             }
-            return done(null, existingUser);
+            return done(null, user);
         } else {
             const newUser = await User.create({
-                username: profile.name?.firstName || "Apple User",
-                email,
-                appleId: idToken.sub,
+                username: profile?.name?.firstName || 'AppleUser',
+                email: email,
+                appleId: appleId
             });
             return done(null, newUser);
         }
@@ -117,33 +124,40 @@ passport.use(new AppleStrategy({
     }
 }));
 
-// Start Apple auth
+// Start Apple login
 router.get('/apple', passport.authenticate('apple'));
 
-// Handle Apple auth callback
-router.post('/apple/callback', passport.authenticate('apple', { failureRedirect: '/sign-in', session: false }), (req, res) => {
-    if (!req.user) return res.redirect('/sign-in');
+// Apple callback
+router.post('/apple/callback',
+    passport.authenticate('apple', { failureRedirect: '/sign-in', session: false }),
+    (req, res) => {
+        if (!req.user) {
+            return res.redirect('/sign-in');
+        }
 
-    const accessToken = generateAccessToken(req.user);
-    const refreshToken = generateRefreshToken(req.user);
+        const accessToken = generateAccessToken(req.user);
+        const refreshToken = generateRefreshToken(req.user);
 
-    res.cookie('accessToken', accessToken, {
-        httpOnly: environment !== "development",
-        secure: environment !== "development",
-        sameSite: environment !== "development" ? 'None' : 'Lax',
-        maxAge: 24 * 60 * 60 * 1000,
-    });
+        res.cookie('accessToken', accessToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'None',
+            maxAge: 86400000
+        });
 
-    res.cookie('refreshToken', refreshToken, {
-        httpOnly: environment !== "development",
-        secure: environment !== "development",
-        sameSite: environment !== "development" ? 'None' : 'Lax',
-        maxAge: 24 * 60 * 60 * 1000,
-    });
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'None',
+            maxAge: 86400000
+        });
 
-    const redirectUrl = `${process.env.FRONTEND_URL}/auth-success?${accessToken}&${refreshToken}`;
-    res.redirect(redirectUrl);
-});
+        const redirectUrl = `${process.env.FRONTEND_URL}/auth-success?${accessToken}&${refreshToken}`;
+        res.redirect(redirectUrl);
+    }
+);
+
+
 
 
 
