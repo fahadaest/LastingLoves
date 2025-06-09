@@ -113,7 +113,7 @@ zT4FBXp4
             return done(null, user);
         } else {
             const newUser = await User.create({
-                username: profile?.name?.firstName || 'AppleUser',
+                username: email.split('@')[0],
                 email: email,
                 appleId: appleId
             });
@@ -124,10 +124,9 @@ zT4FBXp4
     }
 }));
 
-// Start Apple login
+
 router.get('/apple', passport.authenticate('apple'));
 
-// Apple callback
 router.post('/apple/callback',
     passport.authenticate('apple', { failureRedirect: '/sign-in', session: false }),
     (req, res) => {
@@ -156,11 +155,6 @@ router.post('/apple/callback',
         res.redirect(redirectUrl);
     }
 );
-
-
-
-
-
 
 passport.use(
     new GoogleStrategy(
@@ -229,27 +223,6 @@ router.get('/google/callback', passport.authenticate('google', { failureRedirect
         res.redirect(redirectUrl);
     }
 );
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 router.post('/register', async (req, res) => {
     const { username, email, password } = req.body;

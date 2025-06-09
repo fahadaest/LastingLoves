@@ -14,8 +14,7 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: function () {
-            return !this.googleId;
-            return !this.appleId;
+            return !this.googleId && !this.appleId;
         },
     },
     googleId: {
