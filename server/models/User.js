@@ -15,6 +15,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: function () {
             return !this.googleId;
+            return !this.appleId;
         },
     },
     googleId: {
