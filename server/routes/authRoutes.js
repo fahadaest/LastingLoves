@@ -85,7 +85,7 @@ console.log("privateKey", privateKey)
 
 passport.use(new AppleStrategy({
     clientID: 'com.lastingloves.web.login',
-    teamID: 'com.lastingloves.web.login',
+    teamID: '3P7ZHT7XCK',
     keyID: '52922RVCRW',
     callbackURL: `${process.env.BACKEND_URL}/api/auth/apple/callback`,
     privateKeyString: `-----BEGIN PRIVATE KEY-----
@@ -95,9 +95,10 @@ AtpeJyPgJS76PmdFLdqlSOv3JsccYZYIYpKkmUnrivApzINyBJThdwdsX2Jluhtv
 zT4FBXp4
 -----END PRIVATE KEY-----`.trim(),
     scope: ['name', 'email'],
-    passReqToCallback: true
+    passReqToCallback: true,
 }, async (req, accessToken, refreshToken, idToken, profile, done) => {
     try {
+        console.log('APPLE TOKEN:', { accessToken, refreshToken, idToken, profile });
         const { email, sub: appleId } = idToken;
 
         let user = await User.findOne({ email });
