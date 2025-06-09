@@ -80,14 +80,11 @@ const teamId = process.env.APPLE_TEAM_ID;
 const keyId = process.env.APPLE_KEY_ID;
 
 console.log("privateKey", privateKey)
-console.log("clientId", clientId)
-console.log("teamId", teamId)
-console.log("keyId", keyId)
 
 
 
 passport.use(new AppleStrategy({
-    clientID: 'com.lastingloves.web.login', // e.g., com.lastingloves.web.login
+    clientID: 'com.lastingloves.web.login',
     teamID: 'com.lastingloves.web.login',
     keyID: '52922RVCRW',
     callbackURL: `${process.env.BACKEND_URL}/api/auth/apple/callback`,
