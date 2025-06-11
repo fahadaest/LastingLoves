@@ -1,4 +1,4 @@
-import { useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js';
+import { useStripe, useElements, PaymentElement, PaymentRequestButtonElement } from '@stripe/react-stripe-js';
 import { useState, useEffect } from 'react';
 import { Button } from '@mui/material';
 import { CircularProgress } from '@mui/material';
@@ -24,8 +24,75 @@ export const CheckoutForm = ({ page }) => {
     const [smsConsentError, setSmsConsentError] = useState(false);
     const [contactNumber, setContactNumber] = useState('');
     const [contactNumberError, setContactNumberError] = useState(false);
+    const [paymentRequest, setPaymentRequest] = useState(null);
+    const [canMakePayment, setCanMakePayment] = useState(false);
 
-    console.log(showAlert)
+    console.log(paymentRequest)
+    console.log(canMakePayment)
+
+    useEffect(() => {
+        if (stripe) {
+            const pr = stripe.paymentRequest({
+                country: 'US',
+                currency: 'usd',
+                total: {
+                    label: 'Total',
+                    amount: page === 'MON' ? 1000 : 30000, // in cents
+                },
+                requestPayerName: true,
+                requestPayerEmail: true,
+            });
+
+            pr.canMakePayment().then(result => {
+                if (result) {
+                    setPaymentRequest(pr);
+                    setCanMakePayment(true);
+                }
+            });
+        }
+    }, [stripe]);
+
+    useEffect(() => {
+        if (paymentRequest) {
+            paymentRequest.on('paymentmethod', async (ev) => {
+                try {
+                    const response = await axios.post(`${baseURL}/api/auth/create-payment-intent`, { page });
+                    const clientSecret = response.data.clientSecret;
+
+                    const { paymentIntent, error } = await stripe.confirmCardPayment(
+                        clientSecret,
+                        { payment_method: ev.paymentMethod.id },
+                        { handleActions: false }
+                    );
+
+                    if (error) {
+                        ev.complete('fail');
+                        setMessage(error.message);
+                        setSeverity("error");
+                        setShowAlert(true);
+                    } else {
+                        ev.complete('success');
+
+                        // Send success to backend
+                        await axios.post(`${baseURL}/api/auth/payment/success`, { page }, { withCredentials: true });
+
+                        setMessage("Payment successful!");
+                        setSeverity("success");
+                        setShowAlert(true);
+                        setTimeout(() => {
+                            window.location.href = `${frontendUrl}/profile`;
+                        }, 2000);
+                    }
+                } catch (err) {
+                    ev.complete('fail');
+                    setMessage("Payment failed");
+                    setSeverity("error");
+                    setShowAlert(true);
+                }
+            });
+        }
+    }, [paymentRequest]);
+
 
     useEffect(() => {
         if (stripe && elements) {
@@ -115,6 +182,12 @@ export const CheckoutForm = ({ page }) => {
                         <Typography color="error" variant="body2" sx={{ fontFamily: 'poppins', mb: 1 }}>
                             You must agree to receive SMS marketing messages to proceed.
                         </Typography>
+                    )}
+
+                    {canMakePayment && (
+                        <div style={{ marginTop: '1rem' }}>
+                            <PaymentRequestButtonElement options={{ paymentRequest }} />
+                        </div>
                     )}
 
                     <Button

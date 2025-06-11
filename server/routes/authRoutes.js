@@ -74,15 +74,6 @@ const generateRefreshToken = (user) => {
     );
 };
 
-const privateKey = process.env.APPLE_PRIVATE_KEY.replace(/\\n/g, '\n');
-const clientId = process.env.APPLE_CLIENT_ID;
-const teamId = process.env.APPLE_TEAM_ID;
-const keyId = process.env.APPLE_KEY_ID;
-
-console.log("privateKey", privateKey)
-
-
-
 passport.use(new AppleStrategy({
     clientID: 'com.lastingloves.web.login',
     teamID: '3P7ZHT7XCK',
@@ -123,7 +114,6 @@ zT4FBXp4
         return done(err, null);
     }
 }));
-
 
 router.get('/apple', passport.authenticate('apple'));
 
@@ -754,6 +744,27 @@ router.post('/payment/success', async (req, res) => {
     } catch (error) {
         console.error('Error updating payment plan:', error);
         res.status(500).json({ message: 'Server error while updating plan' });
+    }
+});
+
+router.post('/create-payment-intent', async (req, res) => {
+    const { page } = req.body;
+    const amount = page === 'MON' ? 1000 : 30000;
+
+    try {
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount,
+            currency: 'usd',
+            payment_method_types: ['card'],
+            automatic_payment_methods: { enabled: true },
+        });
+
+        res.send({
+            clientSecret: paymentIntent.client_secret,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Failed to create payment intent' });
     }
 });
 
