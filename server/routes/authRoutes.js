@@ -768,5 +768,4 @@ router.post('/create-payment-intent', async (req, res) => {
     }
 });
 
-
 export default router;

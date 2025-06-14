@@ -37,7 +37,7 @@ export const CheckoutForm = ({ page }) => {
                 currency: 'usd',
                 total: {
                     label: 'Total',
-                    amount: page === 'MON' ? 1000 : 30000, // in cents
+                    amount: page === 'MON' ? 1000 : 30000,
                 },
                 requestPayerName: true,
                 requestPayerEmail: true,
