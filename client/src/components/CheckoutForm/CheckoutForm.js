@@ -60,12 +60,11 @@ export const CheckoutForm = ({ page }) => {
                     const response = await axios.post(`${baseURL}/api/auth/create-payment-intent`, { page });
                     const clientSecret = response.data.clientSecret;
 
-                    // FIXED: Use stripe.confirmPayment for Apple Pay instead of confirmCardPayment
-                    const { paymentIntent, error } = await stripe.confirmPayment({
-                        clientSecret: clientSecret,
-                        payment_method: ev.paymentMethod.id,
-                        redirect: 'if_required'
-                    });
+                    const { paymentIntent, error } = await stripe.confirmCardPayment(
+                        clientSecret,
+                        { payment_method: ev.paymentMethod.id },
+                        { handleActions: false }
+                    );
 
                     if (error) {
                         ev.complete('fail');
@@ -92,6 +91,7 @@ export const CheckoutForm = ({ page }) => {
             });
         }
     }, [paymentRequest]);
+
 
 
     useEffect(() => {
