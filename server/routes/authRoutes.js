@@ -749,22 +749,57 @@ router.post('/payment/success', async (req, res) => {
 
 router.post('/create-payment-intent', async (req, res) => {
     const { page } = req.body;
-    const amount = page === 'MON' ? 1000 : 30000;
+    const amount = page === 'MON' ? 1000 : 30000; // $10 or $300 in cents
 
     try {
         const paymentIntent = await stripe.paymentIntents.create({
             amount,
             currency: 'usd',
-            payment_method_types: ['card'],
-            automatic_payment_methods: { enabled: true },
+            // Remove payment_method_types to allow automatic_payment_methods to handle all types
+            automatic_payment_methods: {
+                enabled: true,
+                allow_redirects: 'never' // Optional: prevents redirect-based payment methods
+            },
+            // Or explicitly include Apple Pay:
+            // payment_method_types: ['card', 'apple_pay'],
         });
 
         res.send({
             clientSecret: paymentIntent.client_secret,
         });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Failed to create payment intent' });
+        console.error('Payment Intent Creation Error:', error);
+        res.status(500).json({
+            message: 'Failed to create payment intent',
+            error: error.message // Include error details for debugging
+        });
+    }
+});
+
+// Alternative approach - explicitly enabling Apple Pay
+router.post('/create-payment-intent-apple-pay', async (req, res) => {
+    const { page } = req.body;
+    const amount = page === 'MON' ? 1000 : 30000;
+
+    try {
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount,
+            currency: 'usd',
+            payment_method_types: ['card', 'apple_pay'], // Explicitly include Apple Pay
+            metadata: {
+                plan_type: page === 'MON' ? 'monthly' : 'annual'
+            }
+        });
+
+        res.send({
+            clientSecret: paymentIntent.client_secret,
+        });
+    } catch (error) {
+        console.error('Payment Intent Creation Error:', error);
+        res.status(500).json({
+            message: 'Failed to create payment intent',
+            error: error.message
+        });
     }
 });
 

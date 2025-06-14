@@ -6,8 +6,9 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
 function AffordableLove() {
     const navigate = useNavigate();
-    const monthlyPlan = process.env.REACT_APP_MONTHLY_PLAN;
-    const annualPlan = process.env.REACT_APP_ANNUAL_PLAN;
+    const heartfeltPlan = process.env.REACT_APP_HEARTFELT_PLAN;
+    const legacyPlusPlan = process.env.REACT_APP_LEGACY_PLUS;
+    const eternalVaultPlan = process.env.REACT_APP_ETERNAL_VAULT;
 
     return (
         <section className="flex justify-center items-center pt-12 pb-12 min-h-[80vh] bg-header-white">
@@ -79,7 +80,7 @@ function AffordableLove() {
                                         color: '#020402',
                                     }}
                                 >
-                                    Monthly Plan
+                                    Heartfelt Plan
                                 </Typography>
 
                                 <Typography
@@ -92,35 +93,38 @@ function AffordableLove() {
                                         color: '#595959',
                                     }}
                                 >
-                                    Memories stay uploaded for 60 days after last payment
+                                    ${heartfeltPlan}
                                 </Typography>
 
-                                <Typography
-                                    variant="h1"
-                                    sx={{
-                                        fontFamily: 'poppins',
-                                        fontSize: '18px',
-                                        fontWeight: 400,
-                                        letterSpacing: '.1rem',
-                                        color: '#595959',
-                                    }}
-                                >
-                                    ${monthlyPlan}
-                                </Typography>
+                                <>
+                                    {[
+                                        "Up to 5 video messages",
+                                        "Date or Occasion-based delivery",
+                                        "Delivery via email + text",
+                                        "Personalized background options",
+                                        "Custom Delivery Notes",
+                                    ].map((point, index) => (
+                                        <Typography
+                                            key={index}
+                                            variant="h1"
+                                            sx={{
+                                                fontFamily: 'poppins',
+                                                fontSize: '18px',
+                                                fontWeight: 400,
+                                                letterSpacing: '.05rem',
+                                                color: '#595959',
+                                                lineHeight: "25px",
+                                                display: 'flex',
+                                                alignItems: 'flex-start',
+                                                gap: '8px',
+                                                mt: index === 0 ? 0 : 1
+                                            }}
+                                        >
+                                            <span style={{ fontWeight: 'bold' }}>•</span> {point}
+                                        </Typography>
+                                    ))}
+                                </>
 
-                                <Typography
-                                    variant="h1"
-                                    sx={{
-                                        fontFamily: 'poppins',
-                                        fontSize: '18px',
-                                        fontWeight: 400,
-                                        letterSpacing: '.05rem',
-                                        color: '#595959',
-                                        lineHeight: "25px"
-                                    }}
-                                >
-                                    Create heartfelt personalized video messages for your loved ones with LASTING LOVE. Choose unique backgrounds, add your personal touch, and express your emotions authentically. Whether it’s a birthday, anniversary, or just a simple ‘I love you’, your customized video message can be scheduled for future delivery. Imagine the joy and surprise on their faces when they receive a message created just for them. This is your chance to share your feelings in a memorable way, ensuring your love transcends time and space. Cherish your relationships and create lasting memories today!
-                                </Typography>
 
                                 <Typography
                                     onClick={() => navigate('/monthly-plan')}
@@ -176,7 +180,7 @@ function AffordableLove() {
                                         color: '#020402',
                                     }}
                                 >
-                                    Annual Plan
+                                    Legacy Plus Plan
                                 </Typography>
 
                                 <Typography
@@ -189,7 +193,94 @@ function AffordableLove() {
                                         color: '#595959',
                                     }}
                                 >
-                                    Pay once, save more, Memories stay uploaded forever
+                                    ${legacyPlusPlan}
+                                </Typography>
+
+                                <>
+                                    {[
+                                        "Up to 5 video messages",
+                                        "Date or Occasion-based delivery",
+                                        "Delivery via email + text",
+                                        "Personalized background options",
+                                        "Custom Delivery Notes",
+                                    ].map((point, index) => (
+                                        <Typography
+                                            key={index}
+                                            variant="h1"
+                                            sx={{
+                                                fontFamily: 'poppins',
+                                                fontSize: '18px',
+                                                fontWeight: 400,
+                                                letterSpacing: '.05rem',
+                                                color: '#595959',
+                                                lineHeight: "25px",
+                                                display: 'flex',
+                                                alignItems: 'flex-start',
+                                                gap: '8px',
+                                                mt: index === 0 ? 0 : 1
+                                            }}
+                                        >
+                                            <span style={{ fontWeight: 'bold' }}>•</span> {point}
+                                        </Typography>
+                                    ))}
+                                </>
+
+
+                                <Typography
+                                    onClick={() => navigate('/annual-plan')}
+                                    variant="h1"
+                                    sx={{
+                                        fontFamily: 'poppins',
+                                        fontSize: '18px',
+                                        fontWeight: 500,
+                                        letterSpacing: '.1rem',
+                                        color: '#595959',
+                                        textDecoration: 'underline'
+                                    }}
+                                >
+                                    Upgrade Plan
+                                </Typography>
+                            </Box>
+                        </Box>
+
+                        <Box
+                            onClick={() => navigate('/annual-plan')}
+                            sx={{
+                                padding: "20px",
+                                backgroundColor: "#fff",
+                                boxShadow: "0 5px 20px 0 rgba(0, 0, 0, 0.15)",
+                                transition: "transform 0.1s ease-in-out",
+                                "&:hover": {
+                                    cursor: "pointer",
+                                    transform: "scale(1.05)",
+                                    boxShadow: "0 5px 20px 0 #32AA27",
+                                    "& .hover-text": {
+                                        color: "#32AA27",
+                                    },
+                                },
+                            }}>
+
+                            <Box className="relative w-[30%] aspect-square mb-8">
+                                <img
+                                    src="https://cdn.b12.io/client_media/cQFRBNdt/0c544252-c694-11ef-9cfc-0242ac110002-jpg-regular_image.jpeg"
+                                    alt="Hero Image"
+                                    className="w-[100%] h-[100%] object-cover rounded-full"
+                                />
+                            </Box>
+
+                            <Box sx={{ display: "flex", flexDirection: "column", gap: "12px", paddingRight: "10%" }}>
+                                <Typography
+                                    variant="h1"
+                                    className="hover-text"
+                                    sx={{
+                                        fontFamily: 'poppins',
+                                        fontSize: '20px',
+                                        fontWeight: 600,
+                                        letterSpacing: '.1rem',
+                                        color: '#020402',
+                                    }}
+                                >
+                                    Eternal Value Plan
                                 </Typography>
 
                                 <Typography
@@ -202,22 +293,34 @@ function AffordableLove() {
                                         color: '#595959',
                                     }}
                                 >
-                                    ${annualPlan}
+                                    ${eternalVaultPlan}
                                 </Typography>
 
-                                <Typography
-                                    variant="h1"
-                                    sx={{
-                                        fontFamily: 'poppins',
-                                        fontSize: '18px',
-                                        fontWeight: 400,
-                                        letterSpacing: '.05rem',
-                                        color: '#595959',
-                                        lineHeight: "25px"
-                                    }}
-                                >
-                                    With LASTING LOVE, your love can reach your dear ones even when you're not there. Our scheduled video delivery feature allows you to lock in messages that will be sent on specific dates in the future. Whether it's for a special occasion or an unexpected surprise, you can ensure your voice is heard and your love is felt. Customize each message with unique backgrounds and heartfelt content. This service provides peace of mind, knowing that your sentiments will be delivered at the perfect moment, offering comfort and connection to those you cherish.
-                                </Typography>
+                                <>
+                                    {[
+                                        "Personalized background options",
+                                    ].map((point, index) => (
+                                        <Typography
+                                            key={index}
+                                            variant="h1"
+                                            sx={{
+                                                fontFamily: 'poppins',
+                                                fontSize: '18px',
+                                                fontWeight: 400,
+                                                letterSpacing: '.05rem',
+                                                color: '#595959',
+                                                lineHeight: "25px",
+                                                display: 'flex',
+                                                alignItems: 'flex-start',
+                                                gap: '8px',
+                                                mt: index === 0 ? 0 : 1 // add margin top between items
+                                            }}
+                                        >
+                                            <span style={{ fontWeight: 'bold' }}>•</span> {point}
+                                        </Typography>
+                                    ))}
+                                </>
+
 
                                 <Typography
                                     onClick={() => navigate('/annual-plan')}

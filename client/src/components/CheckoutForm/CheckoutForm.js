@@ -37,7 +37,8 @@ export const CheckoutForm = ({ page }) => {
                 currency: 'usd',
                 total: {
                     label: 'Total',
-                    amount: page === 'MON' ? 1000 : 30000,
+                    amount: page === 'MON' ? 100 : 30000,
+                    // amount: page === 'MON' ? 1000 : 30000,
                 },
                 requestPayerName: true,
                 requestPayerEmail: true,
@@ -59,11 +60,12 @@ export const CheckoutForm = ({ page }) => {
                     const response = await axios.post(`${baseURL}/api/auth/create-payment-intent`, { page });
                     const clientSecret = response.data.clientSecret;
 
-                    const { paymentIntent, error } = await stripe.confirmCardPayment(
-                        clientSecret,
-                        { payment_method: ev.paymentMethod.id },
-                        { handleActions: false }
-                    );
+                    // FIXED: Use stripe.confirmPayment for Apple Pay instead of confirmCardPayment
+                    const { paymentIntent, error } = await stripe.confirmPayment({
+                        clientSecret: clientSecret,
+                        payment_method: ev.paymentMethod.id,
+                        redirect: 'if_required'
+                    });
 
                     if (error) {
                         ev.complete('fail');
@@ -72,8 +74,6 @@ export const CheckoutForm = ({ page }) => {
                         setShowAlert(true);
                     } else {
                         ev.complete('success');
-
-                        // Send success to backend
                         await axios.post(`${baseURL}/api/auth/payment/success`, { page }, { withCredentials: true });
 
                         setMessage("Payment successful!");
