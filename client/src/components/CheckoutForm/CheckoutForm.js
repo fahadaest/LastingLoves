@@ -73,7 +73,16 @@ export const CheckoutForm = ({ page }) => {
                         setShowAlert(true);
                     } else {
                         ev.complete('success');
-                        await axios.post(`${baseURL}/api/auth/payment/success`, { page }, { withCredentials: true });
+                        await axios.post(`${baseURL}/api/auth/payment/success`, { page }, {
+                            headers: {
+                                Authorization: `Bearer ${document.cookie
+                                    .split('; ')
+                                    .find(row => row.startsWith('accessToken='))
+                                    ?.split('=')[1]
+                                    }`
+                            },
+                            withCredentials: true
+                        });
 
                         setMessage("Payment successful!");
                         setSeverity("success");
@@ -91,8 +100,6 @@ export const CheckoutForm = ({ page }) => {
             });
         }
     }, [paymentRequest]);
-
-
 
     useEffect(() => {
         if (stripe && elements) {
