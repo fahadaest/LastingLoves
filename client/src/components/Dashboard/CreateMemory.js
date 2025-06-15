@@ -307,9 +307,9 @@ export default function CreateMemory() {
                 setProgress(0);
             }
         } catch (error) {
+            console.log("Upload error:", error?.response?.data?.message);
             setCreatingMemory(false);
-            console.error("Upload error:", error);
-            setMessage("Unknown error, Please try again!");
+            setMessage(error?.response?.data?.message);
             setSeverity("error");
             setShowAlert(true);
         }

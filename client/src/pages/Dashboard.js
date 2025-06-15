@@ -65,7 +65,7 @@ export default function Dashboard({ path }) {
                 </Stack>
             </Box>
 
-            {isFreePlan &&
+            {/* {isFreePlan &&
                 <Dialog sx={{ my: 2, color: '#595959', fontFamily: 'poppins', fontWeight: '500', display: 'block', textTransform: 'none', }} open={openModal} disableEscapeKeyDown>
                     <DialogTitle>Upgrade Your Plan</DialogTitle>
                     <DialogContent>
@@ -80,7 +80,7 @@ export default function Dashboard({ path }) {
                         </Button>
                     </DialogActions>
                 </Dialog>
-            }
+            } */}
 
         </Box>
     );

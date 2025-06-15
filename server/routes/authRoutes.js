@@ -448,6 +448,42 @@ router.post('/createMemory', uploadVideo.single('file'), async (req, res) => {
     }
 
     try {
+        const user = await User.findById(req.body.userId);
+        console.log(user)
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        if (user.paymentPlan === 'free') {
+            const existingMemoryCount = await Memory.countDocuments({ userId: req.body.userId });
+            console.log(existingMemoryCount)
+            if (existingMemoryCount >= 1) {
+                return res.status(403).json({
+                    message: 'Free plan allows only 1 memory to be uploaded'
+                });
+            }
+        }
+
+        if (user.paymentPlan === 'heartfelt') {
+            const existingMemoryCount = await Memory.countDocuments({ userId: req.body.userId });
+            console.log(existingMemoryCount)
+            if (existingMemoryCount >= 5) {
+                return res.status(403).json({
+                    message: 'Heartfelt plan allows only 5 memory to be uploaded'
+                });
+            }
+        }
+
+        if (user.paymentPlan === 'legacy') {
+            const existingMemoryCount = await Memory.countDocuments({ userId: req.body.userId });
+            console.log(existingMemoryCount)
+            if (existingMemoryCount >= 20) {
+                return res.status(403).json({
+                    message: 'Legacy plan allows only 20 memory to be uploaded'
+                });
+            }
+        }
+
 
         let videoUrl = "";
         let thumbnailUrl = "";
