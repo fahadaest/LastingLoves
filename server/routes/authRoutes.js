@@ -710,14 +710,18 @@ router.post('/payment/success', async (req, res) => {
         let subscriptionStartDate = new Date();
         let subscriptionEndDate;
 
-        if (page === 'MON') {
-            paymentPlan = 'monthly';
+        if (page === 'HEARTFELT') {
+            paymentPlan = 'heartfelt';
             subscriptionEndDate = new Date();
-            subscriptionEndDate.setMonth(subscriptionEndDate.getMonth() + 1); // Set expiry to 1 month later
-        } else if (page === 'ANN') {
-            paymentPlan = 'annual';
+            subscriptionEndDate.setMonth(subscriptionEndDate.getMonth() + 1);
+        } else if (page === 'LEGACY') {
+            paymentPlan = 'legacy';
             subscriptionEndDate = new Date();
-            subscriptionEndDate.setFullYear(subscriptionEndDate.getFullYear() + 1); // Set expiry to 1 year later
+            subscriptionEndDate.setFullYear(subscriptionEndDate.getMonth() + 1);
+        } else if (page === 'ETERNAL') {
+            paymentPlan = 'eternal';
+            subscriptionEndDate = new Date();
+            subscriptionEndDate.setFullYear(subscriptionEndDate.getMonth() + 1);
         } else {
             return res.status(400).json({ message: 'Invalid payment plan type' });
         }
@@ -749,19 +753,16 @@ router.post('/payment/success', async (req, res) => {
 
 router.post('/create-payment-intent', async (req, res) => {
     const { page } = req.body;
-    const amount = page === 'MON' ? 1000 : 30000; // $10 or $300 in cents
+    const amount = page === 'HEARTFELT' ? 1000 : 30000;
 
     try {
         const paymentIntent = await stripe.paymentIntents.create({
             amount,
             currency: 'usd',
-            // Remove payment_method_types to allow automatic_payment_methods to handle all types
             automatic_payment_methods: {
                 enabled: true,
-                allow_redirects: 'never' // Optional: prevents redirect-based payment methods
+                allow_redirects: 'never'
             },
-            // Or explicitly include Apple Pay:
-            // payment_method_types: ['card', 'apple_pay'],
         });
 
         res.send({
@@ -771,23 +772,23 @@ router.post('/create-payment-intent', async (req, res) => {
         console.error('Payment Intent Creation Error:', error);
         res.status(500).json({
             message: 'Failed to create payment intent',
-            error: error.message // Include error details for debugging
+            error: error.message
         });
     }
 });
 
-// Alternative approach - explicitly enabling Apple Pay
+
 router.post('/create-payment-intent-apple-pay', async (req, res) => {
     const { page } = req.body;
-    const amount = page === 'MON' ? 1000 : 30000;
+    const amount = page === 'HEARTFELT' ? 1000 : 30000;
 
     try {
         const paymentIntent = await stripe.paymentIntents.create({
             amount,
             currency: 'usd',
-            payment_method_types: ['card', 'apple_pay'], // Explicitly include Apple Pay
+            payment_method_types: ['card', 'apple_pay'],
             metadata: {
-                plan_type: page === 'MON' ? 'monthly' : 'annual'
+                plan_type: page === 'HEARTFELT' ? 'monthly' : 'annual'
             }
         });
 

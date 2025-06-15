@@ -38,8 +38,9 @@ function App() {
 
           <Route path="/Pricing" element={<MainLayout><Pricing /></MainLayout>} />
           <Route path="/how-it-works" element={<MainLayout><HowItWorks /></MainLayout>} />
-          <Route path="/monthly-plan" element={<MainLayout><UpgradePlan page={"MON"} /></MainLayout>} />
-          <Route path="/annual-plan" element={<MainLayout><UpgradePlan page={"ANN"} /></MainLayout>} />
+          <Route path="/heartfelt-plan" element={<MainLayout><UpgradePlan page={"HEARTFELT"} /></MainLayout>} />
+          <Route path="/legacy-plan" element={<MainLayout><UpgradePlan page={"LEGACY"} /></MainLayout>} />
+          <Route path="/eternal-plan" element={<MainLayout><UpgradePlan page={"ETERNAL"} /></MainLayout>} />
           <Route path="/auth-success" element={<AuthSuccess />} />
 
           <Route path="/sign-in" element={<SignIn />} />

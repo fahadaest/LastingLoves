@@ -37,8 +37,8 @@ export const CheckoutForm = ({ page }) => {
                 currency: 'usd',
                 total: {
                     label: 'Total',
-                    amount: page === 'MON' ? 100 : 30000,
-                    // amount: page === 'MON' ? 1000 : 30000,
+                    amount: page === 'HEARTFELT' ? 100 : 30000,
+                    // amount: page === 'HEARTFELT' ? 1000 : 30000,
                 },
                 requestPayerName: true,
                 requestPayerEmail: true,
@@ -215,7 +215,7 @@ export const CheckoutForm = ({ page }) => {
                         {paymentProcessing ? (
                             <CircularProgress size={24} sx={{ color: '#FFFFFF' }} />
                         ) : (
-                            `Pay ${page === 'MON' ? '$10.00' : '$300.00'}`
+                            `Pay ${page === 'HEARTFELT' ? '$4.99' : page === 'LEGACY' ? '$9.99' : '$19.99'}`
                         )}
                     </Button>
                 </>

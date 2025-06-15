@@ -20,15 +20,23 @@ function UpgradePlan({ page }) {
     const [isLoading, setIsLoading] = useState(true);
     const [paymentMethod, setPaymentMethod] = useState('card');
     const baseURL = process.env.REACT_APP_BASE_URL;
+    const heartfeltPlan = process.env.REACT_APP_HEARTFELT_PLAN;
+    const legacyPlusPlan = process.env.REACT_APP_LEGACY_PLUS;
+    const eternalVaultPlan = process.env.REACT_APP_ETERNAL_VAULT;
+
+    console.log(heartfeltPlan)
 
     useEffect(() => {
-        if (page === 'MON') setCurrentIndex(0);
-        else if (page === 'ANN') setCurrentIndex(1);
+        if (page === 'HEARTFELT') setCurrentIndex(0);
+        else if (page === 'LEGACY') setCurrentIndex(1);
+        else if (page === 'ETERNAL') setCurrentIndex(2);
+
+        let amount;
+        if (page === 'HEARTFELT') amount = Math.round(parseFloat(heartfeltPlan) * 100);
+        else if (page === 'LEGACY') amount = Math.round(parseFloat(legacyPlusPlan) * 100);
+        else if (page === 'ETERNAL') amount = Math.round(parseFloat(eternalVaultPlan) * 100);
 
         const handleUpgrade = async () => {
-            let amount;
-            if (page === 'MON') amount = 1000;
-            else if (page === 'ANN') amount = 30000;
 
             try {
                 const response = await axios.post(`${baseURL}/api/auth/checkout-session`, { amount, page });
@@ -45,13 +53,9 @@ function UpgradePlan({ page }) {
 
     const images = [personalizedVMImg, ScheduledMDImg, SecureMLImg];
     const heading = [
-        "Monthly Plan: $10.00",
-        "Annual Plan: $300.00",
-    ];
-
-    const text = [
-        "Create and upload video messages that are publicly displayed on your profile page for anyone to view. These memories will remain visible indefinitely, giving your loved ones, friends, and even future generations a chance to connect with you, hear your voice, and relive the moments and lessons you’ve shared. Whether it’s cherished memories, life advice, or simple messages of love, your public video memories will form a timeless digital legacy that lives on.",
-        "Sometimes, the most meaningful words are the ones shared in private. With this feature, you can record personal video messages meant exclusively for specific individuals. These messages are securely stored and kept completely private—only to be revealed under certain conditions, like confirmation of your passing. It’s a powerful way to leave behind heartfelt goodbyes, personal reflections, or important information that remains confidential until the time is right.",
+        `Heartfelt Plan: $${heartfeltPlan}`,
+        `Legacy Plus Plan: $${legacyPlusPlan}`,
+        `Eternal Vault Plan: $${eternalVaultPlan}`,
     ];
 
     return (

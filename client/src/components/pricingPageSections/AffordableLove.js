@@ -44,7 +44,7 @@ function AffordableLove() {
                     <Box className="flex flex-col bp900:flex-row gap-10">
 
                         <Box
-                            onClick={() => navigate('/monthly-plan')}
+                            onClick={() => navigate('/heartfelt-plan')}
                             sx={{
                                 padding: "20px",
                                 backgroundColor: "#fff",
@@ -144,7 +144,7 @@ function AffordableLove() {
                         </Box>
 
                         <Box
-                            onClick={() => navigate('/annual-plan')}
+                            onClick={() => navigate('/legacy-plan')}
                             sx={{
                                 padding: "20px",
                                 backgroundColor: "#fff",
@@ -198,11 +198,10 @@ function AffordableLove() {
 
                                 <>
                                     {[
-                                        "Up to 5 video messages",
-                                        "Date or Occasion-based delivery",
-                                        "Delivery via email + text",
-                                        "Personalized background options",
-                                        "Custom Delivery Notes",
+                                        "Up to 20 video messages",
+                                        "Recurring delivery options (e.g every  birthday)",
+                                        "Delivery via email, text, and personalized background",
+                                        "Custom thumbnails",
                                     ].map((point, index) => (
                                         <Typography
                                             key={index}
@@ -244,7 +243,7 @@ function AffordableLove() {
                         </Box>
 
                         <Box
-                            onClick={() => navigate('/annual-plan')}
+                            onClick={() => navigate('/eternal-plan')}
                             sx={{
                                 padding: "20px",
                                 backgroundColor: "#fff",
@@ -280,7 +279,7 @@ function AffordableLove() {
                                         color: '#020402',
                                     }}
                                 >
-                                    Eternal Value Plan
+                                    Eternal Vault
                                 </Typography>
 
                                 <Typography
@@ -298,7 +297,10 @@ function AffordableLove() {
 
                                 <>
                                     {[
-                                        "Personalized background options",
+                                        "Unlimited video messages",
+                                        "Multiple delivery types (date, trigger, event-based)",
+                                        "Custom thumbnails + legacy background",
+                                        "Feature Coming Soon! Audio Cloning",
                                     ].map((point, index) => (
                                         <Typography
                                             key={index}
@@ -313,7 +315,7 @@ function AffordableLove() {
                                                 display: 'flex',
                                                 alignItems: 'flex-start',
                                                 gap: '8px',
-                                                mt: index === 0 ? 0 : 1 // add margin top between items
+                                                mt: index === 0 ? 0 : 1
                                             }}
                                         >
                                             <span style={{ fontWeight: 'bold' }}>•</span> {point}
