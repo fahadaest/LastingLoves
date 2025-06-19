@@ -270,6 +270,8 @@ export default function CreateMemory() {
             .find(row => row.startsWith('accessToken='))
             ?.split('=')[1];
 
+        const scheduleUtcISOString = scheduleTime ? new Date(scheduleTime).toISOString() : null;
+
         try {
             setCreatingMemory(true);
             const response = await axios.post(
@@ -279,7 +281,7 @@ export default function CreateMemory() {
                     title,
                     description,
                     privacy,
-                    scheduledTime: scheduleTime ? new Date(new Date(scheduleTime).toISOString()) : null,
+                    scheduledTime: scheduleUtcISOString,
                     contacts: contacts,
                     videoUrl: videoFile,
                     thumbnailUrl: thumbnailUrl,
