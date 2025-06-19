@@ -279,7 +279,7 @@ export default function CreateMemory() {
                     title,
                     description,
                     privacy,
-                    scheduledTime: scheduleTime,
+                    scheduledTime: scheduleTime ? new Date(new Date(scheduleTime).toISOString()) : null,
                     contacts: contacts,
                     videoUrl: videoFile,
                     thumbnailUrl: thumbnailUrl,
