@@ -11,6 +11,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
+import Cookies from "js-cookie";
 
 export default function PublicMemories({ name }) {
     const { userId, videoId } = useParams();
@@ -24,10 +25,9 @@ export default function PublicMemories({ name }) {
     const [userVerified, setUserVerified] = useState(false);
     const [certificate, setCertificate] = useState(null);
     const [uploading, setUploading] = useState(false);
-
+    const accessToken = Cookies.get("accessToken");
     const [openModal, setOpenModal] = useState(false);
 
-    console.log(selectedMemory)
 
     useEffect(() => {
         if (selectedMemory === null) {
@@ -46,6 +46,7 @@ export default function PublicMemories({ name }) {
     const fetchMemories = async () => {
         try {
             const response = await axios.get(`${baseURL}/api/auth/memories/${userId}`, {
+                headers: { Authorization: `Bearer ${accessToken}` },
                 withCredentials: true,
             });
             setMemories(response?.data?.memories);
